@@ -1,0 +1,144 @@
+/* ===== Root / Background ===== */
+.root-pane {
+    -fx-background-color: #f0f0f0;
+}
+
+/* ===== Card Container ===== */
+.card {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 38 34 38 34;
+}
+
+/* ===== Card Title ===== */
+.card-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111111;
+    -fx-padding: 0 0 16 0;
+}
+
+/* ===== Field Labels ===== */
+.field-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #555555;
+    -fx-padding: 6 0 2 0;
+}
+
+/* ===== Text Fields ===== */
+.input-field {
+    -fx-background-color: white;
+    -fx-border-color: #bfbfbf;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 13px;
+    -fx-pref-height: 38px;
+    -fx-text-fill: #222222;
+}
+
+.input-field:focused {
+    -fx-border-color: #888888;
+}
+
+/* ===== Text Area ===== */
+.input-area {
+    -fx-background-color: white;
+    -fx-border-color: #bfbfbf;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 13px;
+    -fx-pref-height: 100px;
+}
+
+.input-area:focused {
+    -fx-border-color: #888888;
+}
+
+/* ===== Gold / Yellow Button ===== */
+.btn-gold {
+    -fx-background-color: #E8A820;
+    -fx-text-fill: #222222;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30;
+    -fx-padding: 12 20 12 20;
+    -fx-cursor: hand;
+    -fx-border-radius: 30;
+}
+
+.btn-gold:hover {
+    -fx-background-color: #d49a14;
+}
+
+/* ===== Red / Crimson Button ===== */
+.btn-red {
+    -fx-background-color: #9B1B30;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30;
+    -fx-padding: 12 20 12 20;
+    -fx-cursor: hand;
+    -fx-border-radius: 30;
+}
+
+.btn-red:hover {
+    -fx-background-color: #7a1526;
+}
+
+/* ===== Navigation Link ===== */
+.nav-link {
+    -fx-text-fill: #555555;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-underline: true;
+}
+
+.nav-link:hover {
+    -fx-text-fill: #111111;
+}
+
+/* ===== Nav Bar ===== */
+.nav-bar {
+    -fx-background-color: #222222;
+    -fx-padding: 10 20 10 20;
+    -fx-spacing: 16;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-background-radius: 4;
+    -fx-padding: 5 12 5 12;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #444444;
+    -fx-text-fill: white;
+}
+
+.nav-btn-active {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-background-radius: 4;
+    -fx-padding: 5 12 5 12;
+}
+
+.nav-title {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}

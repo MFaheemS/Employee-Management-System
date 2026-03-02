@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.EmployeeAddController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="520" prefHeight="620"
+      spacing="0">
+
+    <!-- Navigation Bar -->
+    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
+        <Label text="EMS" styleClass="nav-title"/>
+        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
+        <Button text="Employee Add" styleClass="nav-btn-active"
+                onAction="#goToAdd"/>
+        <Button text="Employee Deactivate" styleClass="nav-btn"
+                onAction="#goToDeactivate"/>
+    </HBox>
+
+    <!-- Card -->
+    <StackPane VBox.vgrow="ALWAYS">
+        <VBox styleClass="card" maxWidth="400" spacing="0"
+              StackPane.alignment="CENTER">
+
+            <Label text="Employee Add" styleClass="card-title"
+                   maxWidth="Infinity" alignment="CENTER"/>
+
+            <Label text="Employee ID" styleClass="field-label"/>
+            <TextField fx:id="employeeIdField" styleClass="input-field"
+                       maxWidth="Infinity"/>
+
+            <Label text="Full Name" styleClass="field-label"/>
+            <TextField fx:id="fullNameField" styleClass="input-field"
+                       maxWidth="Infinity"/>
+
+            <Label text="Job Title" styleClass="field-label"/>
+            <TextField fx:id="jobTitleField" styleClass="input-field"
+                       maxWidth="Infinity"/>
+
+            <Label text="Department" styleClass="field-label"/>
+            <TextField fx:id="departmentField" styleClass="input-field"
+                       maxWidth="Infinity"/>
+
+            <Label text="Email" styleClass="field-label"/>
+            <TextField fx:id="emailField" styleClass="input-field"
+                       maxWidth="Infinity"/>
+
+            <Region prefHeight="18"/>
+
+            <Button text="Add Employee" styleClass="btn-gold"
+                    maxWidth="Infinity" onAction="#handleAddEmployee"/>
+
+        </VBox>
+    </StackPane>
+
+</VBox>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.ems.LoginController"
+           styleClass="root-pane"
+           stylesheets="@styles.css"
+           prefWidth="520" prefHeight="460">
+
+    <VBox styleClass="card" maxWidth="380" spacing="0"
+          StackPane.alignment="CENTER">
+
+        <Label text="Login" styleClass="card-title"
+               maxWidth="Infinity" alignment="CENTER"/>
+
+        <Label text="Username" styleClass="field-label"/>
+        <TextField fx:id="usernameField" styleClass="input-field"
+                   maxWidth="Infinity"/>
+
+        <Label text="Password" styleClass="field-label"/>
+        <PasswordField fx:id="passwordField" styleClass="input-field"
+                       maxWidth="Infinity"/>
+
+        <VBox.margin>
+            <Insets/>
+        </VBox.margin>
+
+        <Region prefHeight="18"/>
+
+        <Button text="Submit" styleClass="btn-gold"
+                maxWidth="Infinity" onAction="#handleSubmit"/>
+
+    </VBox>
+</StackPane>

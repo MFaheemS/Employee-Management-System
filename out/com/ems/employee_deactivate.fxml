@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.EmployeeDeactivateController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="520" prefHeight="560"
+      spacing="0">
+
+    <!-- Navigation Bar -->
+    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
+        <Label text="EMS" styleClass="nav-title"/>
+        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
+        <Button text="Employee Add" styleClass="nav-btn"
+                onAction="#goToAdd"/>
+        <Button text="Employee Deactivate" styleClass="nav-btn-active"
+                onAction="#goToDeactivate"/>
+    </HBox>
+
+    <!-- Card -->
+    <StackPane VBox.vgrow="ALWAYS">
+        <VBox styleClass="card" maxWidth="400" spacing="0"
+              StackPane.alignment="CENTER">
+
+            <Label text="Employee Deactivate" styleClass="card-title"
+                   maxWidth="Infinity" alignment="CENTER"/>
+
+            <Label text="Employee to Deactivate" styleClass="field-label"/>
+            <TextField fx:id="employeeField" styleClass="input-field"
+                       promptText="Select Employee" maxWidth="Infinity"/>
+
+            <Label text="Reason for Deactivation" styleClass="field-label"/>
+            <TextArea fx:id="reasonField" styleClass="input-area"
+                      promptText="Enter reason for deactivation..."
+                      maxWidth="Infinity" wrapText="true"/>
+
+            <Region prefHeight="18"/>
+
+            <Button text="Deactivate Employee" styleClass="btn-red"
+                    maxWidth="Infinity" onAction="#handleDeactivate"/>
+
+        </VBox>
+    </StackPane>
+
+</VBox>

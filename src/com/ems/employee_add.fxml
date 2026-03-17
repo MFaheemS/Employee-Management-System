@@ -15,10 +15,17 @@
     <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
         <Label text="EMS" styleClass="nav-title"/>
         <Region HBox.hgrow="ALWAYS" minWidth="20"/>
-        <Button text="Employee Add" styleClass="nav-btn-active"
+      <Label fx:id="userLabel" styleClass="nav-user"/>
+      <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn-active"
                 onAction="#goToAdd"/>
-        <Button text="Employee Deactivate" styleClass="nav-btn"
+      <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn"
                 onAction="#goToDeactivate"/>
+      <Button text="Apply Leave" styleClass="nav-btn"
+        fx:id="leaveApplyNavButton" onAction="#goToLeaveApply"/>
+      <Button text="Leave Approvals" styleClass="nav-btn"
+        fx:id="leaveApprovalsNavButton" onAction="#goToLeaveApprovals"/>
+      <Button text="Logout" styleClass="nav-btn"
+        onAction="#handleLogout"/>
     </HBox>
 
     <!-- Card -->

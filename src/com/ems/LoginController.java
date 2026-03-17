@@ -2,6 +2,7 @@ package com.ems;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -16,6 +17,15 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
+    private Label hintLabel;
+
+    @FXML
+    private void initialize() {
+        AppSession.clear();
+        hintLabel.setText("Demo logins: admin/admin, manager/manager, employee/employee");
+    }
+
+    @FXML
     private void handleSubmit() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
@@ -27,12 +37,13 @@ public class LoginController {
         }
 
         try {
-            boolean isValid = authService.validateCredentials(username, password);
-            if (isValid) {
-                Main.showEmployeeAdd();
+            AppUser user = authService.authenticate(username, password);
+            if (user != null) {
+                AppSession.setCurrentUser(user);
+                Main.showHomeForCurrentUser();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Login Failed",
-                        "Invalid username or password.");
+                        "Invalid username, password, or inactive account.");
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Login Error",

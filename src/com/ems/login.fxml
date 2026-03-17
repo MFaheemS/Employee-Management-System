@@ -33,5 +33,8 @@
         <Button text="Submit" styleClass="btn-gold"
                 maxWidth="Infinity" onAction="#handleSubmit"/>
 
+        <Label fx:id="hintLabel" styleClass="hint-label"
+               wrapText="true" maxWidth="Infinity"/>
+
     </VBox>
 </StackPane>

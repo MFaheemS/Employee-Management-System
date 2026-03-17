@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.LeaveApplicationController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="860" prefHeight="680"
+      spacing="0">
+
+    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
+        <Label text="EMS" styleClass="nav-title"/>
+        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
+        <Label fx:id="userLabel" styleClass="nav-user"/>
+        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn" onAction="#goToDeactivate"/>
+        <Button text="Apply Leave" styleClass="nav-btn-active" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn" onAction="#goToLeaveApprovals"/>
+        <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
+    </HBox>
+
+    <StackPane VBox.vgrow="ALWAYS">
+        <VBox styleClass="wide-card" maxWidth="760" spacing="0" StackPane.alignment="CENTER">
+            <Label text="Apply for Leave" styleClass="card-title" maxWidth="Infinity" alignment="CENTER"/>
+
+            <Label fx:id="employeeSummaryLabel" styleClass="summary-label" wrapText="true"/>
+            <Label fx:id="leaveBalanceLabel" styleClass="summary-highlight"/>
+
+            <Label text="Leave Type" styleClass="field-label"/>
+            <ComboBox fx:id="leaveTypeBox" styleClass="input-field" maxWidth="Infinity" promptText="Select leave type"/>
+
+            <HBox spacing="12" maxWidth="Infinity">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Start Date" styleClass="field-label"/>
+                    <DatePicker fx:id="startDatePicker" styleClass="input-field" maxWidth="Infinity"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="End Date" styleClass="field-label"/>
+                    <DatePicker fx:id="endDatePicker" styleClass="input-field" maxWidth="Infinity"/>
+                </VBox>
+            </HBox>
+
+            <Region prefHeight="18"/>
+
+            <Button text="Submit Leave Request" styleClass="btn-gold"
+                    maxWidth="Infinity" onAction="#handleSubmitLeaveRequest"/>
+
+            <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+
+            <Separator styleClass="section-separator"/>
+
+            <Label text="My Leave Requests" styleClass="section-title"/>
+            <TableView fx:id="requestHistoryTable" prefHeight="250">
+                <columns>
+                    <TableColumn fx:id="historyIdColumn" text="ID" prefWidth="70"/>
+                    <TableColumn fx:id="historyTypeColumn" text="Type" prefWidth="160"/>
+                    <TableColumn fx:id="historyDatesColumn" text="Dates" prefWidth="280"/>
+                    <TableColumn fx:id="historyStatusColumn" text="Status" prefWidth="140"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </StackPane>
+</VBox>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.LeaveApprovalController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="980" prefHeight="720"
+      spacing="0">
+
+    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
+        <Label text="EMS" styleClass="nav-title"/>
+        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
+        <Label fx:id="userLabel" styleClass="nav-user"/>
+        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn" onAction="#goToDeactivate"/>
+        <Button text="Apply Leave" styleClass="nav-btn" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn-active" onAction="#goToLeaveApprovals"/>
+        <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="root-pane">
+        <content>
+            <VBox spacing="16">
+                <padding>
+                    <Insets top="22" right="22" bottom="22" left="22"/>
+                </padding>
+                <VBox styleClass="wide-card" spacing="0">
+                    <Label text="Pending Leave Requests" styleClass="card-title" maxWidth="Infinity" alignment="CENTER"/>
+                    <Label fx:id="selectedRequestLabel" styleClass="summary-label" wrapText="true"/>
+
+                    <TableView fx:id="pendingTable" prefHeight="260">
+                        <columns>
+                            <TableColumn fx:id="pendingIdColumn" text="ID" prefWidth="65"/>
+                            <TableColumn fx:id="pendingEmployeeColumn" text="Employee" prefWidth="270"/>
+                            <TableColumn fx:id="pendingTypeColumn" text="Type" prefWidth="150"/>
+                            <TableColumn fx:id="pendingDaysColumn" text="Days" prefWidth="90"/>
+                            <TableColumn fx:id="pendingDatesColumn" text="Dates" prefWidth="300"/>
+                        </columns>
+                    </TableView>
+
+                    <Label text="Decision Comments" styleClass="field-label"/>
+                    <TextArea fx:id="commentsArea" styleClass="input-area" promptText="Optional comments for approval or rejection"/>
+
+                    <HBox spacing="10" maxWidth="Infinity">
+                        <Button text="Approve Selected" styleClass="btn-gold" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleApprove"/>
+                        <Button text="Reject Selected" styleClass="btn-red" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleReject"/>
+                        <Button text="Refresh" styleClass="btn-neutral" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleRefresh"/>
+                    </HBox>
+
+                    <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+                </VBox>
+
+                <VBox styleClass="wide-card" spacing="0">
+                    <Label text="Decision History" styleClass="section-title"/>
+                    <TableView fx:id="historyTable" prefHeight="220">
+                        <columns>
+                            <TableColumn fx:id="historyIdColumn" text="ID" prefWidth="65"/>
+                            <TableColumn fx:id="historyEmployeeColumn" text="Employee" prefWidth="320"/>
+                            <TableColumn fx:id="historyStatusColumn" text="Status" prefWidth="140"/>
+                            <TableColumn fx:id="historyDecisionByColumn" text="Decision By" prefWidth="180"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</VBox>

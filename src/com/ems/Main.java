@@ -32,24 +32,47 @@ public class Main extends Application {
     }
 
     public static void showLogin() throws Exception {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("login.fxml"));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
+        showScene("login.fxml");
     }
 
     public static void showEmployeeAdd() throws Exception {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("employee_add.fxml"));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
+        showScene("employee_add.fxml");
     }
 
     public static void showEmployeeDeactivate() throws Exception {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("employee_deactivate.fxml"));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
+        showScene("employee_deactivate.fxml");
+    }
+
+    public static void showLeaveApplication() throws Exception {
+        showScene("leave_apply.fxml");
+    }
+
+    public static void showLeaveApprovals() throws Exception {
+        showScene("leave_approvals.fxml");
+    }
+
+    public static void showHomeForCurrentUser() throws Exception {
+        AppUser user = AppSession.getCurrentUser();
+        if (user == null) {
+            showLogin();
+            return;
+        }
+
+        if (user.canManageLeaveApprovals()) {
+            showLeaveApprovals();
+            return;
+        }
+
+        showLeaveApplication();
     }
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private static void showScene(String resourceName) throws Exception {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource(resourceName));
+        Scene scene = new Scene(loader.load());
+        primaryStage.setScene(scene);
     }
 }

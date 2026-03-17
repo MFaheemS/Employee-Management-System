@@ -2,12 +2,14 @@ package com.ems;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.sql.SQLException;
 
-public class EmployeeDeactivateController {
+public class EmployeeDeactivateController extends BaseController {
 
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
 
@@ -16,6 +18,30 @@ public class EmployeeDeactivateController {
 
     @FXML
     private TextArea reasonField;
+
+    @FXML
+    private Label userLabel;
+
+    @FXML
+    private Button employeeAddNavButton;
+
+    @FXML
+    private Button employeeDeactivateNavButton;
+
+    @FXML
+    private Button leaveApplyNavButton;
+
+    @FXML
+    private Button leaveApprovalsNavButton;
+
+    @FXML
+    private void initialize() {
+        if (!ensureEmployeeManagementAccess()) {
+            return;
+        }
+
+        configureNavigation();
+    }
 
     @FXML
     private void handleDeactivate() {
@@ -79,11 +105,45 @@ public class EmployeeDeactivateController {
         // already on this page — no-op
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
+    @FXML
+    private void goToLeaveApply() {
+        try {
+            Main.showLeaveApplication();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToLeaveApprovals() {
+        try {
+            Main.showLeaveApprovals();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    protected void handleLogout() {
+        super.handleLogout();
+    }
+
+    protected void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void configureNavigation() {
+        AppUser user = currentUser();
+        userLabel.setText(user.getUsername() + " (" + user.getRole() + ")");
+        leaveApplyNavButton.setDisable(false);
+        leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
+        employeeAddNavButton.setDisable(!user.canManageEmployees());
+        employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
     }
 }

@@ -43,4 +43,8 @@ public class AppUser {
     public boolean canManageEmployees() {
         return isAdmin() || isManager();
     }
+
+    public boolean canSearchEmployees() {
+        return isAdmin() || isManager();
+    }
 }

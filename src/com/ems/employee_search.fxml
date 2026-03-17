@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.EmployeeSearchController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="980" prefHeight="720"
+      spacing="0">
+
+    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
+        <Label text="EMS" styleClass="nav-title"/>
+        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
+        <Label fx:id="userLabel" styleClass="nav-user"/>
+        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn" onAction="#goToDeactivate"/>
+        <Button text="Apply Leave" styleClass="nav-btn" onAction="#goToLeaveApply"/>
+        <Button text="Attendance" styleClass="nav-btn" onAction="#goToAttendance"/>
+        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="nav-btn-active" onAction="#goToEmployeeSearch"/>
+        <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="root-pane">
+        <content>
+            <VBox spacing="16">
+                <padding>
+                    <Insets top="22" right="22" bottom="22" left="22"/>
+                </padding>
+
+                <VBox styleClass="wide-card" spacing="0">
+                    <Label text="Employee Search" styleClass="card-title" maxWidth="Infinity" alignment="CENTER"/>
+
+                    <HBox spacing="10" maxWidth="Infinity">
+                        <TextField fx:id="searchField" styleClass="input-field" HBox.hgrow="ALWAYS"
+                                   promptText="Search by Name, Department, Role, or Employee ID"/>
+                        <Button text="Search" styleClass="btn-gold" onAction="#handleSearch"/>
+                        <Button text="View Profile" styleClass="btn-neutral" onAction="#handleViewProfile"/>
+                    </HBox>
+
+                    <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+
+                    <TableView fx:id="searchResultTable" prefHeight="260">
+                        <columns>
+                            <TableColumn fx:id="idColumn" text="Employee ID" prefWidth="130"/>
+                            <TableColumn fx:id="nameColumn" text="Name" prefWidth="240"/>
+                            <TableColumn fx:id="deptColumn" text="Department" prefWidth="180"/>
+                            <TableColumn fx:id="roleColumn" text="Role" prefWidth="120"/>
+                            <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox styleClass="wide-card" spacing="0">
+                    <Label text="Employee Profile" styleClass="section-title"/>
+                    <Label fx:id="profileLabel" styleClass="summary-label" wrapText="true"
+                           text="Select an employee row and click 'View Profile' to see full details."/>
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</VBox>

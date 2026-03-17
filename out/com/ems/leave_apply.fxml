@@ -20,6 +20,7 @@
         <Button text="Apply Leave" styleClass="nav-btn-active" onAction="#goToLeaveApply"/>
         <Button fx:id="attendanceNavButton" text="Attendance" styleClass="nav-btn" onAction="#goToAttendance"/>
         <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="nav-btn" onAction="#goToEmployeeSearch"/>
         <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
     </HBox>
 

@@ -38,6 +38,9 @@ public class EmployeeDeactivateController extends BaseController {
     private Button attendanceNavButton;
 
     @FXML
+    private Button employeeSearchNavButton;
+
+    @FXML
     private void initialize() {
         if (!ensureEmployeeManagementAccess()) {
             return;
@@ -129,6 +132,16 @@ public class EmployeeDeactivateController extends BaseController {
     }
 
     @FXML
+    private void goToEmployeeSearch() {
+        try {
+            Main.showEmployeeSearch();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void goToLeaveApprovals() {
         try {
             Main.showLeaveApprovals();
@@ -157,6 +170,7 @@ public class EmployeeDeactivateController extends BaseController {
         leaveApplyNavButton.setDisable(false);
         leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
         attendanceNavButton.setDisable(user.getEmployeeId() == null || user.getEmployeeId().isBlank());
+        employeeSearchNavButton.setDisable(!user.canSearchEmployees());
         employeeAddNavButton.setDisable(!user.canManageEmployees());
         employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
     }

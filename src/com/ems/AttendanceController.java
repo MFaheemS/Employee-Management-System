@@ -47,6 +47,9 @@ public class AttendanceController extends BaseController {
     private Button leaveApprovalsNavButton;
 
     @FXML
+    private Button employeeSearchNavButton;
+
+    @FXML
     private TableView<AttendanceRecord> historyTable;
 
     @FXML
@@ -139,6 +142,16 @@ public class AttendanceController extends BaseController {
     }
 
     @FXML
+    private void goToEmployeeSearch() {
+        try {
+            Main.showEmployeeSearch();
+        } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
     protected void handleLogout() {
         super.handleLogout();
     }
@@ -149,6 +162,7 @@ public class AttendanceController extends BaseController {
         employeeAddNavButton.setDisable(!user.canManageEmployees());
         employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
         leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
+        employeeSearchNavButton.setDisable(!user.canSearchEmployees());
     }
 
     private void configureTable() {

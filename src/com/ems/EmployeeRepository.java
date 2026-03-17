@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeRepository {
 
@@ -109,6 +111,43 @@ public class EmployeeRepository {
             statement.setString(2, employeeId);
 
             return statement.executeUpdate() == 1;
+        }
+    }
+
+    public List<Employee> searchEmployees(String searchText) throws SQLException {
+        String normalizedText = searchText == null ? "" : searchText.trim();
+        String pattern = "%" + normalizedText + "%";
+
+        String sql = "SELECT employee_id, full_name, job_title, department, email, is_active, "
+                + "role, manager_username, leave_balance "
+                + "FROM employees "
+                + "WHERE employee_id LIKE ? OR full_name LIKE ? OR department LIKE ? OR role LIKE ? "
+                + "ORDER BY full_name ASC";
+
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, pattern);
+            statement.setString(2, pattern);
+            statement.setString(3, pattern);
+            statement.setString(4, pattern);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<Employee> employees = new ArrayList<>();
+                while (resultSet.next()) {
+                    employees.add(new Employee(
+                            resultSet.getString("employee_id"),
+                            resultSet.getString("full_name"),
+                            resultSet.getString("job_title"),
+                            resultSet.getString("department"),
+                            resultSet.getString("email"),
+                            resultSet.getInt("is_active") == 1,
+                            resultSet.getString("role"),
+                            resultSet.getString("manager_username"),
+                            resultSet.getInt("leave_balance")
+                    ));
+                }
+                return employees;
+            }
         }
     }
 

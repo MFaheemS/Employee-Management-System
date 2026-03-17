@@ -55,6 +55,10 @@ public class Main extends Application {
         showScene("attendance.fxml");
     }
 
+    public static void showEmployeeSearch() throws Exception {
+        showScene("employee_search.fxml");
+    }
+
     public static void showHomeForCurrentUser() throws Exception {
         AppUser user = AppSession.getCurrentUser();
         if (user == null) {

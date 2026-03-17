@@ -26,6 +26,8 @@
         fx:id="attendanceNavButton" onAction="#goToAttendance"/>
       <Button text="Leave Approvals" styleClass="nav-btn"
         fx:id="leaveApprovalsNavButton" onAction="#goToLeaveApprovals"/>
+      <Button text="Employee Search" styleClass="nav-btn"
+        fx:id="employeeSearchNavButton" onAction="#goToEmployeeSearch"/>
       <Button text="Logout" styleClass="nav-btn"
         onAction="#handleLogout"/>
     </HBox>

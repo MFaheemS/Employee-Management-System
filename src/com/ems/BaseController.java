@@ -79,6 +79,21 @@ public abstract class BaseController {
         return false;
     }
 
+    protected boolean ensureEmployeeSearchAccess() {
+        if (!ensureLoggedIn()) {
+            return false;
+        }
+
+        if (currentUser().canSearchEmployees()) {
+            return true;
+        }
+
+        showAlert(Alert.AlertType.ERROR, "Access Denied",
+                "You are not authorized to search employee records.");
+        goHome();
+        return false;
+    }
+
     protected void handleLogout() {
         AppSession.clear();
         navigateToLogin();

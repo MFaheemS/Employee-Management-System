@@ -64,6 +64,21 @@ public abstract class BaseController {
         return false;
     }
 
+    protected boolean ensureAttendanceAccess() {
+        if (!ensureLoggedIn()) {
+            return false;
+        }
+
+        if (currentUser().getEmployeeId() != null && !currentUser().getEmployeeId().isBlank()) {
+            return true;
+        }
+
+        showAlert(Alert.AlertType.ERROR, "Unavailable",
+                "This account is not linked to an employee profile.");
+        goHome();
+        return false;
+    }
+
     protected void handleLogout() {
         AppSession.clear();
         navigateToLogin();

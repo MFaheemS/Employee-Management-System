@@ -51,6 +51,10 @@ public class Main extends Application {
         showScene("leave_approvals.fxml");
     }
 
+    public static void showAttendance() throws Exception {
+        showScene("attendance.fxml");
+    }
+
     public static void showHomeForCurrentUser() throws Exception {
         AppUser user = AppSession.getCurrentUser();
         if (user == null) {

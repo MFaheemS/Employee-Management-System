@@ -22,6 +22,8 @@
                 onAction="#goToDeactivate"/>
       <Button text="Apply Leave" styleClass="nav-btn"
         fx:id="leaveApplyNavButton" onAction="#goToLeaveApply"/>
+      <Button text="Attendance" styleClass="nav-btn"
+        fx:id="attendanceNavButton" onAction="#goToAttendance"/>
       <Button text="Leave Approvals" styleClass="nav-btn"
         fx:id="leaveApprovalsNavButton" onAction="#goToLeaveApprovals"/>
       <Button text="Logout" styleClass="nav-btn"

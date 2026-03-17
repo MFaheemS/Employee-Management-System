@@ -1,0 +1,211 @@
+package com.ems;
+
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.sql.SQLException;
+
+public class AttendanceController extends BaseController {
+
+    private final AttendanceService attendanceService = new AttendanceService();
+    private final EmployeeRepository employeeRepository = new EmployeeRepository();
+
+    @FXML
+    private Label userLabel;
+
+    @FXML
+    private Label employeeSummaryLabel;
+
+    @FXML
+    private Label todayStatusLabel;
+
+    @FXML
+    private Label todayCheckInLabel;
+
+    @FXML
+    private Label todayCheckOutLabel;
+
+    @FXML
+    private Label todayHoursLabel;
+
+    @FXML
+    private Label actionStatusLabel;
+
+    @FXML
+    private Button employeeAddNavButton;
+
+    @FXML
+    private Button employeeDeactivateNavButton;
+
+    @FXML
+    private Button leaveApprovalsNavButton;
+
+    @FXML
+    private TableView<AttendanceRecord> historyTable;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> historyDateColumn;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> historyCheckInColumn;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> historyCheckOutColumn;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> historyHoursColumn;
+
+    @FXML
+    private void initialize() {
+        if (!ensureAttendanceAccess()) {
+            return;
+        }
+
+        configureNavigation();
+        configureTable();
+        loadAttendanceData();
+    }
+
+    @FXML
+    private void handleMarkAttendance() {
+        actionStatusLabel.setText("");
+
+        try {
+            AttendanceRecord updated = attendanceService.markAttendance(currentUser());
+            if (updated.getCheckOutAt() == null || updated.getCheckOutAt().isBlank()) {
+                setSuccessStatus("Check-in recorded at " + updated.getCheckInAt());
+            } else {
+                setSuccessStatus("Check-out recorded at " + updated.getCheckOutAt()
+                        + ". Total hours: " + updated.getDisplayTotalHours());
+            }
+
+            loadAttendanceData();
+        } catch (IllegalArgumentException e) {
+            setErrorStatus(e.getMessage());
+        } catch (SQLException e) {
+            setErrorStatus("Could not mark attendance: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToAdd() {
+        try {
+            Main.showEmployeeAdd();
+        } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDeactivate() {
+        try {
+            Main.showEmployeeDeactivate();
+        } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToAttendance() {
+        // already on this page
+    }
+
+    @FXML
+    private void goToLeaveApply() {
+        try {
+            Main.showLeaveApplication();
+        } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToLeaveApprovals() {
+        try {
+            Main.showLeaveApprovals();
+        } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    protected void handleLogout() {
+        super.handleLogout();
+    }
+
+    private void configureNavigation() {
+        AppUser user = currentUser();
+        userLabel.setText(user.getUsername() + " (" + user.getRole() + ")");
+        employeeAddNavButton.setDisable(!user.canManageEmployees());
+        employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
+        leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
+    }
+
+    private void configureTable() {
+        historyTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        historyDateColumn.setCellValueFactory(new PropertyValueFactory<>("attendanceDate"));
+        historyCheckInColumn.setCellValueFactory(new PropertyValueFactory<>("checkInAt"));
+        historyCheckOutColumn.setCellValueFactory(new PropertyValueFactory<>("checkOutAt"));
+        historyHoursColumn.setCellValueFactory(cellData -> Bindings.createStringBinding(
+                cellData.getValue()::getDisplayTotalHours));
+    }
+
+    private void loadAttendanceData() {
+        try {
+            Employee employee = employeeRepository.findById(currentUser().getEmployeeId());
+            if (employee == null) {
+                setErrorStatus("Employee profile not found.");
+                return;
+            }
+
+            employeeSummaryLabel.setText(employee.getFullName() + " | ID: " + employee.getEmployeeId());
+
+            AttendanceRecord todayRecord = attendanceService.getTodayRecord(currentUser().getEmployeeId());
+            if (todayRecord == null) {
+                todayStatusLabel.setText("No attendance marked today yet.");
+                todayCheckInLabel.setText("Check-in: -");
+                todayCheckOutLabel.setText("Check-out: -");
+                todayHoursLabel.setText("Total Hours: -");
+            } else {
+                todayStatusLabel.setText(todayRecord.getCheckOutAt() == null || todayRecord.getCheckOutAt().isBlank()
+                        ? "Checked in. Waiting for check-out."
+                        : "Attendance completed for today.");
+                todayCheckInLabel.setText("Check-in: " + safe(todayRecord.getCheckInAt()));
+                todayCheckOutLabel.setText("Check-out: " + safe(todayRecord.getCheckOutAt()));
+                todayHoursLabel.setText("Total Hours: " + todayRecord.getDisplayTotalHours());
+            }
+
+            historyTable.setItems(FXCollections.observableArrayList(
+                    attendanceService.getRecentRecords(currentUser().getEmployeeId(), 10)
+            ));
+        } catch (SQLException e) {
+            setErrorStatus("Could not load attendance data: " + e.getMessage());
+        }
+    }
+
+    private String safe(String value) {
+        return value == null || value.isBlank() ? "-" : value;
+    }
+
+    private void setSuccessStatus(String message) {
+        actionStatusLabel.getStyleClass().removeAll("status-error", "status-success");
+        actionStatusLabel.getStyleClass().add("status-success");
+        actionStatusLabel.setText(message);
+    }
+
+    private void setErrorStatus(String message) {
+        actionStatusLabel.getStyleClass().removeAll("status-error", "status-success");
+        actionStatusLabel.getStyleClass().add("status-error");
+        actionStatusLabel.setText(message);
+    }
+}

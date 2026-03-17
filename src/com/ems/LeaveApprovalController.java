@@ -34,6 +34,9 @@ public class LeaveApprovalController extends BaseController {
     private Button leaveApprovalsNavButton;
 
     @FXML
+    private Button attendanceNavButton;
+
+    @FXML
     private TableView<LeaveRequest> pendingTable;
 
     @FXML
@@ -127,6 +130,16 @@ public class LeaveApprovalController extends BaseController {
     }
 
     @FXML
+    private void goToAttendance() {
+        try {
+            Main.showAttendance();
+        } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error",
+                    "Could not load the page: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void goToLeaveApprovals() {
         // already on this page
     }
@@ -142,6 +155,7 @@ public class LeaveApprovalController extends BaseController {
         employeeAddNavButton.setDisable(!user.canManageEmployees());
         employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
         leaveApprovalsNavButton.setDisable(false);
+        attendanceNavButton.setDisable(user.getEmployeeId() == null || user.getEmployeeId().isBlank());
     }
 
     private void configureTables() {

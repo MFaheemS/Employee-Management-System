@@ -18,6 +18,7 @@
         <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn" onAction="#goToAdd"/>
         <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn" onAction="#goToDeactivate"/>
         <Button text="Apply Leave" styleClass="nav-btn-active" onAction="#goToLeaveApply"/>
+        <Button fx:id="attendanceNavButton" text="Attendance" styleClass="nav-btn" onAction="#goToAttendance"/>
         <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn" onAction="#goToLeaveApprovals"/>
         <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
     </HBox>

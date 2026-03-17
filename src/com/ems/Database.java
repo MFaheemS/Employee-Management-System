@@ -64,6 +64,17 @@ public final class Database {
                     + "FOREIGN KEY(employee_id) REFERENCES employees(employee_id)"
                     + ")");
 
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS attendance_records ("
+                    + "record_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "employee_id TEXT NOT NULL, "
+                    + "attendance_date TEXT NOT NULL, "
+                    + "check_in_at TEXT, "
+                    + "check_out_at TEXT, "
+                    + "total_hours REAL, "
+                    + "UNIQUE(employee_id, attendance_date), "
+                    + "FOREIGN KEY(employee_id) REFERENCES employees(employee_id)"
+                    + ")");
+
                 ensureColumn(connection, "users", "role", "TEXT NOT NULL DEFAULT 'Employee'");
                 ensureColumn(connection, "users", "employee_id", "TEXT");
                 ensureColumn(connection, "employees", "role", "TEXT NOT NULL DEFAULT 'Employee'");

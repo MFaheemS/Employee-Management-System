@@ -11,7 +11,7 @@
       prefWidth="520" prefHeight="560"
       spacing="0">
 
-    <!-- Navigation Bar -->
+    <!-- Navigation Baroo -->
     <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
         <Label text="EMS" styleClass="nav-title"/>
         <Region HBox.hgrow="ALWAYS" minWidth="20"/>

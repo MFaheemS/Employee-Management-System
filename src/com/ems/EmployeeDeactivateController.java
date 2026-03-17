@@ -5,7 +5,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
+import java.sql.SQLException;
+
 public class EmployeeDeactivateController {
+
+    private final EmployeeRepository employeeRepository = new EmployeeRepository();
 
     @FXML
     private TextField employeeField;
@@ -15,12 +19,12 @@ public class EmployeeDeactivateController {
 
     @FXML
     private void handleDeactivate() {
-        String employee = employeeField.getText().trim();
+        String employeeId = employeeField.getText().trim();
         String reason   = reasonField.getText().trim();
 
-        if (employee.isEmpty()) {
+        if (employeeId.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Validation Error",
-                    "Please specify the employee to deactivate.");
+                    "Please enter an employee ID to deactivate.");
             return;
         }
 
@@ -30,11 +34,34 @@ public class EmployeeDeactivateController {
             return;
         }
 
-        showAlert(Alert.AlertType.INFORMATION, "Employee Deactivated",
-                "Employee \"" + employee + "\" has been deactivated.\nReason: " + reason);
+        try {
+            Employee employee = employeeRepository.findById(employeeId);
+            if (employee == null) {
+                showAlert(Alert.AlertType.WARNING, "Not Found",
+                        "No employee found with ID: " + employeeId);
+                return;
+            }
 
-        employeeField.clear();
-        reasonField.clear();
+            if (!employee.isActive()) {
+                showAlert(Alert.AlertType.INFORMATION, "Already Inactive",
+                        "Employee \"" + employee.getFullName() + "\" is already inactive.");
+                return;
+            }
+
+            if (employeeRepository.deactivateEmployee(employeeId, reason)) {
+                showAlert(Alert.AlertType.INFORMATION, "Employee Deactivated",
+                        "Employee \"" + employee.getFullName() + "\" (ID: " + employeeId
+                                + ") has been deactivated.\nReason: " + reason);
+                employeeField.clear();
+                reasonField.clear();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Deactivation Failed",
+                        "Could not deactivate employee.");
+            }
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error",
+                    "Could not deactivate employee: " + e.getMessage());
+        }
     }
 
     @FXML

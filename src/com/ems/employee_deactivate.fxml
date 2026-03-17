@@ -29,9 +29,9 @@
             <Label text="Employee Deactivate" styleClass="card-title"
                    maxWidth="Infinity" alignment="CENTER"/>
 
-            <Label text="Employee to Deactivate" styleClass="field-label"/>
+            <Label text="Employee ID to Deactivate" styleClass="field-label"/>
             <TextField fx:id="employeeField" styleClass="input-field"
-                       promptText="Select Employee" maxWidth="Infinity"/>
+                       promptText="Enter employee ID" maxWidth="Infinity"/>
 
             <Label text="Reason for Deactivation" styleClass="field-label"/>
             <TextArea fx:id="reasonField" styleClass="input-area"

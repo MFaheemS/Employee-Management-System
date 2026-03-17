@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 
 public class LoginController {
 
+    private final AuthService authService = new AuthService();
+
     @FXML
     private TextField usernameField;
 
@@ -24,17 +26,17 @@ public class LoginController {
             return;
         }
 
-        // Default credentials: admin / admin
-        if (username.equals("admin") && password.equals("admin")) {
-            try {
+        try {
+            boolean isValid = authService.validateCredentials(username, password);
+            if (isValid) {
                 Main.showEmployeeAdd();
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Navigation Error",
-                        "Could not load the next page: " + e.getMessage());
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Login Failed",
+                        "Invalid username or password.");
             }
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Login Failed",
-                    "Invalid username or password.\nHint: use admin / admin");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Login Error",
+                    "Could not complete login: " + e.getMessage());
         }
     }
 

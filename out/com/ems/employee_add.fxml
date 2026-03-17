@@ -51,8 +51,25 @@
 
             <Region prefHeight="18"/>
 
-            <Button text="Add Employee" styleClass="btn-gold"
-                    maxWidth="Infinity" onAction="#handleAddEmployee"/>
+                <HBox spacing="10" maxWidth="Infinity">
+              <Button text="Add Employee" styleClass="btn-gold"
+                maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                onAction="#handleAddEmployee"/>
+              <Button text="Find by ID" styleClass="btn-neutral"
+                maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                onAction="#handleFindEmployee"/>
+                </HBox>
+
+                <Region prefHeight="10"/>
+
+                <HBox spacing="10" maxWidth="Infinity">
+              <Button text="Update Employee" styleClass="btn-neutral"
+                maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                onAction="#handleUpdateEmployee"/>
+              <Button text="Delete Employee" styleClass="btn-red"
+                maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                onAction="#handleDeleteEmployee"/>
+                </HBox>
 
         </VBox>
     </StackPane>

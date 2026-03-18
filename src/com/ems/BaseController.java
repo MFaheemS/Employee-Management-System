@@ -1,6 +1,15 @@
 package com.ems;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.util.Duration;
 
 public abstract class BaseController {
 
@@ -115,6 +124,95 @@ public abstract class BaseController {
             showAlert(Alert.AlertType.ERROR, "Navigation Error",
                     "Could not load the page: " + e.getMessage());
         }
+    }
+
+    protected void configureSidebarNavigation(Label userLabel,
+                                              Button employeeAddButton,
+                                              Button employeeDeactivateButton,
+                                              Button employeeSearchButton,
+                                              Button attendanceButton,
+                                              Button leaveApplyButton,
+                                              Button leaveApprovalsButton) {
+        AppUser user = currentUser();
+        if (user == null) {
+            return;
+        }
+
+        if (userLabel != null) {
+            userLabel.setText(user.getUsername() + " (" + user.getRole() + ")");
+        }
+
+        boolean hasEmployeeProfile = hasLinkedEmployeeProfile(user);
+        setNavigationVisibility(employeeAddButton, user.canManageEmployees());
+        setNavigationVisibility(employeeDeactivateButton, user.canManageEmployees());
+        setNavigationVisibility(employeeSearchButton, user.canSearchEmployees());
+        setNavigationVisibility(attendanceButton, hasEmployeeProfile);
+        setNavigationVisibility(leaveApplyButton, hasEmployeeProfile);
+        setNavigationVisibility(leaveApprovalsButton, user.canManageLeaveApprovals());
+
+        playEntranceAnimation(firstAvailable(userLabel,
+                employeeAddButton,
+                employeeDeactivateButton,
+                employeeSearchButton,
+                attendanceButton,
+                leaveApplyButton,
+                leaveApprovalsButton));
+    }
+
+    protected void setNavigationVisibility(Button button, boolean allowed) {
+        if (button == null) {
+            return;
+        }
+
+        button.setVisible(allowed);
+        button.setManaged(allowed);
+        button.setDisable(!allowed);
+    }
+
+    protected void playEntranceAnimation(Node anchorNode) {
+        if (anchorNode == null) {
+            return;
+        }
+
+        Platform.runLater(() -> {
+            if (anchorNode.getScene() == null || anchorNode.getScene().getRoot() == null) {
+                return;
+            }
+
+            Node root = anchorNode.getScene().getRoot();
+            if (Boolean.TRUE.equals(root.getProperties().get("emsAnimated"))) {
+                return;
+            }
+            root.getProperties().put("emsAnimated", Boolean.TRUE);
+
+            root.setOpacity(0);
+            root.setTranslateY(14);
+
+            FadeTransition fade = new FadeTransition(Duration.millis(280), root);
+            fade.setFromValue(0);
+            fade.setToValue(1);
+            fade.setInterpolator(Interpolator.EASE_OUT);
+
+            TranslateTransition lift = new TranslateTransition(Duration.millis(280), root);
+            lift.setFromY(14);
+            lift.setToY(0);
+            lift.setInterpolator(Interpolator.EASE_OUT);
+
+            new ParallelTransition(fade, lift).play();
+        });
+    }
+
+    private boolean hasLinkedEmployeeProfile(AppUser user) {
+        return user.getEmployeeId() != null && !user.getEmployeeId().isBlank();
+    }
+
+    private Node firstAvailable(Node... nodes) {
+        for (Node node : nodes) {
+            if (node != null) {
+                return node;
+            }
+        }
+        return null;
     }
 
     protected void showAlert(Alert.AlertType type, String title, String message) {

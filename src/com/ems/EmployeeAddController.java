@@ -270,13 +270,14 @@ public class EmployeeAddController extends BaseController {
     }
 
     private void configureNavigation() {
-        AppUser user = currentUser();
-        userLabel.setText(user.getUsername() + " (" + user.getRole() + ")");
-        leaveApplyNavButton.setDisable(false);
-        leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
-        attendanceNavButton.setDisable(user.getEmployeeId() == null || user.getEmployeeId().isBlank());
-        employeeSearchNavButton.setDisable(!user.canSearchEmployees());
-        employeeAddNavButton.setDisable(!user.canManageEmployees());
-        employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
+        configureSidebarNavigation(
+                userLabel,
+                employeeAddNavButton,
+                employeeDeactivateNavButton,
+                employeeSearchNavButton,
+                attendanceNavButton,
+                leaveApplyNavButton,
+                leaveApprovalsNavButton
+        );
     }
 }

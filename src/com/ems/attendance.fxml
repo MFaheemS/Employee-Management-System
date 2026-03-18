@@ -27,7 +27,7 @@
                         maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
                 <Button text="Attendance" styleClass="side-nav-active"
                         maxWidth="Infinity" onAction="#goToAttendance"/>
-                <Button text="Leave Requests" styleClass="side-nav-button"
+                <Button fx:id="leaveApplyNavButton" text="Leave Requests" styleClass="side-nav-button"
                         maxWidth="Infinity" onAction="#goToLeaveApply"/>
                 <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
                         maxWidth="Infinity" onAction="#goToLeaveApprovals"/>

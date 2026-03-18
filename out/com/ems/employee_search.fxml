@@ -25,9 +25,9 @@
                         maxWidth="Infinity" onAction="#goToDeactivate"/>
                 <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-active"
                         maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
-                <Button text="Attendance" styleClass="side-nav-button"
+                <Button fx:id="attendanceNavButton" text="Attendance" styleClass="side-nav-button"
                         maxWidth="Infinity" onAction="#goToAttendance"/>
-                <Button text="Leave Requests" styleClass="side-nav-button"
+                <Button fx:id="leaveApplyNavButton" text="Leave Requests" styleClass="side-nav-button"
                         maxWidth="Infinity" onAction="#goToLeaveApply"/>
                 <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
                         maxWidth="Infinity" onAction="#goToLeaveApprovals"/>

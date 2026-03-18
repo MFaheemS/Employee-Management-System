@@ -47,6 +47,9 @@ public class AttendanceController extends BaseController {
     private Button leaveApprovalsNavButton;
 
     @FXML
+    private Button leaveApplyNavButton;
+
+    @FXML
     private Button employeeSearchNavButton;
 
     @FXML
@@ -157,12 +160,15 @@ public class AttendanceController extends BaseController {
     }
 
     private void configureNavigation() {
-        AppUser user = currentUser();
-        userLabel.setText(user.getUsername() + " (" + user.getRole() + ")");
-        employeeAddNavButton.setDisable(!user.canManageEmployees());
-        employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
-        leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
-        employeeSearchNavButton.setDisable(!user.canSearchEmployees());
+        configureSidebarNavigation(
+                userLabel,
+                employeeAddNavButton,
+                employeeDeactivateNavButton,
+                employeeSearchNavButton,
+                null,
+                leaveApplyNavButton,
+                leaveApprovalsNavButton
+        );
     }
 
     private void configureTable() {

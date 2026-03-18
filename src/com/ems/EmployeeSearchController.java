@@ -39,6 +39,12 @@ public class EmployeeSearchController extends BaseController {
     private Button leaveApprovalsNavButton;
 
     @FXML
+    private Button attendanceNavButton;
+
+    @FXML
+    private Button leaveApplyNavButton;
+
+    @FXML
     private Button employeeSearchNavButton;
 
     @FXML
@@ -158,12 +164,15 @@ public class EmployeeSearchController extends BaseController {
     }
 
     private void configureNavigation() {
-        AppUser user = currentUser();
-        userLabel.setText(user.getUsername() + " (" + user.getRole() + ")");
-        employeeAddNavButton.setDisable(!user.canManageEmployees());
-        employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
-        leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
-        employeeSearchNavButton.setDisable(!user.canSearchEmployees());
+        configureSidebarNavigation(
+                userLabel,
+                employeeAddNavButton,
+                employeeDeactivateNavButton,
+                employeeSearchNavButton,
+                attendanceNavButton,
+                leaveApplyNavButton,
+                leaveApprovalsNavButton
+        );
     }
 
     private void configureTable() {

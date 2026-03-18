@@ -172,13 +172,15 @@ public class LeaveApplicationController extends BaseController {
     }
 
     private void configureNavigation() {
-        AppUser user = currentUser();
-        userLabel.setText(user.getUsername() + " (" + user.getRole() + ")");
-        employeeAddNavButton.setDisable(!user.canManageEmployees());
-        employeeDeactivateNavButton.setDisable(!user.canManageEmployees());
-        leaveApprovalsNavButton.setDisable(!user.canManageLeaveApprovals());
-        attendanceNavButton.setDisable(user.getEmployeeId() == null || user.getEmployeeId().isBlank());
-        employeeSearchNavButton.setDisable(!user.canSearchEmployees());
+        configureSidebarNavigation(
+                userLabel,
+                employeeAddNavButton,
+                employeeDeactivateNavButton,
+                employeeSearchNavButton,
+                attendanceNavButton,
+                null,
+                leaveApprovalsNavButton
+        );
     }
 
     private void configureHistoryTable() {

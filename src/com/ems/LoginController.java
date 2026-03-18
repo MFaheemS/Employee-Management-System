@@ -2,6 +2,7 @@ package com.ems;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,12 +18,42 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
+    private TextField passwordVisibleField;
+
+    @FXML
+    private Button togglePasswordButton;
+
+    @FXML
     private Label hintLabel;
+
+    private boolean showingPassword;
 
     @FXML
     private void initialize() {
         AppSession.clear();
+        passwordVisibleField.textProperty().bindBidirectional(passwordField.textProperty());
         hintLabel.setText("Demo logins: admin/admin, manager/manager, employee/employee");
+    }
+
+    @FXML
+    private void togglePasswordVisibility() {
+        showingPassword = !showingPassword;
+
+        passwordVisibleField.setVisible(showingPassword);
+        passwordVisibleField.setManaged(showingPassword);
+
+        passwordField.setVisible(!showingPassword);
+        passwordField.setManaged(!showingPassword);
+
+        togglePasswordButton.setText(showingPassword ? "Hide" : "Show");
+
+        if (showingPassword) {
+            passwordVisibleField.requestFocus();
+            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
+        } else {
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        }
     }
 
     @FXML

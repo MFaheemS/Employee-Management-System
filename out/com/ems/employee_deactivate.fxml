@@ -1,60 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.ems.EmployeeDeactivateController"
       styleClass="root-pane"
       stylesheets="@styles.css"
-      prefWidth="520" prefHeight="560"
-      spacing="0">
+      prefWidth="1180" prefHeight="760">
 
-    <!-- Navigation Bar -->
-    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
-        <Label text="EMS" styleClass="nav-title"/>
-        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
-      <Label fx:id="userLabel" styleClass="nav-user"/>
-      <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn"
-                onAction="#goToAdd"/>
-      <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn-active"
-                onAction="#goToDeactivate"/>
-      <Button text="Apply Leave" styleClass="nav-btn"
-        fx:id="leaveApplyNavButton" onAction="#goToLeaveApply"/>
-      <Button text="Attendance" styleClass="nav-btn"
-        fx:id="attendanceNavButton" onAction="#goToAttendance"/>
-      <Button text="Leave Approvals" styleClass="nav-btn"
-        fx:id="leaveApprovalsNavButton" onAction="#goToLeaveApprovals"/>
-      <Button text="Employee Search" styleClass="nav-btn"
-        fx:id="employeeSearchNavButton" onAction="#goToEmployeeSearch"/>
-      <Button text="Logout" styleClass="nav-btn"
-        onAction="#handleLogout"/>
-    </HBox>
+  <left>
+    <VBox styleClass="app-sidebar" prefWidth="228" BorderPane.alignment="CENTER">
+      <VBox spacing="2">
+        <Label text="EMS" styleClass="sidebar-logo"/>
+        <Label text="People operations hub" styleClass="sidebar-subtitle"/>
+      </VBox>
 
-    <!-- Card -->
-    <StackPane VBox.vgrow="ALWAYS">
-        <VBox styleClass="card" maxWidth="400" spacing="0"
-              StackPane.alignment="CENTER">
+      <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+        <Label text="WORKFLOW" styleClass="side-section-label"/>
+        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="side-nav-active"
+            maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+        <Button fx:id="attendanceNavButton" text="Attendance" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToAttendance"/>
+        <Button fx:id="leaveApplyNavButton" text="Leave Requests" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
 
-            <Label text="Employee Deactivate" styleClass="card-title"
-                   maxWidth="Infinity" alignment="CENTER"/>
+        <Label text="ACCOUNT" styleClass="side-section-label"/>
+        <Button text="Log Out" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#handleLogout"/>
+      </VBox>
 
-            <Label text="Employee ID to Deactivate" styleClass="field-label"/>
-            <TextField fx:id="employeeField" styleClass="input-field"
-                       promptText="Enter employee ID" maxWidth="Infinity"/>
+      <VBox spacing="5">
+        <Label text="Signed in as" styleClass="sidebar-footnote"/>
+        <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+      </VBox>
+    </VBox>
+  </left>
 
-            <Label text="Reason for Deactivation" styleClass="field-label"/>
-            <TextArea fx:id="reasonField" styleClass="input-area"
-                      promptText="Enter reason for deactivation..."
-                      maxWidth="Infinity" wrapText="true"/>
+  <center>
+    <BorderPane styleClass="workspace-shell">
+      <top>
+        <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+          <VBox spacing="0">
+            <Label text="Employee Lifecycle" styleClass="topbar-title"/>
+            <Label text="Deactivate records responsibly with proper reason tracking" styleClass="topbar-subtitle"/>
+          </VBox>
+          <Region HBox.hgrow="ALWAYS"/>
+          <TextField styleClass="topbar-search" promptText="Search employee or department"/>
+          <Label text="Sensitive" styleClass="topbar-pill"/>
+        </HBox>
+      </top>
 
-            <Region prefHeight="18"/>
+      <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+          <content>
+            <VBox styleClass="content-body" spacing="16">
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Deactivate Employee" styleClass="page-title"/>
+                <Label text="CONTROLLED ACTION" styleClass="badge-pill"/>
+              </HBox>
+              <Label text="Use this form only for role changes, exits, or compliance deactivation scenarios."
+                   styleClass="page-subtitle"/>
 
-            <Button text="Deactivate Employee" styleClass="btn-red"
-                    maxWidth="Infinity" onAction="#handleDeactivate"/>
+              <VBox styleClass="section-card" spacing="0">
+                <Label text="Deactivation Details" styleClass="card-title"/>
 
-        </VBox>
-    </StackPane>
+                <Label text="Employee ID to Deactivate" styleClass="field-label"/>
+                <TextField fx:id="employeeField"
+                       styleClass="input-field"
+                       promptText="EMP-1001"
+                       maxWidth="Infinity"/>
 
-</VBox>
+                <Label text="Reason for Deactivation" styleClass="field-label"/>
+                <TextArea fx:id="reasonField"
+                      styleClass="input-area"
+                      promptText="Explain the reason and any follow-up actions"
+                      maxWidth="Infinity"
+                      wrapText="true"/>
+
+                <Region prefHeight="16"/>
+
+                <Button text="Deactivate Employee"
+                  styleClass="btn-red"
+                  maxWidth="Infinity"
+                  onAction="#handleDeactivate"/>
+              </VBox>
+            </VBox>
+          </content>
+        </ScrollPane>
+      </center>
+    </BorderPane>
+  </center>
+</BorderPane>

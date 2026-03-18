@@ -1,88 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.ems.EmployeeAddController"
       styleClass="root-pane"
       stylesheets="@styles.css"
-      prefWidth="520" prefHeight="620"
-      spacing="0">
+      prefWidth="1180" prefHeight="760">
 
-    <!-- Navigation Bar -->
-    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
-        <Label text="EMS" styleClass="nav-title"/>
-        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
-      <Label fx:id="userLabel" styleClass="nav-user"/>
-      <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn-active"
-                onAction="#goToAdd"/>
-      <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn"
-                onAction="#goToDeactivate"/>
-      <Button text="Apply Leave" styleClass="nav-btn"
-        fx:id="leaveApplyNavButton" onAction="#goToLeaveApply"/>
-      <Button text="Attendance" styleClass="nav-btn"
-        fx:id="attendanceNavButton" onAction="#goToAttendance"/>
-      <Button text="Leave Approvals" styleClass="nav-btn"
-        fx:id="leaveApprovalsNavButton" onAction="#goToLeaveApprovals"/>
-      <Button text="Employee Search" styleClass="nav-btn"
-        fx:id="employeeSearchNavButton" onAction="#goToEmployeeSearch"/>
-      <Button text="Logout" styleClass="nav-btn"
-        onAction="#handleLogout"/>
-    </HBox>
+  <left>
+    <VBox styleClass="app-sidebar" prefWidth="228" BorderPane.alignment="CENTER">
+      <VBox spacing="2">
+        <Label text="EMS" styleClass="sidebar-logo"/>
+        <Label text="People operations hub" styleClass="sidebar-subtitle"/>
+      </VBox>
 
-    <!-- Card -->
-    <StackPane VBox.vgrow="ALWAYS">
-        <VBox styleClass="card" maxWidth="400" spacing="0"
-              StackPane.alignment="CENTER">
+      <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+        <Label text="WORKFLOW" styleClass="side-section-label"/>
+        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="side-nav-active"
+            maxWidth="Infinity" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+        <Button fx:id="attendanceNavButton" text="Attendance" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToAttendance"/>
+        <Button fx:id="leaveApplyNavButton" text="Leave Requests" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
 
-            <Label text="Employee Add" styleClass="card-title"
-                   maxWidth="Infinity" alignment="CENTER"/>
+        <Label text="ACCOUNT" styleClass="side-section-label"/>
+        <Button text="Log Out" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#handleLogout"/>
+      </VBox>
 
-            <Label text="Employee ID" styleClass="field-label"/>
-            <TextField fx:id="employeeIdField" styleClass="input-field"
-                       maxWidth="Infinity"/>
+      <VBox spacing="5">
+        <Label text="Signed in as" styleClass="sidebar-footnote"/>
+        <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+      </VBox>
+    </VBox>
+  </left>
 
-            <Label text="Full Name" styleClass="field-label"/>
-            <TextField fx:id="fullNameField" styleClass="input-field"
-                       maxWidth="Infinity"/>
+  <center>
+    <BorderPane styleClass="workspace-shell">
+      <top>
+        <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+          <VBox spacing="0">
+            <Label text="Employee Management" styleClass="topbar-title"/>
+            <Label text="Create, find, and maintain employee records" styleClass="topbar-subtitle"/>
+          </VBox>
+          <Region HBox.hgrow="ALWAYS"/>
+          <TextField styleClass="topbar-search" promptText="Search people, departments, or IDs"/>
+          <Label text="Admin Tools" styleClass="topbar-pill"/>
+        </HBox>
+      </top>
 
-            <Label text="Job Title" styleClass="field-label"/>
-            <TextField fx:id="jobTitleField" styleClass="input-field"
-                       maxWidth="Infinity"/>
+      <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+          <content>
+            <VBox styleClass="content-body" spacing="16">
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Add / Edit Employee" styleClass="page-title"/>
+                <Label text="ACTIVE MODULE" styleClass="badge-pill"/>
+              </HBox>
+              <Label text="Use Employee ID to add new records or retrieve existing profiles for updates."
+                   styleClass="page-subtitle"/>
 
-            <Label text="Department" styleClass="field-label"/>
-            <TextField fx:id="departmentField" styleClass="input-field"
-                       maxWidth="Infinity"/>
+              <VBox styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                  <Label text="Personal and Job Details" styleClass="card-title"/>
+                </HBox>
 
-            <Label text="Email" styleClass="field-label"/>
-            <TextField fx:id="emailField" styleClass="input-field"
-                       maxWidth="Infinity"/>
+                <GridPane hgap="14" vgap="3" maxWidth="Infinity">
+                  <columnConstraints>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+                  </columnConstraints>
 
-            <Region prefHeight="18"/>
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="Employee ID" styleClass="field-label"/>
+                    <TextField fx:id="employeeIdField" styleClass="input-field"
+                           promptText="EMP-1001" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label text="Full Name" styleClass="field-label"/>
+                    <TextField fx:id="fullNameField" styleClass="input-field"
+                           promptText="Jordan Rivera" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label text="Job Title" styleClass="field-label"/>
+                    <TextField fx:id="jobTitleField" styleClass="input-field"
+                           promptText="HR Specialist" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Label text="Department" styleClass="field-label"/>
+                    <TextField fx:id="departmentField" styleClass="input-field"
+                           promptText="Human Resources" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                    <Label text="Email" styleClass="field-label"/>
+                    <TextField fx:id="emailField" styleClass="input-field"
+                           promptText="employee@company.com" maxWidth="Infinity"/>
+                  </VBox>
+                </GridPane>
+
+                <Region prefHeight="18"/>
 
                 <HBox spacing="10" maxWidth="Infinity">
-              <Button text="Add Employee" styleClass="btn-gold"
-                maxWidth="Infinity" HBox.hgrow="ALWAYS"
-                onAction="#handleAddEmployee"/>
-              <Button text="Find by ID" styleClass="btn-neutral"
-                maxWidth="Infinity" HBox.hgrow="ALWAYS"
-                onAction="#handleFindEmployee"/>
+                  <Button text="Save Employee" styleClass="btn-gold"
+                      maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                      onAction="#handleAddEmployee"/>
+                  <Button text="Find by ID" styleClass="btn-neutral"
+                      maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                      onAction="#handleFindEmployee"/>
                 </HBox>
 
                 <Region prefHeight="10"/>
 
                 <HBox spacing="10" maxWidth="Infinity">
-              <Button text="Update Employee" styleClass="btn-neutral"
-                maxWidth="Infinity" HBox.hgrow="ALWAYS"
-                onAction="#handleUpdateEmployee"/>
-              <Button text="Delete Employee" styleClass="btn-red"
-                maxWidth="Infinity" HBox.hgrow="ALWAYS"
-                onAction="#handleDeleteEmployee"/>
+                  <Button text="Update Employee" styleClass="btn-neutral"
+                      maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                      onAction="#handleUpdateEmployee"/>
+                  <Button text="Delete Employee" styleClass="btn-red"
+                      maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                      onAction="#handleDeleteEmployee"/>
                 </HBox>
-
-        </VBox>
-    </StackPane>
-
-</VBox>
+              </VBox>
+            </VBox>
+          </content>
+        </ScrollPane>
+      </center>
+    </BorderPane>
+  </center>
+</BorderPane>

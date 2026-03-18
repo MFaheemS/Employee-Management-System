@@ -4,62 +4,103 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.ems.EmployeeSearchController"
-      styleClass="root-pane"
-      stylesheets="@styles.css"
-      prefWidth="980" prefHeight="720"
-      spacing="0">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ems.EmployeeSearchController"
+            styleClass="root-pane"
+            stylesheets="@styles.css"
+            prefWidth="1180" prefHeight="760">
 
-    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
-        <Label text="EMS" styleClass="nav-title"/>
-        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
-        <Label fx:id="userLabel" styleClass="nav-user"/>
-        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn" onAction="#goToAdd"/>
-        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn" onAction="#goToDeactivate"/>
-        <Button text="Apply Leave" styleClass="nav-btn" onAction="#goToLeaveApply"/>
-        <Button text="Attendance" styleClass="nav-btn" onAction="#goToAttendance"/>
-        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn" onAction="#goToLeaveApprovals"/>
-        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="nav-btn-active" onAction="#goToEmployeeSearch"/>
-        <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
-    </HBox>
-
-    <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="root-pane">
-        <content>
-            <VBox spacing="16">
-                <padding>
-                    <Insets top="22" right="22" bottom="22" left="22"/>
-                </padding>
-
-                <VBox styleClass="wide-card" spacing="0">
-                    <Label text="Employee Search" styleClass="card-title" maxWidth="Infinity" alignment="CENTER"/>
-
-                    <HBox spacing="10" maxWidth="Infinity">
-                        <TextField fx:id="searchField" styleClass="input-field" HBox.hgrow="ALWAYS"
-                                   promptText="Search by Name, Department, Role, or Employee ID"/>
-                        <Button text="Search" styleClass="btn-gold" onAction="#handleSearch"/>
-                        <Button text="View Profile" styleClass="btn-neutral" onAction="#handleViewProfile"/>
-                    </HBox>
-
-                    <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
-
-                    <TableView fx:id="searchResultTable" prefHeight="260">
-                        <columns>
-                            <TableColumn fx:id="idColumn" text="Employee ID" prefWidth="130"/>
-                            <TableColumn fx:id="nameColumn" text="Name" prefWidth="240"/>
-                            <TableColumn fx:id="deptColumn" text="Department" prefWidth="180"/>
-                            <TableColumn fx:id="roleColumn" text="Role" prefWidth="120"/>
-                            <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
-                        </columns>
-                    </TableView>
-                </VBox>
-
-                <VBox styleClass="wide-card" spacing="0">
-                    <Label text="Employee Profile" styleClass="section-title"/>
-                    <Label fx:id="profileLabel" styleClass="summary-label" wrapText="true"
-                           text="Select an employee row and click 'View Profile' to see full details."/>
-                </VBox>
+    <left>
+        <VBox styleClass="app-sidebar" prefWidth="228" BorderPane.alignment="CENTER">
+            <VBox spacing="2">
+                <Label text="EMS" styleClass="sidebar-logo"/>
+                <Label text="People operations hub" styleClass="sidebar-subtitle"/>
             </VBox>
-        </content>
-    </ScrollPane>
-</VBox>
+
+            <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+                <Label text="WORKFLOW" styleClass="side-section-label"/>
+                <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToAdd"/>
+                <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToDeactivate"/>
+                <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-active"
+                        maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+                <Button text="Attendance" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToAttendance"/>
+                <Button text="Leave Requests" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToLeaveApply"/>
+                <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+
+                <Label text="ACCOUNT" styleClass="side-section-label"/>
+                <Button text="Log Out" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#handleLogout"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Signed in as" styleClass="sidebar-footnote"/>
+                <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <BorderPane styleClass="workspace-shell">
+            <top>
+                <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+                    <VBox spacing="0">
+                        <Label text="Employee Directory" styleClass="topbar-title"/>
+                        <Label text="Search and review complete employee profiles" styleClass="topbar-subtitle"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <TextField styleClass="topbar-search" promptText="Search by name, role, or department"/>
+                    <Label text="Directory" styleClass="topbar-pill"/>
+                </HBox>
+            </top>
+
+            <center>
+                <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+                    <content>
+                        <VBox styleClass="content-body" spacing="16">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="All Employees" styleClass="page-title"/>
+                                <Label text="LIVE TABLE" styleClass="badge-pill"/>
+                            </HBox>
+
+                            <VBox styleClass="section-card" spacing="0">
+                                <HBox spacing="10" alignment="CENTER_LEFT" maxWidth="Infinity">
+                                    <TextField fx:id="searchField"
+                                               styleClass="input-field"
+                                               HBox.hgrow="ALWAYS"
+                                               promptText="Search by Name, Department, Role, or Employee ID"/>
+                                    <Button text="Search" styleClass="btn-gold" onAction="#handleSearch"/>
+                                    <Button text="View Profile" styleClass="btn-neutral" onAction="#handleViewProfile"/>
+                                </HBox>
+
+                                <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+
+                                <TableView fx:id="searchResultTable" prefHeight="320">
+                                    <columns>
+                                        <TableColumn fx:id="idColumn" text="Employee ID" prefWidth="130"/>
+                                        <TableColumn fx:id="nameColumn" text="Name" prefWidth="240"/>
+                                        <TableColumn fx:id="deptColumn" text="Department" prefWidth="180"/>
+                                        <TableColumn fx:id="roleColumn" text="Role" prefWidth="120"/>
+                                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+
+                            <VBox styleClass="section-card" spacing="0">
+                                <Label text="Employee Profile" styleClass="section-title"/>
+                                <Label fx:id="profileLabel"
+                                       styleClass="summary-label"
+                                       wrapText="true"
+                                       text="Select an employee row and click 'View Profile' to see full details."/>
+                            </VBox>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

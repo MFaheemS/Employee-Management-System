@@ -4,54 +4,119 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.ems.AttendanceController"
-      styleClass="root-pane"
-      stylesheets="@styles.css"
-      prefWidth="860" prefHeight="680"
-      spacing="0">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ems.AttendanceController"
+            styleClass="root-pane"
+            stylesheets="@styles.css"
+            prefWidth="1180" prefHeight="760">
 
-    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
-        <Label text="EMS" styleClass="nav-title"/>
-        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
-        <Label fx:id="userLabel" styleClass="nav-user"/>
-        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn" onAction="#goToAdd"/>
-        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn" onAction="#goToDeactivate"/>
-        <Button text="Apply Leave" styleClass="nav-btn" onAction="#goToLeaveApply"/>
-        <Button text="Attendance" styleClass="nav-btn-active" onAction="#goToAttendance"/>
-        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn" onAction="#goToLeaveApprovals"/>
-        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="nav-btn" onAction="#goToEmployeeSearch"/>
-        <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
-    </HBox>
+    <left>
+        <VBox styleClass="app-sidebar" prefWidth="228" BorderPane.alignment="CENTER">
+            <VBox spacing="2">
+                <Label text="EMS" styleClass="sidebar-logo"/>
+                <Label text="People operations hub" styleClass="sidebar-subtitle"/>
+            </VBox>
 
-    <StackPane VBox.vgrow="ALWAYS">
-        <VBox styleClass="wide-card" maxWidth="760" spacing="0" StackPane.alignment="CENTER">
-            <Label text="Attendance Management" styleClass="card-title" maxWidth="Infinity" alignment="CENTER"/>
+            <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+                <Label text="WORKFLOW" styleClass="side-section-label"/>
+                <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToAdd"/>
+                <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToDeactivate"/>
+                <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+                <Button text="Attendance" styleClass="side-nav-active"
+                        maxWidth="Infinity" onAction="#goToAttendance"/>
+                <Button text="Leave Requests" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToLeaveApply"/>
+                <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
 
-            <Label fx:id="employeeSummaryLabel" styleClass="summary-label" wrapText="true"/>
-            <Label fx:id="todayStatusLabel" styleClass="summary-highlight"/>
-            <Label fx:id="todayCheckInLabel" styleClass="summary-label"/>
-            <Label fx:id="todayCheckOutLabel" styleClass="summary-label"/>
-            <Label fx:id="todayHoursLabel" styleClass="summary-label"/>
+                <Label text="ACCOUNT" styleClass="side-section-label"/>
+                <Button text="Log Out" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#handleLogout"/>
+            </VBox>
 
-            <Region prefHeight="8"/>
-
-            <Button text="Mark Attendance (Check-in / Check-out)" styleClass="btn-gold"
-                    maxWidth="Infinity" onAction="#handleMarkAttendance"/>
-
-            <Label fx:id="actionStatusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
-
-            <Separator styleClass="section-separator"/>
-
-            <Label text="Recent Attendance" styleClass="section-title"/>
-            <TableView fx:id="historyTable" prefHeight="260">
-                <columns>
-                    <TableColumn fx:id="historyDateColumn" text="Date" prefWidth="170"/>
-                    <TableColumn fx:id="historyCheckInColumn" text="Check-in" prefWidth="210"/>
-                    <TableColumn fx:id="historyCheckOutColumn" text="Check-out" prefWidth="210"/>
-                    <TableColumn fx:id="historyHoursColumn" text="Total Hours" prefWidth="130"/>
-                </columns>
-            </TableView>
+            <VBox spacing="5">
+                <Label text="Signed in as" styleClass="sidebar-footnote"/>
+                <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+            </VBox>
         </VBox>
-    </StackPane>
-</VBox>
+    </left>
+
+    <center>
+        <BorderPane styleClass="workspace-shell">
+            <top>
+                <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+                    <VBox spacing="0">
+                        <Label text="Attendance Dashboard" styleClass="topbar-title"/>
+                        <Label text="Track daily presence, check-ins, and working hours" styleClass="topbar-subtitle"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <TextField styleClass="topbar-search" promptText="Filter records by date or status"/>
+                    <Label text="Live" styleClass="topbar-pill"/>
+                </HBox>
+            </top>
+
+            <center>
+                <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+                    <content>
+                        <VBox styleClass="content-body" spacing="16">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Attendance Overview" styleClass="page-title"/>
+                                <Label text="TODAY" styleClass="badge-pill"/>
+                            </HBox>
+                            <Label text="Use the action button to check in or check out. The panel below updates in real time."
+                                   styleClass="page-subtitle"/>
+
+                            <HBox styleClass="kpi-grid" maxWidth="Infinity">
+                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                    <Label text="Employee" styleClass="kpi-title"/>
+                                    <Label fx:id="employeeSummaryLabel" styleClass="kpi-value" wrapText="true"/>
+                                    <Label text="Profile currently signed in" styleClass="kpi-note"/>
+                                </VBox>
+                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                    <Label text="Status" styleClass="kpi-title"/>
+                                    <Label fx:id="todayStatusLabel" styleClass="kpi-value" wrapText="true"/>
+                                    <Label text="Current attendance state" styleClass="kpi-note"/>
+                                </VBox>
+                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                    <Label text="Check-in" styleClass="kpi-title"/>
+                                    <Label fx:id="todayCheckInLabel" styleClass="kpi-value" wrapText="true"/>
+                                    <Label text="Recorded start time" styleClass="kpi-note"/>
+                                </VBox>
+                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                    <Label text="Check-out" styleClass="kpi-title"/>
+                                    <Label fx:id="todayCheckOutLabel" styleClass="kpi-value" wrapText="true"/>
+                                    <Label text="Recorded end time" styleClass="kpi-note"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox styleClass="summary-strip" spacing="4">
+                                <Label fx:id="todayHoursLabel" styleClass="summary-highlight"/>
+                                <Label fx:id="actionStatusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <Button text="Mark Attendance (Check-in / Check-out)"
+                                    styleClass="btn-gold"
+                                    maxWidth="Infinity"
+                                    onAction="#handleMarkAttendance"/>
+
+                            <VBox styleClass="section-card" spacing="0">
+                                <Label text="Recent Attendance" styleClass="section-title"/>
+                                <TableView fx:id="historyTable" prefHeight="330">
+                                    <columns>
+                                        <TableColumn fx:id="historyDateColumn" text="Date" prefWidth="170"/>
+                                        <TableColumn fx:id="historyCheckInColumn" text="Check-in" prefWidth="210"/>
+                                        <TableColumn fx:id="historyCheckOutColumn" text="Check-out" prefWidth="210"/>
+                                        <TableColumn fx:id="historyHoursColumn" text="Total Hours" prefWidth="130"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

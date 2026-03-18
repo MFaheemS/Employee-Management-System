@@ -4,70 +4,116 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.ems.LeaveApprovalController"
-      styleClass="root-pane"
-      stylesheets="@styles.css"
-      prefWidth="980" prefHeight="720"
-      spacing="0">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ems.LeaveApprovalController"
+            styleClass="root-pane"
+            stylesheets="@styles.css"
+            prefWidth="1180" prefHeight="760">
 
-    <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="0">
-        <Label text="EMS" styleClass="nav-title"/>
-        <Region HBox.hgrow="ALWAYS" minWidth="20"/>
-        <Label fx:id="userLabel" styleClass="nav-user"/>
-        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="nav-btn" onAction="#goToAdd"/>
-        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="nav-btn" onAction="#goToDeactivate"/>
-        <Button text="Apply Leave" styleClass="nav-btn" onAction="#goToLeaveApply"/>
-        <Button fx:id="attendanceNavButton" text="Attendance" styleClass="nav-btn" onAction="#goToAttendance"/>
-        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="nav-btn-active" onAction="#goToLeaveApprovals"/>
-        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="nav-btn" onAction="#goToEmployeeSearch"/>
-        <Button text="Logout" styleClass="nav-btn" onAction="#handleLogout"/>
-    </HBox>
-
-    <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="root-pane">
-        <content>
-            <VBox spacing="16">
-                <padding>
-                    <Insets top="22" right="22" bottom="22" left="22"/>
-                </padding>
-                <VBox styleClass="wide-card" spacing="0">
-                    <Label text="Pending Leave Requests" styleClass="card-title" maxWidth="Infinity" alignment="CENTER"/>
-                    <Label fx:id="selectedRequestLabel" styleClass="summary-label" wrapText="true"/>
-
-                    <TableView fx:id="pendingTable" prefHeight="260">
-                        <columns>
-                            <TableColumn fx:id="pendingIdColumn" text="ID" prefWidth="65"/>
-                            <TableColumn fx:id="pendingEmployeeColumn" text="Employee" prefWidth="270"/>
-                            <TableColumn fx:id="pendingTypeColumn" text="Type" prefWidth="150"/>
-                            <TableColumn fx:id="pendingDaysColumn" text="Days" prefWidth="90"/>
-                            <TableColumn fx:id="pendingDatesColumn" text="Dates" prefWidth="300"/>
-                        </columns>
-                    </TableView>
-
-                    <Label text="Decision Comments" styleClass="field-label"/>
-                    <TextArea fx:id="commentsArea" styleClass="input-area" promptText="Optional comments for approval or rejection"/>
-
-                    <HBox spacing="10" maxWidth="Infinity">
-                        <Button text="Approve Selected" styleClass="btn-gold" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleApprove"/>
-                        <Button text="Reject Selected" styleClass="btn-red" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleReject"/>
-                        <Button text="Refresh" styleClass="btn-neutral" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleRefresh"/>
-                    </HBox>
-
-                    <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
-                </VBox>
-
-                <VBox styleClass="wide-card" spacing="0">
-                    <Label text="Decision History" styleClass="section-title"/>
-                    <TableView fx:id="historyTable" prefHeight="220">
-                        <columns>
-                            <TableColumn fx:id="historyIdColumn" text="ID" prefWidth="65"/>
-                            <TableColumn fx:id="historyEmployeeColumn" text="Employee" prefWidth="320"/>
-                            <TableColumn fx:id="historyStatusColumn" text="Status" prefWidth="140"/>
-                            <TableColumn fx:id="historyDecisionByColumn" text="Decision By" prefWidth="180"/>
-                        </columns>
-                    </TableView>
-                </VBox>
+    <left>
+        <VBox styleClass="app-sidebar" prefWidth="228" BorderPane.alignment="CENTER">
+            <VBox spacing="2">
+                <Label text="EMS" styleClass="sidebar-logo"/>
+                <Label text="People operations hub" styleClass="sidebar-subtitle"/>
             </VBox>
-        </content>
-    </ScrollPane>
-</VBox>
+
+            <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+                <Label text="WORKFLOW" styleClass="side-section-label"/>
+                <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToAdd"/>
+                <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToDeactivate"/>
+                <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+                <Button fx:id="attendanceNavButton" text="Attendance" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToAttendance"/>
+                <Button text="Leave Requests" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToLeaveApply"/>
+                <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-active"
+                        maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+
+                <Label text="ACCOUNT" styleClass="side-section-label"/>
+                <Button text="Log Out" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#handleLogout"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Signed in as" styleClass="sidebar-footnote"/>
+                <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <BorderPane styleClass="workspace-shell">
+            <top>
+                <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+                    <VBox spacing="0">
+                        <Label text="Leave Approvals" styleClass="topbar-title"/>
+                        <Label text="Review pending requests and publish final decisions" styleClass="topbar-subtitle"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <TextField styleClass="topbar-search" promptText="Search by employee, leave type, or status"/>
+                    <Label text="Approver" styleClass="topbar-pill"/>
+                </HBox>
+            </top>
+
+            <center>
+                <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+                    <content>
+                        <VBox styleClass="content-body" spacing="16">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Pending Leave Requests" styleClass="page-title"/>
+                                <Label text="REVIEW" styleClass="badge-pill"/>
+                            </HBox>
+
+                            <VBox styleClass="summary-strip" spacing="4">
+                                <Label fx:id="selectedRequestLabel" styleClass="summary-label" wrapText="true"/>
+                            </VBox>
+
+                            <VBox styleClass="section-card" spacing="0">
+                                <TableView fx:id="pendingTable" prefHeight="295">
+                                    <columns>
+                                        <TableColumn fx:id="pendingIdColumn" text="ID" prefWidth="65"/>
+                                        <TableColumn fx:id="pendingEmployeeColumn" text="Employee" prefWidth="270"/>
+                                        <TableColumn fx:id="pendingTypeColumn" text="Type" prefWidth="150"/>
+                                        <TableColumn fx:id="pendingDaysColumn" text="Days" prefWidth="90"/>
+                                        <TableColumn fx:id="pendingDatesColumn" text="Dates" prefWidth="300"/>
+                                    </columns>
+                                </TableView>
+
+                                <Label text="Decision Comments" styleClass="field-label"/>
+                                <TextArea fx:id="commentsArea"
+                                          styleClass="input-area"
+                                          promptText="Optional comments for approval or rejection"/>
+
+                                <HBox spacing="10" maxWidth="Infinity">
+                                    <Button text="Approve Selected" styleClass="btn-gold"
+                                            HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleApprove"/>
+                                    <Button text="Reject Selected" styleClass="btn-red"
+                                            HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleReject"/>
+                                    <Button text="Refresh" styleClass="btn-neutral"
+                                            HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#handleRefresh"/>
+                                </HBox>
+
+                                <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox styleClass="section-card" spacing="0">
+                                <Label text="Decision History" styleClass="section-title"/>
+                                <TableView fx:id="historyTable" prefHeight="250">
+                                    <columns>
+                                        <TableColumn fx:id="historyIdColumn" text="ID" prefWidth="65"/>
+                                        <TableColumn fx:id="historyEmployeeColumn" text="Employee" prefWidth="320"/>
+                                        <TableColumn fx:id="historyStatusColumn" text="Status" prefWidth="140"/>
+                                        <TableColumn fx:id="historyDecisionByColumn" text="Decision By" prefWidth="180"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

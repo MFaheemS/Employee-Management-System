@@ -53,8 +53,7 @@
                         <Label text="Search and review complete employee profiles" styleClass="topbar-subtitle"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <TextField styleClass="topbar-search" promptText="Search by name, role, or department"/>
-                    <Label text="Directory" styleClass="topbar-pill"/>
+<Label text="Directory" styleClass="topbar-pill"/>
                 </HBox>
             </top>
 

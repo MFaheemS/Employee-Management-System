@@ -14,7 +14,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         stage.setTitle("Employee Management System");
-        stage.setResizable(false);
+        stage.setResizable(true);
 
         try {
             Database.initialize();

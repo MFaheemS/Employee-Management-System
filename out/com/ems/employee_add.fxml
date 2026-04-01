@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.ems.EmployeeAddController"
@@ -53,8 +54,7 @@
             <Label text="Create, find, and maintain employee records" styleClass="topbar-subtitle"/>
           </VBox>
           <Region HBox.hgrow="ALWAYS"/>
-          <TextField styleClass="topbar-search" promptText="Search people, departments, or IDs"/>
-          <Label text="Admin Tools" styleClass="topbar-pill"/>
+<Label text="Admin Tools" styleClass="topbar-pill"/>
         </HBox>
       </top>
 
@@ -108,6 +108,18 @@
                     <Label text="Email" styleClass="field-label"/>
                     <TextField fx:id="emailField" styleClass="input-field"
                            promptText="employee@company.com" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="3">
+                    <Label text="Login Username" styleClass="field-label"/>
+                    <TextField fx:id="usernameField" styleClass="input-field"
+                           promptText="e.g. jrivera" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <Label text="Password" styleClass="field-label"/>
+                    <PasswordField fx:id="passwordField" styleClass="input-field"
+                           promptText="Set login password" maxWidth="Infinity"/>
                   </VBox>
                 </GridPane>
 

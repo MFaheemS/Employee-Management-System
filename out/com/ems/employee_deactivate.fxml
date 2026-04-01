@@ -53,8 +53,7 @@
             <Label text="Deactivate records responsibly with proper reason tracking" styleClass="topbar-subtitle"/>
           </VBox>
           <Region HBox.hgrow="ALWAYS"/>
-          <TextField styleClass="topbar-search" promptText="Search employee or department"/>
-          <Label text="Sensitive" styleClass="topbar-pill"/>
+<Label text="Sensitive" styleClass="topbar-pill"/>
         </HBox>
       </top>
 

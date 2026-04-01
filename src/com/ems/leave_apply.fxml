@@ -53,8 +53,7 @@
                         <Label text="Apply for time off and track approval outcomes" styleClass="topbar-subtitle"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <TextField styleClass="topbar-search" promptText="Search leave by type or status"/>
-                    <Label text="Self Service" styleClass="topbar-pill"/>
+<Label text="Self Service" styleClass="topbar-pill"/>
                 </HBox>
             </top>
 

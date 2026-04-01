@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.sql.SQLException;
@@ -26,6 +27,12 @@ public class EmployeeAddController extends BaseController {
 
     @FXML
     private TextField emailField;
+
+    @FXML
+    private TextField usernameField;
+
+    @FXML
+    private PasswordField passwordField;
 
     @FXML
     private Label userLabel;
@@ -64,6 +71,15 @@ public class EmployeeAddController extends BaseController {
             return;
         }
 
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error",
+                    "Please provide a login username and password for the employee.");
+            return;
+        }
+
         try {
             if (employeeRepository.findById(employee.getEmployeeId()) != null) {
                 showAlert(Alert.AlertType.WARNING, "Duplicate Employee ID",
@@ -71,10 +87,18 @@ public class EmployeeAddController extends BaseController {
                 return;
             }
 
+            if (employeeRepository.usernameExists(username)) {
+                showAlert(Alert.AlertType.WARNING, "Duplicate Username",
+                        "The username \"" + username + "\" is already taken.");
+                return;
+            }
+
             if (employeeRepository.addEmployee(employee)) {
+                employeeRepository.createUserAccount(username, password, employee.getRole(), employee.getEmployeeId());
                 showAlert(Alert.AlertType.INFORMATION, "Employee Added",
                         "Employee \"" + employee.getFullName() + "\" (ID: "
-                                + employee.getEmployeeId() + ") has been added successfully.");
+                                + employee.getEmployeeId() + ") has been added successfully.\n"
+                                + "Login username: " + username);
                 clearFields();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Add Failed",
@@ -267,6 +291,8 @@ public class EmployeeAddController extends BaseController {
         jobTitleField.clear();
         departmentField.clear();
         emailField.clear();
+        usernameField.clear();
+        passwordField.clear();
     }
 
     private void configureNavigation() {

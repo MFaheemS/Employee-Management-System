@@ -53,8 +53,7 @@
                         <Label text="Track daily presence, check-ins, and working hours" styleClass="topbar-subtitle"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <TextField styleClass="topbar-search" promptText="Filter records by date or status"/>
-                    <Label text="Live" styleClass="topbar-pill"/>
+<Label text="Live" styleClass="topbar-pill"/>
                 </HBox>
             </top>
 

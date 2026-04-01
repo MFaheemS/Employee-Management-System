@@ -53,8 +53,7 @@
                         <Label text="Review pending requests and publish final decisions" styleClass="topbar-subtitle"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <TextField styleClass="topbar-search" promptText="Search by employee, leave type, or status"/>
-                    <Label text="Approver" styleClass="topbar-pill"/>
+<Label text="Approver" styleClass="topbar-pill"/>
                 </HBox>
             </top>
 

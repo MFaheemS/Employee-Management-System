@@ -151,6 +151,29 @@ public class EmployeeRepository {
         }
     }
 
+    public boolean usernameExists(String username) throws SQLException {
+        String sql = "SELECT 1 FROM users WHERE username = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    public void createUserAccount(String username, String password, String role, String employeeId) throws SQLException {
+        String sql = "INSERT INTO users (username, password, role, employee_id) VALUES (?, ?, ?, ?)";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.setString(3, role);
+            statement.setString(4, employeeId);
+            statement.executeUpdate();
+        }
+    }
+
     private String findDefaultManagerUsername() throws SQLException {
         String sql = "SELECT username FROM users WHERE role IN ('Manager', 'Admin') "
                 + "ORDER BY CASE role WHEN 'Manager' THEN 0 ELSE 1 END, username LIMIT 1";

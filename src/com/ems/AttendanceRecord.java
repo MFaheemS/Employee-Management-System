@@ -4,6 +4,7 @@ public class AttendanceRecord {
 
     private final int recordId;
     private final String employeeId;
+    private String employeeName;
     private final String attendanceDate;
     private final String checkInAt;
     private final String checkOutAt;
@@ -25,6 +26,14 @@ public class AttendanceRecord {
 
     public String getEmployeeId() {
         return employeeId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName == null ? "" : employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
     }
 
     public String getAttendanceDate() {

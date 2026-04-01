@@ -4,12 +4,15 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class AttendanceController extends BaseController {
 
@@ -53,6 +56,12 @@ public class AttendanceController extends BaseController {
     private Button employeeSearchNavButton;
 
     @FXML
+    private VBox employeeView;
+
+    @FXML
+    private VBox managerView;
+
+    @FXML
     private TableView<AttendanceRecord> historyTable;
 
     @FXML
@@ -68,14 +77,46 @@ public class AttendanceController extends BaseController {
     private TableColumn<AttendanceRecord, String> historyHoursColumn;
 
     @FXML
+    private DatePicker datePicker;
+
+    @FXML
+    private TableView<AttendanceRecord> managerTable;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> mgrEmployeeIdColumn;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> mgrEmployeeNameColumn;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> mgrCheckInColumn;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> mgrCheckOutColumn;
+
+    @FXML
+    private TableColumn<AttendanceRecord, String> mgrHoursColumn;
+
+    @FXML
     private void initialize() {
         if (!ensureAttendanceAccess()) {
             return;
         }
 
         configureNavigation();
-        configureTable();
-        loadAttendanceData();
+
+        if (currentUser().isManager()) {
+            employeeView.setVisible(false);
+            employeeView.setManaged(false);
+            managerView.setVisible(true);
+            managerView.setManaged(true);
+            configureManagerTable();
+            datePicker.setValue(LocalDate.now());
+            loadManagerRecords(LocalDate.now());
+        } else {
+            configureTable();
+            loadAttendanceData();
+        }
     }
 
     @FXML
@@ -169,6 +210,36 @@ public class AttendanceController extends BaseController {
                 leaveApplyNavButton,
                 leaveApprovalsNavButton
         );
+    }
+
+    @FXML
+    private void handleViewRecords() {
+        LocalDate date = datePicker.getValue();
+        if (date == null) {
+            return;
+        }
+        loadManagerRecords(date);
+    }
+
+    private void configureManagerTable() {
+        managerTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        mgrEmployeeIdColumn.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
+        mgrEmployeeNameColumn.setCellValueFactory(new PropertyValueFactory<>("employeeName"));
+        mgrCheckInColumn.setCellValueFactory(new PropertyValueFactory<>("checkInAt"));
+        mgrCheckOutColumn.setCellValueFactory(new PropertyValueFactory<>("checkOutAt"));
+        mgrHoursColumn.setCellValueFactory(cellData -> Bindings.createStringBinding(
+                cellData.getValue()::getDisplayTotalHours));
+    }
+
+    private void loadManagerRecords(LocalDate date) {
+        try {
+            managerTable.setItems(FXCollections.observableArrayList(
+                    attendanceService.getRecordsByDate(date.toString())
+            ));
+        } catch (SQLException e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Database Error",
+                    "Could not load records: " + e.getMessage());
+        }
     }
 
     private void configureTable() {

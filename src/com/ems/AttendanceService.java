@@ -102,6 +102,38 @@ public class AttendanceService {
         }
     }
 
+    public List<AttendanceRecord> getRecordsByDate(String date) throws SQLException {
+        String sql = "SELECT r.record_id, r.employee_id, e.full_name, r.attendance_date, "
+                + "r.check_in_at, r.check_out_at, r.total_hours "
+                + "FROM attendance_records r "
+                + "JOIN employees e ON r.employee_id = e.employee_id "
+                + "WHERE r.attendance_date = ? "
+                + "ORDER BY e.full_name ASC";
+
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, date);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<AttendanceRecord> records = new ArrayList<>();
+                while (resultSet.next()) {
+                    double dbHours = resultSet.getDouble("total_hours");
+                    Double totalHours = resultSet.wasNull() ? null : dbHours;
+                    AttendanceRecord record = new AttendanceRecord(
+                            resultSet.getInt("record_id"),
+                            resultSet.getString("employee_id"),
+                            resultSet.getString("attendance_date"),
+                            resultSet.getString("check_in_at"),
+                            resultSet.getString("check_out_at"),
+                            totalHours
+                    );
+                    record.setEmployeeName(resultSet.getString("full_name"));
+                    records.add(record);
+                }
+                return records;
+            }
+        }
+    }
+
     private AttendanceRecord getRecordForDate(Connection connection, String employeeId,
                                               String dateText) throws SQLException {
         String sql = "SELECT record_id, employee_id, attendance_date, check_in_at, check_out_at, total_hours "

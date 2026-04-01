@@ -61,57 +61,91 @@
                 <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
                     <content>
                         <VBox styleClass="content-body" spacing="16">
-                            <HBox alignment="CENTER_LEFT" spacing="10">
-                                <Label text="Attendance Overview" styleClass="page-title"/>
-                                <Label text="TODAY" styleClass="badge-pill"/>
-                            </HBox>
-                            <Label text="Use the action button to check in or check out. The panel below updates in real time."
-                                   styleClass="page-subtitle"/>
 
-                            <HBox styleClass="kpi-grid" maxWidth="Infinity">
-                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
-                                    <Label text="Employee" styleClass="kpi-title"/>
-                                    <Label fx:id="employeeSummaryLabel" styleClass="kpi-value" wrapText="true"/>
-                                    <Label text="Profile currently signed in" styleClass="kpi-note"/>
-                                </VBox>
-                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
-                                    <Label text="Status" styleClass="kpi-title"/>
-                                    <Label fx:id="todayStatusLabel" styleClass="kpi-value" wrapText="true"/>
-                                    <Label text="Current attendance state" styleClass="kpi-note"/>
-                                </VBox>
-                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
-                                    <Label text="Check-in" styleClass="kpi-title"/>
-                                    <Label fx:id="todayCheckInLabel" styleClass="kpi-value" wrapText="true"/>
-                                    <Label text="Recorded start time" styleClass="kpi-note"/>
-                                </VBox>
-                                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
-                                    <Label text="Check-out" styleClass="kpi-title"/>
-                                    <Label fx:id="todayCheckOutLabel" styleClass="kpi-value" wrapText="true"/>
-                                    <Label text="Recorded end time" styleClass="kpi-note"/>
-                                </VBox>
-                            </HBox>
+                            <!-- Employee check-in view -->
+                            <VBox fx:id="employeeView" spacing="16">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label text="Attendance Overview" styleClass="page-title"/>
+                                    <Label text="TODAY" styleClass="badge-pill"/>
+                                </HBox>
+                                <Label text="Use the action button to check in or check out. The panel below updates in real time."
+                                       styleClass="page-subtitle"/>
 
-                            <VBox styleClass="summary-strip" spacing="4">
-                                <Label fx:id="todayHoursLabel" styleClass="summary-highlight"/>
-                                <Label fx:id="actionStatusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+                                <HBox styleClass="kpi-grid" maxWidth="Infinity">
+                                    <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                        <Label text="Employee" styleClass="kpi-title"/>
+                                        <Label fx:id="employeeSummaryLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label text="Profile currently signed in" styleClass="kpi-note"/>
+                                    </VBox>
+                                    <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                        <Label text="Status" styleClass="kpi-title"/>
+                                        <Label fx:id="todayStatusLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label text="Current attendance state" styleClass="kpi-note"/>
+                                    </VBox>
+                                    <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                        <Label text="Check-in" styleClass="kpi-title"/>
+                                        <Label fx:id="todayCheckInLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label text="Recorded start time" styleClass="kpi-note"/>
+                                    </VBox>
+                                    <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                                        <Label text="Check-out" styleClass="kpi-title"/>
+                                        <Label fx:id="todayCheckOutLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label text="Recorded end time" styleClass="kpi-note"/>
+                                    </VBox>
+                                </HBox>
+
+                                <VBox styleClass="summary-strip" spacing="4">
+                                    <Label fx:id="todayHoursLabel" styleClass="summary-highlight"/>
+                                    <Label fx:id="actionStatusLabel" styleClass="status-label" wrapText="true" maxWidth="Infinity"/>
+                                </VBox>
+
+                                <Button text="Mark Attendance (Check-in / Check-out)"
+                                        styleClass="btn-gold"
+                                        maxWidth="Infinity"
+                                        onAction="#handleMarkAttendance"/>
+
+                                <VBox styleClass="section-card" spacing="0">
+                                    <Label text="Recent Attendance" styleClass="section-title"/>
+                                    <TableView fx:id="historyTable" prefHeight="330">
+                                        <columns>
+                                            <TableColumn fx:id="historyDateColumn" text="Date" prefWidth="170"/>
+                                            <TableColumn fx:id="historyCheckInColumn" text="Check-in" prefWidth="210"/>
+                                            <TableColumn fx:id="historyCheckOutColumn" text="Check-out" prefWidth="210"/>
+                                            <TableColumn fx:id="historyHoursColumn" text="Total Hours" prefWidth="130"/>
+                                        </columns>
+                                    </TableView>
+                                </VBox>
                             </VBox>
 
-                            <Button text="Mark Attendance (Check-in / Check-out)"
-                                    styleClass="btn-gold"
-                                    maxWidth="Infinity"
-                                    onAction="#handleMarkAttendance"/>
+                            <!-- Manager daily records view -->
+                            <VBox fx:id="managerView" spacing="16" visible="false" managed="false">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label text="Employee Attendance Records" styleClass="page-title"/>
+                                    <Label text="MANAGER VIEW" styleClass="badge-pill"/>
+                                </HBox>
+                                <Label text="Select a date to view attendance records for all employees."
+                                       styleClass="page-subtitle"/>
 
-                            <VBox styleClass="section-card" spacing="0">
-                                <Label text="Recent Attendance" styleClass="section-title"/>
-                                <TableView fx:id="historyTable" prefHeight="330">
-                                    <columns>
-                                        <TableColumn fx:id="historyDateColumn" text="Date" prefWidth="170"/>
-                                        <TableColumn fx:id="historyCheckInColumn" text="Check-in" prefWidth="210"/>
-                                        <TableColumn fx:id="historyCheckOutColumn" text="Check-out" prefWidth="210"/>
-                                        <TableColumn fx:id="historyHoursColumn" text="Total Hours" prefWidth="130"/>
-                                    </columns>
-                                </TableView>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Date:" styleClass="field-label"/>
+                                    <DatePicker fx:id="datePicker" styleClass="input-field"/>
+                                    <Button text="View Records" styleClass="btn-gold" onAction="#handleViewRecords"/>
+                                </HBox>
+
+                                <VBox styleClass="section-card" spacing="0">
+                                    <Label text="Attendance for Selected Date" styleClass="section-title"/>
+                                    <TableView fx:id="managerTable" prefHeight="420">
+                                        <columns>
+                                            <TableColumn fx:id="mgrEmployeeIdColumn" text="Employee ID" prefWidth="140"/>
+                                            <TableColumn fx:id="mgrEmployeeNameColumn" text="Name" prefWidth="200"/>
+                                            <TableColumn fx:id="mgrCheckInColumn" text="Check-in" prefWidth="190"/>
+                                            <TableColumn fx:id="mgrCheckOutColumn" text="Check-out" prefWidth="190"/>
+                                            <TableColumn fx:id="mgrHoursColumn" text="Total Hours" prefWidth="140"/>
+                                        </columns>
+                                    </TableView>
+                                </VBox>
                             </VBox>
+
                         </VBox>
                     </content>
                 </ScrollPane>

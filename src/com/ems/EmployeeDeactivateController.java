@@ -41,6 +41,15 @@ public class EmployeeDeactivateController extends BaseController {
     private Button employeeSearchNavButton;
 
     @FXML
+    private Button dashboardNavButton;
+
+    @FXML
+    private Button payrollNavButton;
+
+    @FXML
+    private Button documentsNavButton;
+
+    @FXML
     private void initialize() {
         if (!ensureEmployeeManagementAccess()) {
             return;
@@ -93,6 +102,27 @@ public class EmployeeDeactivateController extends BaseController {
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Database Error",
                     "Could not deactivate employee: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDashboard() {
+        try { Main.showDashboard(); } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToPayroll() {
+        try { Main.showPayroll(); } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDocuments() {
+        try { Main.showDocuments(); } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
         }
     }
 
@@ -174,5 +204,6 @@ public class EmployeeDeactivateController extends BaseController {
                 leaveApplyNavButton,
                 leaveApprovalsNavButton
         );
+        configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
     }
 }

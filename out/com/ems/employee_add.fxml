@@ -9,32 +9,41 @@
       fx:controller="com.ems.EmployeeAddController"
       styleClass="root-pane"
       stylesheets="@styles.css"
-      prefWidth="1180" prefHeight="760">
+      prefWidth="1200" prefHeight="780">
 
   <left>
-    <VBox styleClass="app-sidebar" prefWidth="228" BorderPane.alignment="CENTER">
-      <VBox spacing="2">
-        <Label text="EMS" styleClass="sidebar-logo"/>
+    <VBox styleClass="app-sidebar" prefWidth="234" BorderPane.alignment="CENTER">
+      <VBox spacing="3">
+        <HBox alignment="CENTER_LEFT" spacing="8">
+          <Label text="⬡" style="-fx-text-fill: #A78BFA; -fx-font-size: 22px;"/>
+          <Label text="EMS" styleClass="sidebar-logo"/>
+        </HBox>
         <Label text="People operations hub" styleClass="sidebar-subtitle"/>
       </VBox>
 
       <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
-        <Label text="WORKFLOW" styleClass="side-section-label"/>
-        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="side-nav-active"
+        <Label text="WORKSPACE" styleClass="side-section-label"/>
+        <Button fx:id="dashboardNavButton" text="⊞  Dashboard" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDashboard"/>
+        <Button fx:id="employeeAddNavButton" text="＋  Employee Add" styleClass="side-nav-active"
             maxWidth="Infinity" onAction="#goToAdd"/>
-        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="side-nav-button"
+        <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToDeactivate"/>
-        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-button"
+        <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
-        <Button fx:id="attendanceNavButton" text="Attendance" styleClass="side-nav-button"
+        <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToAttendance"/>
-        <Button fx:id="leaveApplyNavButton" text="Leave Requests" styleClass="side-nav-button"
+        <Button fx:id="leaveApplyNavButton" text="◫  Leave Requests" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToLeaveApply"/>
-        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
+        <Button fx:id="leaveApprovalsNavButton" text="✔  Leave Approvals" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="payrollNavButton" text="◈  Payroll" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToPayroll"/>
+        <Button fx:id="documentsNavButton" text="◻  Documents" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDocuments"/>
 
         <Label text="ACCOUNT" styleClass="side-section-label"/>
-        <Button text="Log Out" styleClass="side-nav-button"
+        <Button text="⊘  Log Out" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#handleLogout"/>
       </VBox>
 
@@ -104,19 +113,37 @@
                            promptText="Human Resources" maxWidth="Infinity"/>
                   </VBox>
 
-                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="2">
                     <Label text="Email" styleClass="field-label"/>
                     <TextField fx:id="emailField" styleClass="input-field"
                            promptText="employee@company.com" maxWidth="Infinity"/>
                   </VBox>
 
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <Label text="Phone" styleClass="field-label"/>
+                    <TextField fx:id="phoneField" styleClass="input-field"
+                           promptText="+92-300-0000000" maxWidth="Infinity"/>
+                  </VBox>
+
                   <VBox GridPane.columnIndex="0" GridPane.rowIndex="3">
+                    <Label text="Monthly Salary (PKR)" styleClass="field-label"/>
+                    <TextField fx:id="salaryField" styleClass="input-field"
+                           promptText="e.g. 75000" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <Label text="Role" styleClass="field-label"/>
+                    <ComboBox fx:id="roleComboBox" styleClass="input-field"
+                           maxWidth="Infinity" promptText="Select role"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="4">
                     <Label text="Login Username" styleClass="field-label"/>
                     <TextField fx:id="usernameField" styleClass="input-field"
                            promptText="e.g. jrivera" maxWidth="Infinity"/>
                   </VBox>
 
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <Label text="Password" styleClass="field-label"/>
                     <PasswordField fx:id="passwordField" styleClass="input-field"
                            promptText="Set login password" maxWidth="Infinity"/>

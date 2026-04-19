@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.PayrollController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="1200" prefHeight="780">
+
+  <left>
+    <VBox styleClass="app-sidebar" prefWidth="234" BorderPane.alignment="CENTER">
+      <VBox spacing="3">
+        <HBox alignment="CENTER_LEFT" spacing="8">
+          <Label text="⭡" style="-fx-text-fill: #A78BFA; -fx-font-size: 22px;"/>
+          <Label text="EMS" styleClass="sidebar-logo"/>
+        </HBox>
+        <Label text="People operations hub" styleClass="sidebar-subtitle"/>
+      </VBox>
+
+      <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+        <Label text="WORKSPACE" styleClass="side-section-label"/>
+        <Button fx:id="dashboardNavButton" text="⊞  Dashboard" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDashboard"/>
+        <Button fx:id="employeeAddNavButton" text="＋  Employee Add" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+        <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToAttendance"/>
+        <Button fx:id="leaveApplyNavButton" text="◫  Leave Requests" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton" text="✔  Leave Approvals" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="payrollNavButton" text="◈  Payroll" styleClass="side-nav-active"
+            maxWidth="Infinity" onAction="#goToPayroll"/>
+        <Button fx:id="documentsNavButton" text="◻  Documents" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDocuments"/>
+
+        <Label text="ACCOUNT" styleClass="side-section-label"/>
+        <Button text="⊘  Log Out" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#handleLogout"/>
+      </VBox>
+
+      <VBox spacing="5">
+        <Label text="Signed in as" styleClass="sidebar-footnote"/>
+        <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+      </VBox>
+    </VBox>
+  </left>
+
+  <center>
+    <BorderPane styleClass="workspace-shell">
+      <top>
+        <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+          <VBox spacing="0">
+            <Label text="Payroll Management" styleClass="topbar-title"/>
+            <Label text="Generate salary slips and view payroll history" styleClass="topbar-subtitle"/>
+          </VBox>
+          <Region HBox.hgrow="ALWAYS"/>
+          <Label text="Finance" styleClass="topbar-pill"/>
+        </HBox>
+      </top>
+
+      <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+          <content>
+            <VBox styleClass="content-body" spacing="16">
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="◈  Payroll" styleClass="page-title"/>
+                <Label text="ACTIVE MODULE" styleClass="badge-pill"/>
+              </HBox>
+              <Label text="Generate payroll records and view salary history by employee."
+                   styleClass="page-subtitle"/>
+
+              <!-- Generate Payroll (Admin only) -->
+              <VBox fx:id="generateSection" styleClass="section-card" spacing="0">
+                <Label text="Generate Payroll" styleClass="card-title"/>
+
+                <GridPane hgap="14" vgap="3" maxWidth="Infinity">
+                  <columnConstraints>
+                    <ColumnConstraints percentWidth="33" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="33" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="34" hgrow="ALWAYS"/>
+                  </columnConstraints>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="Employee ID" styleClass="field-label"/>
+                    <TextField fx:id="empIdField" styleClass="input-field"
+                           promptText="e.g. EMP001" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label text="Month (1-12)" styleClass="field-label"/>
+                    <TextField fx:id="monthField" styleClass="input-field"
+                           promptText="e.g. 4" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <Label text="Year" styleClass="field-label"/>
+                    <TextField fx:id="yearField" styleClass="input-field"
+                           promptText="e.g. 2026" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label text="Base Salary (PKR)" styleClass="field-label"/>
+                    <TextField fx:id="baseSalaryField" styleClass="input-field"
+                           promptText="e.g. 75000" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Label text="Overtime Hours" styleClass="field-label"/>
+                    <TextField fx:id="overtimeHoursField" styleClass="input-field"
+                           promptText="e.g. 8" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <Label text="Overtime Rate (PKR/hr)" styleClass="field-label"/>
+                    <TextField fx:id="overtimeRateField" styleClass="input-field"
+                           promptText="e.g. 500" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    <Label text="Deductions (PKR)" styleClass="field-label"/>
+                    <TextField fx:id="deductionsField" styleClass="input-field"
+                           promptText="e.g. 5000" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                    <Label text="Notes (optional)" styleClass="field-label"/>
+                    <TextField fx:id="notesField" styleClass="input-field"
+                           promptText="e.g. Performance bonus included" maxWidth="Infinity"/>
+                  </VBox>
+                </GridPane>
+
+                <Region prefHeight="8"/>
+                <Label fx:id="salarySlipLabel" styleClass="summary-label" wrapText="true"/>
+                <Region prefHeight="8"/>
+
+                <HBox spacing="10">
+                  <Button text="Generate Payroll" styleClass="btn-gold"
+                      onAction="#handleGeneratePayroll"/>
+                  <Button text="Load Employee Salary" styleClass="btn-neutral"
+                      onAction="#handleLoadSalary"/>
+                </HBox>
+
+                <Region prefHeight="8"/>
+                <Label fx:id="statusLabel" styleClass="status-label" wrapText="true"/>
+              </VBox>
+
+              <!-- Payroll History -->
+              <VBox styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="Payroll History" styleClass="card-title" HBox.hgrow="ALWAYS"/>
+                  <TextField fx:id="filterField" styleClass="input-field"
+                         promptText="Filter by Employee ID..." prefWidth="220"/>
+                  <Button text="Filter" styleClass="btn-neutral" onAction="#handleFilter"/>
+                  <Button text="Show All" styleClass="btn-neutral" onAction="#handleShowAll"/>
+                </HBox>
+
+                <TableView fx:id="payrollTable" prefHeight="320">
+                  <columns>
+                    <TableColumn fx:id="colEmployee" text="Employee" prefWidth="160"/>
+                    <TableColumn fx:id="colPeriod" text="Period" prefWidth="90"/>
+                    <TableColumn fx:id="colBase" text="Base Salary" prefWidth="110"/>
+                    <TableColumn fx:id="colOvertime" text="Overtime" prefWidth="90"/>
+                    <TableColumn fx:id="colDeductions" text="Deductions" prefWidth="100"/>
+                    <TableColumn fx:id="colGross" text="Gross" prefWidth="110"/>
+                    <TableColumn fx:id="colNet" text="Net Salary" prefWidth="120"/>
+                    <TableColumn fx:id="colGeneratedBy" text="Generated By" prefWidth="120"/>
+                  </columns>
+                </TableView>
+              </VBox>
+
+            </VBox>
+          </content>
+        </ScrollPane>
+      </center>
+    </BorderPane>
+  </center>
+</BorderPane>

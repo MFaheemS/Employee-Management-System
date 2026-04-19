@@ -159,6 +159,20 @@ public abstract class BaseController {
                 leaveApprovalsButton));
     }
 
+    protected void configureAdditionalNavigation(Button dashboardButton,
+                                                  Button payrollButton,
+                                                  Button documentsButton) {
+        AppUser user = currentUser();
+        if (user == null) return;
+        // Dashboard visible to everyone
+        setNavigationVisibility(dashboardButton, true);
+        // Payroll visible to everyone (content filtered by role inside screen)
+        setNavigationVisibility(payrollButton, true);
+        // Documents visible to everyone with a profile, or admins
+        boolean hasProfile = hasLinkedEmployeeProfile(user);
+        setNavigationVisibility(documentsButton, hasProfile || user.isAdmin());
+    }
+
     protected void setNavigationVisibility(Button button, boolean allowed) {
         if (button == null) {
             return;

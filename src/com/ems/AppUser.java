@@ -47,4 +47,12 @@ public class AppUser {
     public boolean canSearchEmployees() {
         return isAdmin() || isManager();
     }
+
+    public boolean canGeneratePayroll() {
+        return isAdmin();
+    }
+
+    public boolean canManageDocuments() {
+        return isAdmin();
+    }
 }

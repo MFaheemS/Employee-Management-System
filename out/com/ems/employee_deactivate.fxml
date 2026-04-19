@@ -8,32 +8,41 @@
       fx:controller="com.ems.EmployeeDeactivateController"
       styleClass="root-pane"
       stylesheets="@styles.css"
-      prefWidth="1180" prefHeight="760">
+      prefWidth="1200" prefHeight="780">
 
   <left>
-    <VBox styleClass="app-sidebar" prefWidth="228" BorderPane.alignment="CENTER">
-      <VBox spacing="2">
-        <Label text="EMS" styleClass="sidebar-logo"/>
+    <VBox styleClass="app-sidebar" prefWidth="234" BorderPane.alignment="CENTER">
+      <VBox spacing="3">
+        <HBox alignment="CENTER_LEFT" spacing="8">
+          <Label text="⭡" style="-fx-text-fill: #A78BFA; -fx-font-size: 22px;"/>
+          <Label text="EMS" styleClass="sidebar-logo"/>
+        </HBox>
         <Label text="People operations hub" styleClass="sidebar-subtitle"/>
       </VBox>
 
       <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
-        <Label text="WORKFLOW" styleClass="side-section-label"/>
-        <Button fx:id="employeeAddNavButton" text="Employee Add" styleClass="side-nav-button"
+        <Label text="WORKSPACE" styleClass="side-section-label"/>
+        <Button fx:id="dashboardNavButton" text="⊞  Dashboard" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDashboard"/>
+        <Button fx:id="employeeAddNavButton" text="＋  Employee Add" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToAdd"/>
-        <Button fx:id="employeeDeactivateNavButton" text="Employee Deactivate" styleClass="side-nav-active"
+        <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-active"
             maxWidth="Infinity" onAction="#goToDeactivate"/>
-        <Button fx:id="employeeSearchNavButton" text="Employee Search" styleClass="side-nav-button"
+        <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
-        <Button fx:id="attendanceNavButton" text="Attendance" styleClass="side-nav-button"
+        <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToAttendance"/>
-        <Button fx:id="leaveApplyNavButton" text="Leave Requests" styleClass="side-nav-button"
+        <Button fx:id="leaveApplyNavButton" text="◫  Leave Requests" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToLeaveApply"/>
-        <Button fx:id="leaveApprovalsNavButton" text="Leave Approvals" styleClass="side-nav-button"
+        <Button fx:id="leaveApprovalsNavButton" text="✔  Leave Approvals" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="payrollNavButton" text="◈  Payroll" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToPayroll"/>
+        <Button fx:id="documentsNavButton" text="◻  Documents" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDocuments"/>
 
         <Label text="ACCOUNT" styleClass="side-section-label"/>
-        <Button text="Log Out" styleClass="side-nav-button"
+        <Button text="⊘  Log Out" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#handleLogout"/>
       </VBox>
 

@@ -1,8 +1,10 @@
 package com.ems;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -27,6 +29,15 @@ public class EmployeeAddController extends BaseController {
 
     @FXML
     private TextField emailField;
+
+    @FXML
+    private TextField phoneField;
+
+    @FXML
+    private TextField salaryField;
+
+    @FXML
+    private ComboBox<String> roleComboBox;
 
     @FXML
     private TextField usernameField;
@@ -56,11 +67,22 @@ public class EmployeeAddController extends BaseController {
     private Button employeeSearchNavButton;
 
     @FXML
+    private Button dashboardNavButton;
+
+    @FXML
+    private Button payrollNavButton;
+
+    @FXML
+    private Button documentsNavButton;
+
+    @FXML
     private void initialize() {
         if (!ensureEmployeeManagementAccess()) {
             return;
         }
 
+        roleComboBox.setItems(FXCollections.observableArrayList("Employee", "Manager", "Admin"));
+        roleComboBox.setValue("Employee");
         configureNavigation();
     }
 
@@ -131,6 +153,9 @@ public class EmployeeAddController extends BaseController {
             jobTitleField.setText(employee.getJobTitle());
             departmentField.setText(employee.getDepartment());
             emailField.setText(employee.getEmail());
+            phoneField.setText(employee.getPhone() != null ? employee.getPhone() : "");
+            salaryField.setText(employee.getSalary() > 0 ? String.valueOf((long) employee.getSalary()) : "");
+            roleComboBox.setValue(employee.getRole() != null ? employee.getRole() : "Employee");
 
             String status = employee.isActive() ? "Active" : "Inactive";
             showAlert(Alert.AlertType.INFORMATION, "Employee Loaded",
@@ -191,6 +216,27 @@ public class EmployeeAddController extends BaseController {
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Database Error",
                     "Could not delete employee: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDashboard() {
+        try { Main.showDashboard(); } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToPayroll() {
+        try { Main.showPayroll(); } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDocuments() {
+        try { Main.showDocuments(); } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
         }
     }
 
@@ -268,11 +314,13 @@ public class EmployeeAddController extends BaseController {
         String title = jobTitleField.getText().trim();
         String dept = departmentField.getText().trim();
         String email = emailField.getText().trim();
+        String phone = phoneField.getText().trim();
+        String salaryText = salaryField.getText().trim();
+        String role = roleComboBox.getValue();
 
-        if (id.isEmpty() || name.isEmpty() || title.isEmpty()
-                || dept.isEmpty() || email.isEmpty()) {
+        if (id.isEmpty() || name.isEmpty() || title.isEmpty() || dept.isEmpty() || email.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Validation Error",
-                    "Please fill in all fields.");
+                    "Please fill in all required fields (ID, Name, Job Title, Department, Email).");
             return null;
         }
 
@@ -282,7 +330,25 @@ public class EmployeeAddController extends BaseController {
             return null;
         }
 
-        return new Employee(id, name, title, dept, email, true);
+        double salary = 0.0;
+        if (!salaryText.isEmpty()) {
+            try {
+                salary = Double.parseDouble(salaryText);
+                if (salary < 0) {
+                    showAlert(Alert.AlertType.WARNING, "Invalid Salary",
+                            "Salary cannot be negative.");
+                    return null;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Invalid Salary",
+                        "Please enter a valid numeric salary.");
+                return null;
+            }
+        }
+
+        if (role == null) role = "Employee";
+
+        return new Employee(id, name, title, dept, email, phone, true, role, null, 20, salary);
     }
 
     private void clearFields() {
@@ -291,6 +357,9 @@ public class EmployeeAddController extends BaseController {
         jobTitleField.clear();
         departmentField.clear();
         emailField.clear();
+        phoneField.clear();
+        salaryField.clear();
+        roleComboBox.setValue("Employee");
         usernameField.clear();
         passwordField.clear();
     }
@@ -305,5 +374,6 @@ public class EmployeeAddController extends BaseController {
                 leaveApplyNavButton,
                 leaveApprovalsNavButton
         );
+        configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
     }
 }

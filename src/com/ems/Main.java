@@ -31,33 +31,16 @@ public class Main extends Application {
         stage.show();
     }
 
-    public static void showLogin() throws Exception {
-        showScene("login.fxml");
-    }
-
-    public static void showEmployeeAdd() throws Exception {
-        showScene("employee_add.fxml");
-    }
-
-    public static void showEmployeeDeactivate() throws Exception {
-        showScene("employee_deactivate.fxml");
-    }
-
-    public static void showLeaveApplication() throws Exception {
-        showScene("leave_apply.fxml");
-    }
-
-    public static void showLeaveApprovals() throws Exception {
-        showScene("leave_approvals.fxml");
-    }
-
-    public static void showAttendance() throws Exception {
-        showScene("attendance.fxml");
-    }
-
-    public static void showEmployeeSearch() throws Exception {
-        showScene("employee_search.fxml");
-    }
+    public static void showLogin() throws Exception { showScene("login.fxml"); }
+    public static void showDashboard() throws Exception { showScene("dashboard.fxml"); }
+    public static void showEmployeeAdd() throws Exception { showScene("employee_add.fxml"); }
+    public static void showEmployeeDeactivate() throws Exception { showScene("employee_deactivate.fxml"); }
+    public static void showLeaveApplication() throws Exception { showScene("leave_apply.fxml"); }
+    public static void showLeaveApprovals() throws Exception { showScene("leave_approvals.fxml"); }
+    public static void showAttendance() throws Exception { showScene("attendance.fxml"); }
+    public static void showEmployeeSearch() throws Exception { showScene("employee_search.fxml"); }
+    public static void showPayroll() throws Exception { showScene("payroll.fxml"); }
+    public static void showDocuments() throws Exception { showScene("document_upload.fxml"); }
 
     public static void showHomeForCurrentUser() throws Exception {
         AppUser user = AppSession.getCurrentUser();
@@ -65,13 +48,7 @@ public class Main extends Application {
             showLogin();
             return;
         }
-
-        if (user.canManageLeaveApprovals()) {
-            showLeaveApprovals();
-            return;
-        }
-
-        showLeaveApplication();
+        showDashboard();
     }
 
     public static void main(String[] args) {

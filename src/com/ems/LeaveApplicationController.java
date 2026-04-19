@@ -54,6 +54,15 @@ public class LeaveApplicationController extends BaseController {
     private Button employeeSearchNavButton;
 
     @FXML
+    private Button dashboardNavButton;
+
+    @FXML
+    private Button payrollNavButton;
+
+    @FXML
+    private Button documentsNavButton;
+
+    @FXML
     private TableView<LeaveRequest> requestHistoryTable;
 
     @FXML
@@ -108,6 +117,27 @@ public class LeaveApplicationController extends BaseController {
             setErrorStatus(e.getMessage());
         } catch (SQLException e) {
             setErrorStatus("Could not submit leave request: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDashboard() {
+        try { Main.showDashboard(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToPayroll() {
+        try { Main.showPayroll(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDocuments() {
+        try { Main.showDocuments(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
         }
     }
 
@@ -181,6 +211,7 @@ public class LeaveApplicationController extends BaseController {
                 null,
                 leaveApprovalsNavButton
         );
+        configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
     }
 
     private void configureHistoryTable() {

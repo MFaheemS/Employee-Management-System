@@ -43,6 +43,15 @@ public class LeaveApprovalController extends BaseController {
     private Button employeeSearchNavButton;
 
     @FXML
+    private Button dashboardNavButton;
+
+    @FXML
+    private Button payrollNavButton;
+
+    @FXML
+    private Button documentsNavButton;
+
+    @FXML
     private TableView<LeaveRequest> pendingTable;
 
     @FXML
@@ -103,6 +112,27 @@ public class LeaveApprovalController extends BaseController {
     @FXML
     private void handleRefresh() {
         loadTables();
+    }
+
+    @FXML
+    private void goToDashboard() {
+        try { Main.showDashboard(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToPayroll() {
+        try { Main.showPayroll(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDocuments() {
+        try { Main.showDocuments(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
     }
 
     @FXML
@@ -175,6 +205,7 @@ public class LeaveApprovalController extends BaseController {
                 leaveApplyNavButton,
                 leaveApprovalsNavButton
         );
+        configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
     }
 
     private void configureTables() {

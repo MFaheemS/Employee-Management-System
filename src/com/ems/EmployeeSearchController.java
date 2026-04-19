@@ -48,6 +48,15 @@ public class EmployeeSearchController extends BaseController {
     private Button employeeSearchNavButton;
 
     @FXML
+    private Button dashboardNavButton;
+
+    @FXML
+    private Button payrollNavButton;
+
+    @FXML
+    private Button documentsNavButton;
+
+    @FXML
     private TableView<Employee> searchResultTable;
 
     @FXML
@@ -101,6 +110,27 @@ public class EmployeeSearchController extends BaseController {
         );
 
         setSuccessStatus("Employee profile loaded.");
+    }
+
+    @FXML
+    private void goToDashboard() {
+        try { Main.showDashboard(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToPayroll() {
+        try { Main.showPayroll(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDocuments() {
+        try { Main.showDocuments(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
     }
 
     @FXML
@@ -173,6 +203,7 @@ public class EmployeeSearchController extends BaseController {
                 leaveApplyNavButton,
                 leaveApprovalsNavButton
         );
+        configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
     }
 
     private void configureTable() {

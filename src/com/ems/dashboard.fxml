@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.DashboardController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="1200" prefHeight="780">
+
+  <left>
+    <VBox styleClass="app-sidebar" prefWidth="234" BorderPane.alignment="CENTER">
+      <VBox spacing="3">
+        <HBox alignment="CENTER_LEFT" spacing="8">
+          <Label text="⬡" style="-fx-text-fill: #A78BFA; -fx-font-size: 22px;"/>
+          <Label text="EMS" styleClass="sidebar-logo"/>
+        </HBox>
+        <Label text="People operations hub" styleClass="sidebar-subtitle"/>
+      </VBox>
+
+      <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+        <Label text="WORKSPACE" styleClass="side-section-label"/>
+        <Button fx:id="dashboardNavButton" text="⊞  Dashboard" styleClass="side-nav-active"
+            maxWidth="Infinity" onAction="#goToDashboard"/>
+        <Button fx:id="employeeAddNavButton" text="＋  Employee Add" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+        <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToAttendance"/>
+        <Button fx:id="leaveApplyNavButton" text="◫  Leave Requests" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton" text="✔  Leave Approvals" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="payrollNavButton" text="◈  Payroll" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToPayroll"/>
+        <Button fx:id="documentsNavButton" text="◻  Documents" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDocuments"/>
+
+        <Label text="ACCOUNT" styleClass="side-section-label"/>
+        <Button text="⊘  Log Out" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#handleLogout"/>
+      </VBox>
+
+      <VBox spacing="5">
+        <Label text="Signed in as" styleClass="sidebar-footnote"/>
+        <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+      </VBox>
+    </VBox>
+  </left>
+
+  <center>
+    <BorderPane styleClass="workspace-shell">
+      <top>
+        <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+          <VBox spacing="0">
+            <Label text="Dashboard" styleClass="topbar-title"/>
+            <Label text="Workforce overview and key metrics" styleClass="topbar-subtitle"/>
+          </VBox>
+          <Region HBox.hgrow="ALWAYS"/>
+          <Label text="⬤  Live" styleClass="topbar-pill-green"/>
+        </HBox>
+      </top>
+
+      <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+          <content>
+            <VBox styleClass="content-body" spacing="20">
+
+              <!-- Page header -->
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Good day 👋" styleClass="page-title"/>
+              </HBox>
+              <Label fx:id="welcomeLabel" styleClass="page-subtitle"/>
+
+              <!-- KPI Cards Row -->
+              <HBox spacing="14">
+                <VBox styleClass="kpi-card-blue" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                  <Label text="👥" styleClass="kpi-icon"/>
+                  <Label text="TOTAL EMPLOYEES" styleClass="kpi-title"/>
+                  <Label fx:id="totalEmployeesLabel" text="—" styleClass="kpi-value-blue"/>
+                  <Label text="All registered records" styleClass="kpi-note"/>
+                </VBox>
+                <VBox styleClass="kpi-card-green" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                  <Label text="✅" styleClass="kpi-icon"/>
+                  <Label text="ACTIVE EMPLOYEES" styleClass="kpi-title"/>
+                  <Label fx:id="activeEmployeesLabel" text="—" styleClass="kpi-value-green"/>
+                  <Label text="Currently active" styleClass="kpi-note"/>
+                </VBox>
+                <VBox styleClass="kpi-card-orange" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                  <Label text="🕐" styleClass="kpi-icon"/>
+                  <Label text="PENDING LEAVES" styleClass="kpi-title"/>
+                  <Label fx:id="pendingLeavesLabel" text="—" styleClass="kpi-value-orange"/>
+                  <Label text="Awaiting approval" styleClass="kpi-note"/>
+                </VBox>
+                <VBox styleClass="kpi-card-purple" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                  <Label text="📅" styleClass="kpi-icon"/>
+                  <Label text="TODAY'S ATTENDANCE" styleClass="kpi-title"/>
+                  <Label fx:id="todayAttendanceLabel" text="—" styleClass="kpi-value-purple"/>
+                  <Label text="Checked in today" styleClass="kpi-note"/>
+                </VBox>
+              </HBox>
+
+              <!-- Department Breakdown -->
+              <VBox styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="🏢  Department Summary" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="BY DEPT" styleClass="badge-pill"/>
+                </HBox>
+                <TableView fx:id="deptTable" prefHeight="200">
+                  <columns>
+                    <TableColumn fx:id="colDept" text="Department" prefWidth="240"/>
+                    <TableColumn fx:id="colDeptCount" text="Employees" prefWidth="130"/>
+                    <TableColumn fx:id="colDeptActive" text="Active" prefWidth="130"/>
+                  </columns>
+                </TableView>
+              </VBox>
+
+              <!-- Recent Leave Requests (managers/admins) -->
+              <VBox fx:id="leaveSection" styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="📋  Recent Leave Requests" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="PENDING REVIEW" styleClass="badge-pill"/>
+                </HBox>
+                <TableView fx:id="leaveTable" prefHeight="220">
+                  <columns>
+                    <TableColumn fx:id="colLeaveEmp" text="Employee" prefWidth="170"/>
+                    <TableColumn fx:id="colLeaveType" text="Type" prefWidth="110"/>
+                    <TableColumn fx:id="colLeaveDates" text="Dates" prefWidth="210"/>
+                    <TableColumn fx:id="colLeaveStatus" text="Status" prefWidth="110"/>
+                    <TableColumn fx:id="colLeaveManager" text="Manager" prefWidth="130"/>
+                  </columns>
+                </TableView>
+              </VBox>
+
+              <!-- My Profile (employees) -->
+              <VBox fx:id="profileSection" styleClass="section-card" spacing="8">
+                <Label text="👤  My Profile" styleClass="card-title"/>
+                <Label fx:id="profileNameLabel" styleClass="summary-highlight"/>
+                <Label fx:id="profileDetailLabel" styleClass="summary-label" wrapText="true"/>
+                <Label fx:id="profileLeaveLabel" styleClass="summary-label"/>
+              </VBox>
+
+            </VBox>
+          </content>
+        </ScrollPane>
+      </center>
+    </BorderPane>
+  </center>
+</BorderPane>

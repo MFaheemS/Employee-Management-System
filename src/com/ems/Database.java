@@ -75,11 +75,41 @@ public final class Database {
                     + "FOREIGN KEY(employee_id) REFERENCES employees(employee_id)"
                     + ")");
 
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS payroll_records ("
+                    + "record_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "employee_id TEXT NOT NULL, "
+                    + "month INTEGER NOT NULL, "
+                    + "year INTEGER NOT NULL, "
+                    + "base_salary REAL NOT NULL DEFAULT 0, "
+                    + "overtime_hours REAL NOT NULL DEFAULT 0, "
+                    + "overtime_rate REAL NOT NULL DEFAULT 0, "
+                    + "deductions REAL NOT NULL DEFAULT 0, "
+                    + "gross_salary REAL NOT NULL DEFAULT 0, "
+                    + "net_salary REAL NOT NULL DEFAULT 0, "
+                    + "generated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+                    + "generated_by TEXT, "
+                    + "notes TEXT, "
+                    + "FOREIGN KEY(employee_id) REFERENCES employees(employee_id)"
+                    + ")");
+
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS employee_documents ("
+                    + "doc_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "employee_id TEXT NOT NULL, "
+                    + "file_name TEXT NOT NULL, "
+                    + "file_path TEXT NOT NULL, "
+                    + "file_type TEXT, "
+                    + "uploaded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+                    + "uploaded_by TEXT, "
+                    + "FOREIGN KEY(employee_id) REFERENCES employees(employee_id)"
+                    + ")");
+
                 ensureColumn(connection, "users", "role", "TEXT NOT NULL DEFAULT 'Employee'");
                 ensureColumn(connection, "users", "employee_id", "TEXT");
                 ensureColumn(connection, "employees", "role", "TEXT NOT NULL DEFAULT 'Employee'");
                 ensureColumn(connection, "employees", "manager_username", "TEXT");
                 ensureColumn(connection, "employees", "leave_balance", "INTEGER NOT NULL DEFAULT 20");
+                ensureColumn(connection, "employees", "phone", "TEXT");
+                ensureColumn(connection, "employees", "salary", "REAL NOT NULL DEFAULT 0");
         }
 
         seedDefaultAdmin();

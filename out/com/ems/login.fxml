@@ -6,74 +6,109 @@
 
 <StackPane xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.ems.LoginController"
-           styleClass="root-pane"
+           styleClass="login-root"
            stylesheets="@styles.css"
-                 prefWidth="620" prefHeight="560">
+           prefWidth="900" prefHeight="600">
 
-       <Pane styleClass="login-pattern" maxWidth="Infinity" maxHeight="Infinity" mouseTransparent="true">
-              <Region styleClass="leaf-blob" prefWidth="270" prefHeight="230"
-                            translateX="-210" translateY="-165"/>
-              <Region styleClass="leaf-blob" prefWidth="240" prefHeight="210"
-                            translateX="235" translateY="180"/>
-              <Region styleClass="leaf-blob-soft" prefWidth="180" prefHeight="155"
-                            translateX="220" translateY="-170"/>
-       </Pane>
+    <!-- Decorative blobs -->
+    <Pane styleClass="login-pattern" maxWidth="Infinity" maxHeight="Infinity" mouseTransparent="true">
+        <Region styleClass="leaf-blob" prefWidth="320" prefHeight="280"
+                translateX="-330" translateY="-200"/>
+        <Region styleClass="leaf-blob" prefWidth="280" prefHeight="260"
+                translateX="320" translateY="210"/>
+        <Region styleClass="leaf-blob-soft" prefWidth="200" prefHeight="180"
+                translateX="270" translateY="-200"/>
+        <Region styleClass="leaf-blob-soft" prefWidth="160" prefHeight="140"
+                translateX="-260" translateY="180"/>
+    </Pane>
 
-       <VBox styleClass="login-card" maxWidth="430" spacing="0"
-                StackPane.alignment="CENTER">
+    <!-- Split layout: left branding + right form -->
+    <HBox alignment="CENTER" StackPane.alignment="CENTER" maxWidth="800" maxHeight="520">
 
-              <HBox alignment="CENTER" spacing="10">
-                     <Label text="LF" styleClass="brand-icon"/>
-                     <Label text="EMS" styleClass="brand-title"/>
-              </HBox>
+        <!-- Left: branding panel -->
+        <VBox alignment="CENTER" spacing="16" prefWidth="330" prefHeight="520"
+              style="-fx-padding: 48 40 48 48;">
+            <Label text="👥" style="-fx-font-size: 52px;"/>
+            <Label text="EMS" style="-fx-text-fill: white; -fx-font-size: 44px; -fx-font-weight: 800;"/>
+            <Label text="Employee Management System"
+                   style="-fx-text-fill: rgba(255,255,255,0.75); -fx-font-size: 14px; -fx-font-weight: 600;"
+                   wrapText="true" alignment="CENTER" maxWidth="240"/>
+            <Region prefHeight="20"/>
+            <VBox spacing="12">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="✦" style="-fx-text-fill: #A78BFA; -fx-font-size: 14px;"/>
+                    <Label text="Role-based access control"
+                           style="-fx-text-fill: rgba(255,255,255,0.65); -fx-font-size: 12.5px;"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="✦" style="-fx-text-fill: #A78BFA; -fx-font-size: 14px;"/>
+                    <Label text="Attendance &amp; leave tracking"
+                           style="-fx-text-fill: rgba(255,255,255,0.65); -fx-font-size: 12.5px;"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="✦" style="-fx-text-fill: #A78BFA; -fx-font-size: 14px;"/>
+                    <Label text="Payroll &amp; document management"
+                           style="-fx-text-fill: rgba(255,255,255,0.65); -fx-font-size: 12.5px;"/>
+                </HBox>
+            </VBox>
+        </VBox>
 
-              <Label text="Your workforce, beautifully managed."
-                        styleClass="brand-tagline"
-                        maxWidth="Infinity" alignment="CENTER"/>
+        <!-- Right: login card -->
+        <VBox styleClass="login-card" maxWidth="390" spacing="0">
 
-              <Region prefHeight="18"/>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="⬡" styleClass="brand-icon"/>
+                <VBox spacing="1">
+                    <Label text="Welcome back" styleClass="brand-title"/>
+                    <Label text="Sign in to your account" styleClass="brand-tagline"/>
+                </VBox>
+            </HBox>
 
-              <Label text="Username / Email" styleClass="field-label"/>
-              <TextField fx:id="usernameField"
+            <Region prefHeight="24"/>
+
+            <Label text="Username" styleClass="field-label"/>
+            <TextField fx:id="usernameField"
+                       styleClass="input-field"
+                       maxWidth="Infinity"
+                       promptText="Enter your username"/>
+
+            <Label text="Password" styleClass="field-label"/>
+            <HBox spacing="8" alignment="CENTER_LEFT" maxWidth="Infinity">
+                <StackPane HBox.hgrow="ALWAYS">
+                    <PasswordField fx:id="passwordField"
+                                   styleClass="input-field"
+                                   maxWidth="Infinity"
+                                   promptText="Enter your password"/>
+                    <TextField fx:id="passwordVisibleField"
                                styleClass="input-field"
                                maxWidth="Infinity"
-                               promptText="Enter your username"/>
+                               visible="false"
+                               managed="false"
+                               promptText="Enter your password"/>
+                </StackPane>
+                <Button fx:id="togglePasswordButton"
+                        text="Show"
+                        styleClass="btn-inline"
+                        onAction="#togglePasswordVisibility"/>
+            </HBox>
 
-              <Label text="Password" styleClass="field-label"/>
-              <HBox spacing="8" alignment="CENTER_LEFT" maxWidth="Infinity">
-                     <StackPane HBox.hgrow="ALWAYS">
-                            <PasswordField fx:id="passwordField"
-                                                    styleClass="input-field"
-                                                    maxWidth="Infinity"
-                                                    promptText="Enter your password"/>
-                            <TextField fx:id="passwordVisibleField"
-                                             styleClass="input-field"
-                                             maxWidth="Infinity"
-                                             visible="false"
-                                             managed="false"
-                                             promptText="Enter your password"/>
-                     </StackPane>
-                     <Button fx:id="togglePasswordButton"
-                                   text="Show"
-                                   styleClass="btn-inline"
-                                   onAction="#togglePasswordVisibility"/>
-              </HBox>
+            <Region prefHeight="6"/>
+            <HBox alignment="CENTER_RIGHT">
+                <Hyperlink text="Forgot Password?" styleClass="login-link"/>
+            </HBox>
 
-              <Region prefHeight="22"/>
+            <Region prefHeight="14"/>
 
-              <Button text="Login"
-                            styleClass="btn-gold"
-                            maxWidth="Infinity"
-                            onAction="#handleSubmit"/>
+            <Button text="Sign In →"
+                    styleClass="btn-gold"
+                    maxWidth="Infinity"
+                    onAction="#handleSubmit"/>
 
-              <HBox alignment="CENTER_RIGHT">
-                     <Hyperlink text="Forgot Password?" styleClass="login-link"/>
-              </HBox>
+            <Label fx:id="hintLabel"
+                   styleClass="hint-label"
+                   wrapText="true"
+                   maxWidth="Infinity"/>
 
-              <Label fx:id="hintLabel"
-                        styleClass="hint-label"
-                        wrapText="true"
-                        maxWidth="Infinity"/>
-
-       </VBox>
+        </VBox>
+    </HBox>
 </StackPane>

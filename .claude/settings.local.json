@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(compile.bat)",
+      "Bash(cmd.exe /c compile.bat)",
+      "Bash(cmd.exe /c \"cd \\\\\"d:\\\\Employee Management System\\\\\" && compile.bat\")",
+      "Bash(cmd.exe /c \"cd /d \\\\\"d:\\\\Employee Management System\\\\\" && javac --module-path javafx-sdk-25.0.2\\\\lib --add-modules javafx.controls,javafx.fxml -cp lib\\\\sqlite-jdbc-3.46.1.3.jar -d out src\\\\com\\\\ems\\\\*.java 2>&1\")",
+      "Bash(cmd.exe /c \"dir /b \\\\\"d:\\\\Employee Management System\\\\out\\\\com\\\\ems\\\\*.class\\\\\" 2>&1 | find /c \\\\\".class\\\\\"\")",
+      "Bash(cmd.exe /c \"copy /Y \\\\\"d:\\\\Employee Management System\\\\src\\\\com\\\\ems\\\\*.fxml\\\\\" \\\\\"d:\\\\Employee Management System\\\\out\\\\com\\\\ems\\\\\\\\\")",
+      "Bash(cp \"d:/Employee Management System/src/com/ems/\"*.fxml \"d:/Employee Management System/out/com/ems/\")",
+      "Bash(cp \"d:/Employee Management System/src/com/ems/\"*.css \"d:/Employee Management System/out/com/ems/\")",
+      "Read(//c/Users/M.Faheem/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"enterprise HR employee management professional modern\" --design-system -p \"EMS\" -f markdown)"
+    ]
+  }
+}

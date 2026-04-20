@@ -14,7 +14,7 @@
     <VBox styleClass="app-sidebar" prefWidth="234" BorderPane.alignment="CENTER">
       <VBox spacing="3">
         <HBox alignment="CENTER_LEFT" spacing="8">
-          <Label text="⭡" style="-fx-text-fill: #A78BFA; -fx-font-size: 22px;"/>
+          <Label text="⬡" style="-fx-text-fill: #A78BFA; -fx-font-size: 22px;"/>
           <Label text="EMS" styleClass="sidebar-logo"/>
         </HBox>
         <Label text="People operations hub" styleClass="sidebar-subtitle"/>
@@ -28,6 +28,8 @@
             maxWidth="Infinity" onAction="#goToAdd"/>
         <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="departmentNavButton" text="⊠  Departments" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDepartments"/>
         <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
         <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
@@ -58,81 +60,99 @@
       <top>
         <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
           <VBox spacing="0">
-            <Label text="Document Management" styleClass="topbar-title"/>
-            <Label text="Upload and view employee documents" styleClass="topbar-subtitle"/>
+            <Label text="Document Centre" styleClass="topbar-title"/>
+            <Label text="Employee document storage, uploads and management" styleClass="topbar-subtitle"/>
           </VBox>
           <Region HBox.hgrow="ALWAYS"/>
-          <Label text="HR Tools" styleClass="topbar-pill"/>
+          <Label text="◻ Docs" styleClass="topbar-pill"/>
         </HBox>
       </top>
 
       <center>
         <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
           <content>
-            <VBox styleClass="content-body" spacing="16">
+            <VBox styleClass="content-body" spacing="20">
+
               <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="◻  Documents" styleClass="page-title"/>
+                <Label text="Documents" styleClass="page-title"/>
                 <Label text="ACTIVE MODULE" styleClass="badge-pill"/>
               </HBox>
-              <Label text="Upload and manage employee documents. Supported formats: PDF, PNG, JPG, DOC, DOCX, TXT."
-                   styleClass="page-subtitle"/>
 
-              <!-- Upload Section (Admin only) -->
+              <!-- Role info banner -->
+              <VBox styleClass="summary-strip">
+                <Label fx:id="roleInfoLabel" styleClass="summary-label" wrapText="true"/>
+              </VBox>
+
+              <!-- ═══ UPLOAD SECTION — Employee only ═══ -->
               <VBox fx:id="uploadSection" styleClass="section-card" spacing="0">
-                <Label text="Upload Document" styleClass="card-title"/>
+                <Label text="📎  Upload Your Document" styleClass="card-title"/>
+                <Label text="Supported: PDF, PNG, JPG, JPEG, DOC, DOCX, TXT. Max one file at a time."
+                       styleClass="page-subtitle"/>
 
-                <GridPane hgap="14" vgap="3" maxWidth="Infinity">
-                  <columnConstraints>
-                    <ColumnConstraints percentWidth="40" hgrow="ALWAYS"/>
-                    <ColumnConstraints percentWidth="60" hgrow="ALWAYS"/>
-                  </columnConstraints>
-
-                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="Employee ID" styleClass="field-label"/>
-                    <TextField fx:id="employeeIdField" styleClass="input-field"
-                           promptText="e.g. EMP001" maxWidth="Infinity"/>
-                  </VBox>
-
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <Label text="Selected File" styleClass="field-label"/>
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                      <TextField fx:id="filePathField" styleClass="input-field"
-                             promptText="No file selected" HBox.hgrow="ALWAYS"
-                             editable="false" maxWidth="Infinity"/>
-                      <Button text="Browse..." styleClass="btn-neutral"
-                          onAction="#handleBrowse"/>
-                    </HBox>
-                  </VBox>
-                </GridPane>
-
-                <Region prefHeight="10"/>
-                <HBox spacing="10">
-                  <Button text="Upload Document" styleClass="btn-gold"
-                      onAction="#handleUpload"/>
+                <Label text="Select File" styleClass="field-label"/>
+                <HBox spacing="10" alignment="CENTER_LEFT" maxWidth="Infinity">
+                  <TextField fx:id="filePathField" styleClass="input-field"
+                         promptText="No file selected" HBox.hgrow="ALWAYS"
+                         editable="false" maxWidth="Infinity"/>
+                  <Button text="Browse..." styleClass="btn-neutral" onAction="#handleBrowse"/>
                 </HBox>
-                <Region prefHeight="6"/>
+
+                <Region prefHeight="12"/>
+                <HBox spacing="10">
+                  <Button text="Upload Document" styleClass="btn-gold" onAction="#handleUpload"/>
+                </HBox>
                 <Label fx:id="uploadStatusLabel" styleClass="status-label" wrapText="true"/>
               </VBox>
 
-              <!-- View Documents -->
+              <!-- ═══ VIEW / MANAGE SECTION ═══ -->
               <VBox styleClass="section-card" spacing="0">
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                  <Label text="Document Records" styleClass="card-title" HBox.hgrow="ALWAYS"/>
-                  <TextField fx:id="filterField" styleClass="input-field"
-                         promptText="Filter by Employee ID..." prefWidth="220"/>
-                  <Button text="Filter" styleClass="btn-neutral" onAction="#handleFilter"/>
-                  <Button text="Show All" styleClass="btn-neutral" onAction="#handleShowAll"/>
+                  <Label text="📁  Document Records" styleClass="card-title" HBox.hgrow="ALWAYS"/>
+
+                  <!-- Filter bar — Admin/Manager only -->
+                  <VBox fx:id="filterSection" spacing="0">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                      <TextField fx:id="filterField" styleClass="input-field"
+                             promptText="Filter by Employee ID..." prefWidth="220"/>
+                      <Button text="Filter" styleClass="btn-neutral" onAction="#handleFilter"/>
+                      <Button text="Show All" styleClass="btn-neutral" onAction="#handleShowAll"/>
+                    </HBox>
+                  </VBox>
                 </HBox>
 
                 <TableView fx:id="documentsTable" prefHeight="320">
                   <columns>
-                    <TableColumn fx:id="colEmpId" text="Employee ID" prefWidth="120"/>
-                    <TableColumn fx:id="colFileName" text="File Name" prefWidth="220"/>
-                    <TableColumn fx:id="colFileType" text="Type" prefWidth="70"/>
-                    <TableColumn fx:id="colUploadedAt" text="Uploaded At" prefWidth="160"/>
-                    <TableColumn fx:id="colUploadedBy" text="Uploaded By" prefWidth="130"/>
+                    <TableColumn fx:id="colEmpId" text="Employee ID" prefWidth="110"/>
+                    <TableColumn fx:id="colFileName" text="File Name" prefWidth="210"/>
+                    <TableColumn fx:id="colFileType" text="Type" prefWidth="60"/>
+                    <TableColumn fx:id="colUploadedAt" text="Uploaded At" prefWidth="150"/>
+                    <TableColumn fx:id="colUploadedBy" text="Uploaded By" prefWidth="110"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="90"/>
                   </columns>
                 </TableView>
+
+                <Region prefHeight="10"/>
+
+                <!-- Manager actions: Approve / Reject / Delete -->
+                <VBox fx:id="managerActionsSection" spacing="8">
+                  <HBox spacing="10">
+                    <Button fx:id="approveDocButton" text="✔  Approve"
+                        styleClass="btn-gold" onAction="#handleApproveDocument"/>
+                    <Button fx:id="rejectDocButton" text="✖  Reject"
+                        styleClass="btn-neutral" onAction="#handleRejectDocument"/>
+                    <Button fx:id="deleteDocButton" text="🗑  Delete"
+                        styleClass="btn-red" onAction="#handleDeleteDocument"/>
+                  </HBox>
+                </VBox>
+
+                <!-- Employee action: Open file -->
+                <VBox fx:id="employeeActionsSection" spacing="8">
+                  <HBox spacing="10">
+                    <Button fx:id="openFileButton" text="📂  Open Selected File"
+                        styleClass="btn-neutral" onAction="#handleOpenFile"/>
+                  </HBox>
+                </VBox>
+
               </VBox>
 
             </VBox>

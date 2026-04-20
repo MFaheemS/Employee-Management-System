@@ -65,6 +65,9 @@ public class AttendanceController extends BaseController {
     private Button documentsNavButton;
 
     @FXML
+    private Button departmentNavButton;
+
+    @FXML
     private VBox employeeView;
 
     @FXML
@@ -146,6 +149,13 @@ public class AttendanceController extends BaseController {
             setErrorStatus(e.getMessage());
         } catch (SQLException e) {
             setErrorStatus("Could not mark attendance: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToDepartments() {
+        try { Main.showDepartmentManagement(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
         }
     }
 
@@ -241,6 +251,7 @@ public class AttendanceController extends BaseController {
                 leaveApprovalsNavButton
         );
         configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
+        configureDepartmentNavigation(departmentNavButton);
     }
 
     @FXML
@@ -265,7 +276,7 @@ public class AttendanceController extends BaseController {
     private void loadManagerRecords(LocalDate date) {
         try {
             managerTable.setItems(FXCollections.observableArrayList(
-                    attendanceService.getRecordsByDate(date.toString())
+                    attendanceService.getRecordsByDateForManager(date.toString(), currentUser().getUsername())
             ));
         } catch (SQLException e) {
             showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Database Error",

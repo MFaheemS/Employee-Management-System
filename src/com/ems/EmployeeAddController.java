@@ -10,10 +10,12 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class EmployeeAddController extends BaseController {
 
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
+    private final DepartmentRepository departmentRepository = new DepartmentRepository();
 
     @FXML
     private TextField employeeIdField;
@@ -25,7 +27,7 @@ public class EmployeeAddController extends BaseController {
     private TextField jobTitleField;
 
     @FXML
-    private TextField departmentField;
+    private ComboBox<String> departmentComboBox;
 
     @FXML
     private TextField emailField;
@@ -76,14 +78,56 @@ public class EmployeeAddController extends BaseController {
     private Button documentsNavButton;
 
     @FXML
+    private Button departmentNavButton;
+
+    @FXML
     private void initialize() {
         if (!ensureEmployeeManagementAccess()) {
             return;
         }
 
-        roleComboBox.setItems(FXCollections.observableArrayList("Employee", "Manager", "Admin"));
-        roleComboBox.setValue("Employee");
+        AppUser user = currentUser();
+        if (user.isAdmin()) {
+            // Admin creates Manager accounts only
+            roleComboBox.setItems(FXCollections.observableArrayList("Manager"));
+            roleComboBox.setValue("Manager");
+        } else {
+            // Manager creates Employee accounts only
+            roleComboBox.setItems(FXCollections.observableArrayList("Employee"));
+            roleComboBox.setValue("Employee");
+        }
+        loadDepartments();
+        // If manager, lock the department to their own dept
+        if (user.isManager()) {
+            lockDepartmentToManager(user);
+        }
+        departmentComboBox.setOnAction(e -> autoFillManager());
         configureNavigation();
+    }
+
+    private void loadDepartments() {
+        try {
+            List<String> depts = departmentRepository.getAllDepartmentNames();
+            departmentComboBox.setItems(FXCollections.observableArrayList(depts));
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.WARNING, "Warning", "Could not load departments: " + e.getMessage());
+        }
+    }
+
+    private void lockDepartmentToManager(AppUser user) {
+        try {
+            departmentRepository.getAllDepartments().stream()
+                    .filter(d -> d.getManagerUsername().equals(user.getUsername()))
+                    .findFirst()
+                    .ifPresent(d -> departmentComboBox.setValue(d.getDepartmentName()));
+            departmentComboBox.setDisable(true);
+        } catch (Exception e) {
+            // ignore — dept stays editable
+        }
+    }
+
+    private void autoFillManager() {
+        // manager_username is resolved from selected department in buildEmployeeFromFields
     }
 
     @FXML
@@ -151,7 +195,7 @@ public class EmployeeAddController extends BaseController {
 
             fullNameField.setText(employee.getFullName());
             jobTitleField.setText(employee.getJobTitle());
-            departmentField.setText(employee.getDepartment());
+            departmentComboBox.setValue(employee.getDepartment());
             emailField.setText(employee.getEmail());
             phoneField.setText(employee.getPhone() != null ? employee.getPhone() : "");
             salaryField.setText(employee.getSalary() > 0 ? String.valueOf((long) employee.getSalary()) : "");
@@ -312,7 +356,7 @@ public class EmployeeAddController extends BaseController {
         String id = employeeIdField.getText().trim();
         String name = fullNameField.getText().trim();
         String title = jobTitleField.getText().trim();
-        String dept = departmentField.getText().trim();
+        String dept = departmentComboBox.getValue() != null ? departmentComboBox.getValue().trim() : "";
         String email = emailField.getText().trim();
         String phone = phoneField.getText().trim();
         String salaryText = salaryField.getText().trim();
@@ -348,14 +392,21 @@ public class EmployeeAddController extends BaseController {
 
         if (role == null) role = "Employee";
 
-        return new Employee(id, name, title, dept, email, phone, true, role, null, 20, salary);
+        String managerUsername = null;
+        try {
+            managerUsername = departmentRepository.getManagerForDepartment(dept);
+        } catch (SQLException e) {
+            // fall through; EmployeeRepository will assign a default manager
+        }
+
+        return new Employee(id, name, title, dept, email, phone, true, role, managerUsername, 20, salary);
     }
 
     private void clearFields() {
         employeeIdField.clear();
         fullNameField.clear();
         jobTitleField.clear();
-        departmentField.clear();
+        departmentComboBox.setValue(null);
         emailField.clear();
         phoneField.clear();
         salaryField.clear();
@@ -375,5 +426,13 @@ public class EmployeeAddController extends BaseController {
                 leaveApprovalsNavButton
         );
         configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
+        configureDepartmentNavigation(departmentNavButton);
+    }
+
+    @FXML
+    private void goToDepartments() {
+        try { Main.showDepartmentManagement(); } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
     }
 }

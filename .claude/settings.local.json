@@ -10,7 +10,18 @@
       "Bash(cp \"d:/Employee Management System/src/com/ems/\"*.fxml \"d:/Employee Management System/out/com/ems/\")",
       "Bash(cp \"d:/Employee Management System/src/com/ems/\"*.css \"d:/Employee Management System/out/com/ems/\")",
       "Read(//c/Users/M.Faheem/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/.claude/skills/ui-ux-pro-max/**)",
-      "Bash(python scripts/search.py \"enterprise HR employee management professional modern\" --design-system -p \"EMS\" -f markdown)"
+      "Bash(python scripts/search.py \"enterprise HR employee management professional modern\" --design-system -p \"EMS\" -f markdown)",
+      "Bash(javac -cp \"lib/*\" -d out src/com/ems/*.java)",
+      "Bash(cmd /c compile.bat)",
+      "Bash(python3 *)",
+      "Bash(python3.exe --version)",
+      "Bash(python.exe --version)",
+      "Bash(py --version)",
+      "Bash(where python *)",
+      "Bash(where py *)",
+      "Bash(py *)",
+      "Bash(cp src/com/ems/*.fxml out/com/ems/)",
+      "Bash(cp src/com/ems/*.css out/com/ems/)"
     ]
   }
 }

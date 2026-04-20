@@ -102,6 +102,39 @@ public class AttendanceService {
         }
     }
 
+    public List<AttendanceRecord> getRecordsByDateForManager(String date, String managerUsername) throws SQLException {
+        String sql = "SELECT r.record_id, r.employee_id, e.full_name, r.attendance_date, "
+                + "r.check_in_at, r.check_out_at, r.total_hours "
+                + "FROM attendance_records r "
+                + "JOIN employees e ON r.employee_id = e.employee_id "
+                + "WHERE r.attendance_date = ? AND e.manager_username = ? "
+                + "ORDER BY e.full_name ASC";
+
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, date);
+            statement.setString(2, managerUsername);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<AttendanceRecord> records = new ArrayList<>();
+                while (resultSet.next()) {
+                    double dbHours = resultSet.getDouble("total_hours");
+                    Double totalHours = resultSet.wasNull() ? null : dbHours;
+                    AttendanceRecord record = new AttendanceRecord(
+                            resultSet.getInt("record_id"),
+                            resultSet.getString("employee_id"),
+                            resultSet.getString("attendance_date"),
+                            resultSet.getString("check_in_at"),
+                            resultSet.getString("check_out_at"),
+                            totalHours
+                    );
+                    record.setEmployeeName(resultSet.getString("full_name"));
+                    records.add(record);
+                }
+                return records;
+            }
+        }
+    }
+
     public List<AttendanceRecord> getRecordsByDate(String date) throws SQLException {
         String sql = "SELECT r.record_id, r.employee_id, e.full_name, r.attendance_date, "
                 + "r.check_in_at, r.check_out_at, r.total_hours "
@@ -130,6 +163,22 @@ public class AttendanceService {
                     records.add(record);
                 }
                 return records;
+            }
+        }
+    }
+
+    public double getTotalHoursForMonth(String employeeId, int month, int year) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(total_hours), 0) FROM attendance_records "
+                + "WHERE employee_id = ? "
+                + "AND strftime('%m', attendance_date) = ? "
+                + "AND strftime('%Y', attendance_date) = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, employeeId);
+            statement.setString(2, String.format("%02d", month));
+            statement.setString(3, String.valueOf(year));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getDouble(1) : 0.0;
             }
         }
     }

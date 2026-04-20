@@ -11,6 +11,12 @@ public class PayrollService {
 
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
 
+    /**
+     * Generate payroll for an employee.
+     * Only HR Managers can generate payroll.
+     * After generation, updates the employee's last_net_salary so their profile
+     * always reflects the most recent pay.
+     */
     public PayrollRecord generatePayroll(AppUser generatedBy, String employeeId,
                                          int month, int year,
                                          double baseSalary, double overtimeHours,
@@ -18,7 +24,8 @@ public class PayrollService {
                                          String notes) throws SQLException {
 
         if (!generatedBy.canGeneratePayroll()) {
-            throw new IllegalArgumentException("You are not authorized to generate payroll.");
+            throw new IllegalArgumentException(
+                    "Only Administrators are authorized to generate payroll.");
         }
 
         if (employeeId == null || employeeId.isBlank()) {
@@ -30,55 +37,78 @@ public class PayrollService {
             throw new IllegalArgumentException("Employee not found: " + employeeId);
         }
 
+        if (!employee.isActive()) {
+            throw new IllegalArgumentException(
+                    "Cannot generate payroll for an inactive employee.");
+        }
+
         if (month < 1 || month > 12) {
             throw new IllegalArgumentException("Month must be between 1 and 12.");
         }
 
         if (year < 2000 || year > 2100) {
-            throw new IllegalArgumentException("Please enter a valid year.");
+            throw new IllegalArgumentException("Please enter a valid year (2000–2100).");
         }
 
         if (baseSalary < 0 || overtimeHours < 0 || overtimeRate < 0 || deductions < 0) {
             throw new IllegalArgumentException("Salary values cannot be negative.");
         }
 
-        // Check for duplicate payroll record for same employee/month/year
         if (payrollExists(employeeId, month, year)) {
             throw new IllegalArgumentException(
                     "Payroll for " + employee.getFullName() + " already exists for this period.");
         }
 
         double grossSalary = baseSalary + (overtimeHours * overtimeRate);
-        double netSalary = Math.max(0, grossSalary - deductions);
+        double netSalary   = Math.max(0, grossSalary - deductions);
 
-        String sql = "INSERT INTO payroll_records "
+        String insertSql = "INSERT INTO payroll_records "
                 + "(employee_id, month, year, base_salary, overtime_hours, overtime_rate, "
                 + "deductions, gross_salary, net_salary, generated_by, notes) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql,
-                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = Database.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                int newId;
+                try (PreparedStatement st = conn.prepareStatement(insertSql,
+                        java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                    st.setString(1, employeeId);
+                    st.setInt(2, month);
+                    st.setInt(3, year);
+                    st.setDouble(4, baseSalary);
+                    st.setDouble(5, overtimeHours);
+                    st.setDouble(6, overtimeRate);
+                    st.setDouble(7, deductions);
+                    st.setDouble(8, grossSalary);
+                    st.setDouble(9, netSalary);
+                    st.setString(10, generatedBy.getUsername());
+                    st.setString(11, notes == null || notes.isBlank() ? null : notes.trim());
+                    st.executeUpdate();
 
-            statement.setString(1, employeeId);
-            statement.setInt(2, month);
-            statement.setInt(3, year);
-            statement.setDouble(4, baseSalary);
-            statement.setDouble(5, overtimeHours);
-            statement.setDouble(6, overtimeRate);
-            statement.setDouble(7, deductions);
-            statement.setDouble(8, grossSalary);
-            statement.setDouble(9, netSalary);
-            statement.setString(10, generatedBy.getUsername());
-            statement.setString(11, notes == null || notes.isBlank() ? null : notes.trim());
-            statement.executeUpdate();
+                    try (ResultSet keys = st.getGeneratedKeys()) {
+                        newId = keys.next() ? keys.getInt(1) : -1;
+                    }
+                }
 
-            try (ResultSet keys = statement.getGeneratedKeys()) {
-                int newId = keys.next() ? keys.getInt(1) : -1;
+                // ── Update employee's last net salary ────────────────────
+                // Keeps employee profile salary current after each payroll run.
+                try (PreparedStatement upd = conn.prepareStatement(
+                        "UPDATE employees SET last_net_salary = ? WHERE employee_id = ?")) {
+                    upd.setDouble(1, netSalary);
+                    upd.setString(2, employeeId);
+                    upd.executeUpdate();
+                }
+
+                conn.commit();
                 return new PayrollRecord(newId, employeeId, employee.getFullName(),
                         month, year, baseSalary, overtimeHours, overtimeRate,
                         deductions, grossSalary, netSalary, null,
                         generatedBy.getUsername(), notes);
+
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
             }
         }
     }
@@ -92,12 +122,10 @@ public class PayrollService {
                 + "WHERE pr.employee_id = ? "
                 + "ORDER BY pr.year DESC, pr.month DESC";
 
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, employeeId);
-            try (ResultSet rs = statement.executeQuery()) {
-                return readRecords(rs);
-            }
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, employeeId);
+            try (ResultSet rs = st.executeQuery()) { return readRecords(rs); }
         }
     }
 
@@ -109,23 +137,21 @@ public class PayrollService {
                 + "JOIN employees e ON e.employee_id = pr.employee_id "
                 + "ORDER BY pr.year DESC, pr.month DESC, e.full_name ASC";
 
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql);
+             ResultSet rs = st.executeQuery()) {
             return readRecords(rs);
         }
     }
 
     private boolean payrollExists(String employeeId, int month, int year) throws SQLException {
         String sql = "SELECT 1 FROM payroll_records WHERE employee_id = ? AND month = ? AND year = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, employeeId);
-            statement.setInt(2, month);
-            statement.setInt(3, year);
-            try (ResultSet rs = statement.executeQuery()) {
-                return rs.next();
-            }
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, employeeId);
+            st.setInt(2, month);
+            st.setInt(3, year);
+            try (ResultSet rs = st.executeQuery()) { return rs.next(); }
         }
     }
 

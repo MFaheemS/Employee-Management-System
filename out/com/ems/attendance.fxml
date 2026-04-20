@@ -25,6 +25,8 @@
                         maxWidth="Infinity" onAction="#goToAdd"/>
                 <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-button"
                         maxWidth="Infinity" onAction="#goToDeactivate"/>
+                <Button fx:id="departmentNavButton" text="⊠  Departments" styleClass="side-nav-button"
+                        maxWidth="Infinity" onAction="#goToDepartments"/>
                 <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
                         maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
                 <Button text="◉  Attendance" styleClass="side-nav-active"
@@ -80,22 +82,22 @@
                                 <HBox styleClass="kpi-grid" maxWidth="Infinity">
                                     <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                                         <Label text="Employee" styleClass="kpi-title"/>
-                                        <Label fx:id="employeeSummaryLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label fx:id="employeeSummaryLabel" styleClass="kpi-value-sm" wrapText="true"/>
                                         <Label text="Profile currently signed in" styleClass="kpi-note"/>
                                     </VBox>
                                     <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                                         <Label text="Status" styleClass="kpi-title"/>
-                                        <Label fx:id="todayStatusLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label fx:id="todayStatusLabel" styleClass="kpi-value-sm" wrapText="true"/>
                                         <Label text="Current attendance state" styleClass="kpi-note"/>
                                     </VBox>
                                     <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                                         <Label text="Check-in" styleClass="kpi-title"/>
-                                        <Label fx:id="todayCheckInLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label fx:id="todayCheckInLabel" styleClass="kpi-value-sm" wrapText="true"/>
                                         <Label text="Recorded start time" styleClass="kpi-note"/>
                                     </VBox>
                                     <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                                         <Label text="Check-out" styleClass="kpi-title"/>
-                                        <Label fx:id="todayCheckOutLabel" styleClass="kpi-value" wrapText="true"/>
+                                        <Label fx:id="todayCheckOutLabel" styleClass="kpi-value-sm" wrapText="true"/>
                                         <Label text="Recorded end time" styleClass="kpi-note"/>
                                     </VBox>
                                 </HBox>

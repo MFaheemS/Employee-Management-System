@@ -28,6 +28,8 @@
             maxWidth="Infinity" onAction="#goToAdd"/>
         <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-active"
             maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="departmentNavButton" text="⊠  Departments" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDepartments"/>
         <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
         <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
@@ -77,8 +79,9 @@
               <Label text="Use this form only for role changes, exits, or compliance deactivation scenarios."
                    styleClass="page-subtitle"/>
 
-              <VBox styleClass="section-card" spacing="0">
-                <Label text="Deactivation Details" styleClass="card-title"/>
+              <!-- Admin: direct deactivation -->
+              <VBox fx:id="adminDeactivateSection" styleClass="section-card" spacing="0">
+                <Label text="Direct Deactivation" styleClass="card-title"/>
 
                 <Label text="Employee ID to Deactivate" styleClass="field-label"/>
                 <TextField fx:id="employeeField"
@@ -99,6 +102,59 @@
                   styleClass="btn-red"
                   maxWidth="Infinity"
                   onAction="#handleDeactivate"/>
+              </VBox>
+
+              <!-- Admin: pending deactivation requests from managers -->
+              <VBox fx:id="pendingRequestsSection" styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="⏳  Pending Deactivation Requests" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Button text="Refresh" styleClass="btn-neutral" onAction="#handleRefreshRequests"/>
+                </HBox>
+                <Label text="Submitted by managers — approve to deactivate the employee, reject to cancel."
+                       styleClass="page-subtitle" style="-fx-padding: 0 0 8 0;"/>
+                <TableView fx:id="requestsTable" prefHeight="240">
+                  <columns>
+                    <TableColumn fx:id="colReqEmpId"   text="Employee ID" prefWidth="110"/>
+                    <TableColumn fx:id="colReqEmpName" text="Employee Name" prefWidth="160"/>
+                    <TableColumn fx:id="colReqBy"      text="Requested By" prefWidth="120"/>
+                    <TableColumn fx:id="colReqReason"  text="Reason" prefWidth="230"/>
+                    <TableColumn fx:id="colReqAt"      text="Requested At" prefWidth="150"/>
+                  </columns>
+                </TableView>
+                <Region prefHeight="10"/>
+                <HBox spacing="10">
+                  <Button text="✔  Approve Deactivation" styleClass="btn-red" onAction="#handleApproveRequest"/>
+                  <Button text="✖  Reject Request" styleClass="btn-neutral" onAction="#handleRejectRequest"/>
+                </HBox>
+                <Label fx:id="requestStatusLabel" styleClass="status-label" wrapText="true"/>
+              </VBox>
+
+              <!-- Manager: submit deactivation request -->
+              <VBox fx:id="managerRequestSection" styleClass="section-card" spacing="0">
+                <Label text="Request Employee Deactivation" styleClass="card-title"/>
+                <Label text="Submit a deactivation request to the admin. The employee will be deactivated once approved."
+                       styleClass="page-subtitle" style="-fx-padding: 0 0 8 0;"/>
+
+                <Label text="Employee ID" styleClass="field-label"/>
+                <TextField fx:id="employeeField"
+                       styleClass="input-field"
+                       promptText="EMP-1001"
+                       maxWidth="Infinity"/>
+
+                <Label text="Reason" styleClass="field-label"/>
+                <TextArea fx:id="reasonField"
+                      styleClass="input-area"
+                      promptText="Explain the reason for requesting deactivation"
+                      maxWidth="Infinity"
+                      wrapText="true"/>
+
+                <Region prefHeight="16"/>
+                <Button text="Submit Deactivation Request"
+                  styleClass="btn-gold"
+                  maxWidth="Infinity"
+                  onAction="#handleDeactivate"/>
+                <Label fx:id="requestStatusLabel" styleClass="status-label" wrapText="true"/>
               </VBox>
             </VBox>
           </content>

@@ -57,6 +57,9 @@ public class EmployeeSearchController extends BaseController {
     private Button documentsNavButton;
 
     @FXML
+    private Button departmentNavButton;
+
+    @FXML
     private TableView<Employee> searchResultTable;
 
     @FXML
@@ -204,6 +207,14 @@ public class EmployeeSearchController extends BaseController {
                 leaveApprovalsNavButton
         );
         configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
+        configureDepartmentNavigation(departmentNavButton);
+    }
+
+    @FXML
+    private void goToDepartments() {
+        try { Main.showDepartmentManagement(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
     }
 
     private void configureTable() {
@@ -218,7 +229,13 @@ public class EmployeeSearchController extends BaseController {
 
     private void runSearch() {
         try {
-            List<Employee> employees = employeeRepository.searchEmployees(searchField.getText());
+            AppUser user = currentUser();
+            List<Employee> employees;
+            if (user.isAdmin()) {
+                employees = employeeRepository.searchManagersOnly(searchField.getText());
+            } else {
+                employees = employeeRepository.searchEmployeesForManager(searchField.getText(), user.getUsername());
+            }
             searchResultTable.setItems(FXCollections.observableArrayList(employees));
 
             if (employees.isEmpty()) {

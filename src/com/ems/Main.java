@@ -41,6 +41,7 @@ public class Main extends Application {
     public static void showEmployeeSearch() throws Exception { showScene("employee_search.fxml"); }
     public static void showPayroll() throws Exception { showScene("payroll.fxml"); }
     public static void showDocuments() throws Exception { showScene("document_upload.fxml"); }
+    public static void showDepartmentManagement() throws Exception { showScene("department_management.fxml"); }
 
     public static void showHomeForCurrentUser() throws Exception {
         AppUser user = AppSession.getCurrentUser();

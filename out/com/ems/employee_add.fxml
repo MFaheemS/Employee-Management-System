@@ -29,6 +29,8 @@
             maxWidth="Infinity" onAction="#goToAdd"/>
         <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="departmentNavButton" text="⊠  Departments" styleClass="side-nav-button"
+            maxWidth="Infinity" onAction="#goToDepartments"/>
         <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
             maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
         <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
@@ -109,8 +111,8 @@
 
                   <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <Label text="Department" styleClass="field-label"/>
-                    <TextField fx:id="departmentField" styleClass="input-field"
-                           promptText="Human Resources" maxWidth="Infinity"/>
+                    <ComboBox fx:id="departmentComboBox" styleClass="input-field"
+                           maxWidth="Infinity" promptText="Select department"/>
                   </VBox>
 
                   <VBox GridPane.columnIndex="0" GridPane.rowIndex="2">

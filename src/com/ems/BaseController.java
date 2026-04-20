@@ -143,11 +143,22 @@ public abstract class BaseController {
         }
 
         boolean hasEmployeeProfile = hasLinkedEmployeeProfile(user);
+        // Admin creates managers; Manager creates/deactivates their own dept employees
         setNavigationVisibility(employeeAddButton, user.canManageEmployees());
         setNavigationVisibility(employeeDeactivateButton, user.canManageEmployees());
+        if (employeeAddButton != null) {
+            employeeAddButton.setText(user.isAdmin() ? "＋  Manager Add" : "＋  Employee Add");
+        }
+        if (employeeDeactivateButton != null) {
+            employeeDeactivateButton.setText(user.isAdmin() ? "⊗  Manager Deactivate" : "⊗  Deactivate");
+        }
+        // Admin + Manager can search (each scoped in the controller)
         setNavigationVisibility(employeeSearchButton, user.canSearchEmployees());
+        // Attendance: employees and managers with a linked profile
         setNavigationVisibility(attendanceButton, hasEmployeeProfile);
-        setNavigationVisibility(leaveApplyButton, hasEmployeeProfile);
+        // Leave apply: employees only (managers do not apply for leave)
+        setNavigationVisibility(leaveApplyButton, hasEmployeeProfile && user.isEmployee());
+        // Only HR Manager handles leave approvals
         setNavigationVisibility(leaveApprovalsButton, user.canManageLeaveApprovals());
 
         playEntranceAnimation(firstAvailable(userLabel,
@@ -164,13 +175,18 @@ public abstract class BaseController {
                                                   Button documentsButton) {
         AppUser user = currentUser();
         if (user == null) return;
-        // Dashboard visible to everyone
         setNavigationVisibility(dashboardButton, true);
-        // Payroll visible to everyone (content filtered by role inside screen)
-        setNavigationVisibility(payrollButton, true);
-        // Documents visible to everyone with a profile, or admins
+        // Payroll: Admin generates + views all; Employee views own slips; Manager has no payroll
+        setNavigationVisibility(payrollButton, user.isAdmin() || user.isEmployee());
+        // Documents: Employee uploads own docs; Manager views their department's docs
         boolean hasProfile = hasLinkedEmployeeProfile(user);
-        setNavigationVisibility(documentsButton, hasProfile || user.isAdmin());
+        setNavigationVisibility(documentsButton, hasProfile || user.isManager());
+    }
+
+    protected void configureDepartmentNavigation(Button departmentButton) {
+        AppUser user = currentUser();
+        if (user == null) return;
+        setNavigationVisibility(departmentButton, user.canManageDepartments());
     }
 
     protected void setNavigationVisibility(Button button, boolean allowed) {

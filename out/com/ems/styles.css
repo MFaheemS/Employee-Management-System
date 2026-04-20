@@ -401,6 +401,12 @@
     -fx-font-weight: 800;
 }
 
+.kpi-value-sm {
+    -fx-text-fill: -app-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
 .kpi-value-blue  { -fx-text-fill: #0284C7; -fx-font-size: 32px; -fx-font-weight: 800; }
 .kpi-value-green { -fx-text-fill: #059669; -fx-font-size: 32px; -fx-font-weight: 800; }
 .kpi-value-orange{ -fx-text-fill: #D97706; -fx-font-size: 32px; -fx-font-weight: 800; }

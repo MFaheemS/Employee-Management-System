@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ems.DepartmentController"
+      styleClass="root-pane"
+      stylesheets="@styles.css"
+      prefWidth="1200" prefHeight="780">
+
+  <left>
+    <VBox styleClass="app-sidebar" prefWidth="234" BorderPane.alignment="CENTER">
+      <VBox spacing="3">
+        <HBox alignment="CENTER_LEFT" spacing="8">
+          <Label text="⬡" style="-fx-text-fill: #A78BFA; -fx-font-size: 22px;"/>
+          <Label text="EMS" styleClass="sidebar-logo"/>
+        </HBox>
+        <Label text="People operations hub" styleClass="sidebar-subtitle"/>
+      </VBox>
+
+      <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
+        <Label text="WORKSPACE" styleClass="side-section-label"/>
+        <Button fx:id="dashboardNavButton"         text="⊞  Dashboard"      styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToDashboard"/>
+        <Button fx:id="employeeAddNavButton"        text="＋  Employee Add"   styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate"      styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="departmentNavButton"         text="⊠  Departments"    styleClass="side-nav-active"  maxWidth="Infinity" onAction="#goToDepartments"/>
+        <Button fx:id="employeeSearchNavButton"     text="⊛  Employee Search" styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+        <Button fx:id="attendanceNavButton"         text="◉  Attendance"      styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToAttendance"/>
+        <Button fx:id="leaveApplyNavButton"         text="◫  Leave Requests"  styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton"     text="✔  Leave Approvals" styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="payrollNavButton"            text="◈  Payroll"         styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToPayroll"/>
+        <Button fx:id="documentsNavButton"          text="◻  Documents"       styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToDocuments"/>
+
+        <Label text="ACCOUNT" styleClass="side-section-label"/>
+        <Button text="⊘  Log Out" styleClass="side-nav-button" maxWidth="Infinity" onAction="#handleLogout"/>
+      </VBox>
+
+      <VBox spacing="5">
+        <Label text="Signed in as" styleClass="sidebar-footnote"/>
+        <Label fx:id="userLabel" styleClass="sidebar-user-chip" maxWidth="Infinity"/>
+      </VBox>
+    </VBox>
+  </left>
+
+  <center>
+    <BorderPane styleClass="workspace-shell">
+      <top>
+        <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
+          <VBox spacing="0">
+            <Label text="Department Management" styleClass="topbar-title"/>
+            <Label text="Create departments and assign responsible managers" styleClass="topbar-subtitle"/>
+          </VBox>
+          <Region HBox.hgrow="ALWAYS"/>
+          <Label text="Admin Tools" styleClass="topbar-pill"/>
+        </HBox>
+      </top>
+
+      <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+          <content>
+            <VBox styleClass="content-body" spacing="20">
+
+              <!-- ═══ Create Department ═══ -->
+              <VBox styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="⊠  Create New Department" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="MANAGER REQUIRED" styleClass="badge-pill"/>
+                </HBox>
+                <Label text="Every department must have a dedicated manager assigned at creation."
+                       styleClass="page-subtitle" style="-fx-padding: 0 0 12 0;"/>
+
+                <GridPane hgap="14" vgap="3" maxWidth="Infinity">
+                  <columnConstraints>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+                  </columnConstraints>
+
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="Department Name" styleClass="field-label"/>
+                    <TextField fx:id="deptNameField" styleClass="input-field"
+                               promptText="e.g. Human Resources" maxWidth="Infinity"/>
+                  </VBox>
+
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label text="Assign Manager" styleClass="field-label"/>
+                    <ComboBox fx:id="managerComboBox" styleClass="input-field"
+                              maxWidth="Infinity" promptText="Select a manager"/>
+                  </VBox>
+                </GridPane>
+
+                <Region prefHeight="14"/>
+                <Button text="Create Department" styleClass="btn-gold"
+                        maxWidth="Infinity" onAction="#handleAddDepartment"/>
+                <Region prefHeight="6"/>
+                <Label fx:id="statusLabel" styleClass="status-label" maxWidth="Infinity"/>
+              </VBox>
+
+              <!-- ═══ Existing Departments ═══ -->
+              <VBox styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="🏢  All Departments" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="SYSTEM VIEW" styleClass="badge-pill"/>
+                </HBox>
+                <TableView fx:id="departmentTable" prefHeight="340">
+                  <columns>
+                    <TableColumn fx:id="colDeptName"  text="Department"      prefWidth="300"/>
+                    <TableColumn fx:id="colManager"   text="Manager"         prefWidth="250"/>
+                    <TableColumn fx:id="colCreatedAt" text="Created At"      prefWidth="220"/>
+                  </columns>
+                </TableView>
+              </VBox>
+
+            </VBox>
+          </content>
+        </ScrollPane>
+      </center>
+    </BorderPane>
+  </center>
+</BorderPane>

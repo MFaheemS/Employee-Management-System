@@ -22,28 +22,19 @@
 
       <VBox styleClass="sidebar-section" VBox.vgrow="ALWAYS">
         <Label text="WORKSPACE" styleClass="side-section-label"/>
-        <Button fx:id="dashboardNavButton" text="⊞  Dashboard" styleClass="side-nav-active"
-            maxWidth="Infinity" onAction="#goToDashboard"/>
-        <Button fx:id="employeeAddNavButton" text="＋  Employee Add" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToAdd"/>
-        <Button fx:id="employeeDeactivateNavButton" text="⊗  Deactivate" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToDeactivate"/>
-        <Button fx:id="employeeSearchNavButton" text="⊛  Employee Search" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
-        <Button fx:id="attendanceNavButton" text="◉  Attendance" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToAttendance"/>
-        <Button fx:id="leaveApplyNavButton" text="◫  Leave Requests" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToLeaveApply"/>
-        <Button fx:id="leaveApprovalsNavButton" text="✔  Leave Approvals" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
-        <Button fx:id="payrollNavButton" text="◈  Payroll" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToPayroll"/>
-        <Button fx:id="documentsNavButton" text="◻  Documents" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#goToDocuments"/>
+        <Button fx:id="dashboardNavButton"          text="⊞  Dashboard"        styleClass="side-nav-active"  maxWidth="Infinity" onAction="#goToDashboard"/>
+        <Button fx:id="employeeAddNavButton"         text="＋  Employee Add"     styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToAdd"/>
+        <Button fx:id="employeeDeactivateNavButton"  text="⊗  Deactivate"        styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToDeactivate"/>
+        <Button fx:id="departmentNavButton"          text="⊠  Departments"       styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToDepartments"/>
+        <Button fx:id="employeeSearchNavButton"      text="⊛  Employee Search"   styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToEmployeeSearch"/>
+        <Button fx:id="attendanceNavButton"          text="◉  Attendance"        styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToAttendance"/>
+        <Button fx:id="leaveApplyNavButton"          text="◫  Leave Requests"    styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToLeaveApply"/>
+        <Button fx:id="leaveApprovalsNavButton"      text="✔  Leave Approvals"   styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToLeaveApprovals"/>
+        <Button fx:id="payrollNavButton"             text="◈  Payroll"           styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToPayroll"/>
+        <Button fx:id="documentsNavButton"           text="◻  Documents"         styleClass="side-nav-button" maxWidth="Infinity" onAction="#goToDocuments"/>
 
         <Label text="ACCOUNT" styleClass="side-section-label"/>
-        <Button text="⊘  Log Out" styleClass="side-nav-button"
-            maxWidth="Infinity" onAction="#handleLogout"/>
+        <Button text="⊘  Log Out" styleClass="side-nav-button" maxWidth="Infinity" onAction="#handleLogout"/>
       </VBox>
 
       <VBox spacing="5">
@@ -59,7 +50,7 @@
         <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
           <VBox spacing="0">
             <Label text="Dashboard" styleClass="topbar-title"/>
-            <Label text="Workforce overview and key metrics" styleClass="topbar-subtitle"/>
+            <Label fx:id="welcomeLabel" styleClass="topbar-subtitle"/>
           </VBox>
           <Region HBox.hgrow="ALWAYS"/>
           <Label text="⬤  Live" styleClass="topbar-pill-green"/>
@@ -71,14 +62,8 @@
           <content>
             <VBox styleClass="content-body" spacing="20">
 
-              <!-- Page header -->
-              <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Good day 👋" styleClass="page-title"/>
-              </HBox>
-              <Label fx:id="welcomeLabel" styleClass="page-subtitle"/>
-
-              <!-- KPI Cards Row -->
-              <HBox spacing="14">
+              <!-- ═══════════════ ADMIN KPI STRIP ═══════════════ -->
+              <HBox fx:id="kpiSection" spacing="14">
                 <VBox styleClass="kpi-card-blue" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                   <Label text="👥" styleClass="kpi-icon"/>
                   <Label text="TOTAL EMPLOYEES" styleClass="kpi-title"/>
@@ -91,60 +76,159 @@
                   <Label fx:id="activeEmployeesLabel" text="—" styleClass="kpi-value-green"/>
                   <Label text="Currently active" styleClass="kpi-note"/>
                 </VBox>
-                <VBox styleClass="kpi-card-orange" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                  <Label text="🕐" styleClass="kpi-icon"/>
-                  <Label text="PENDING LEAVES" styleClass="kpi-title"/>
-                  <Label fx:id="pendingLeavesLabel" text="—" styleClass="kpi-value-orange"/>
-                  <Label text="Awaiting approval" styleClass="kpi-note"/>
-                </VBox>
-                <VBox styleClass="kpi-card-purple" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                  <Label text="📅" styleClass="kpi-icon"/>
-                  <Label text="TODAY'S ATTENDANCE" styleClass="kpi-title"/>
-                  <Label fx:id="todayAttendanceLabel" text="—" styleClass="kpi-value-purple"/>
-                  <Label text="Checked in today" styleClass="kpi-note"/>
-                </VBox>
               </HBox>
 
-              <!-- Department Breakdown -->
-              <VBox styleClass="section-card" spacing="0">
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                  <Label text="🏢  Department Summary" styleClass="card-title"/>
-                  <Region HBox.hgrow="ALWAYS"/>
-                  <Label text="BY DEPT" styleClass="badge-pill"/>
-                </HBox>
-                <TableView fx:id="deptTable" prefHeight="200">
-                  <columns>
-                    <TableColumn fx:id="colDept" text="Department" prefWidth="240"/>
-                    <TableColumn fx:id="colDeptCount" text="Employees" prefWidth="130"/>
-                    <TableColumn fx:id="colDeptActive" text="Active" prefWidth="130"/>
-                  </columns>
-                </TableView>
+              <!-- ═══════════════ ADMIN SECTION ═══════════════ -->
+              <VBox fx:id="adminSection" spacing="16">
+
+                <!-- Department breakdown -->
+                <VBox styleClass="section-card" spacing="0">
+                  <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="🏢  Department Breakdown" styleClass="card-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="SYSTEM VIEW" styleClass="badge-pill"/>
+                  </HBox>
+                  <TableView fx:id="deptTable" prefHeight="200">
+                    <columns>
+                      <TableColumn fx:id="colDept"        text="Department" prefWidth="200"/>
+                      <TableColumn fx:id="colDeptManager" text="Manager"    prefWidth="160"/>
+                      <TableColumn fx:id="colDeptCount"   text="Total"      prefWidth="100"/>
+                      <TableColumn fx:id="colDeptActive"  text="Active"     prefWidth="100"/>
+                    </columns>
+                  </TableView>
+                </VBox>
               </VBox>
 
-              <!-- Recent Leave Requests (managers/admins) -->
-              <VBox fx:id="leaveSection" styleClass="section-card" spacing="0">
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                  <Label text="📋  Recent Leave Requests" styleClass="card-title"/>
-                  <Region HBox.hgrow="ALWAYS"/>
-                  <Label text="PENDING REVIEW" styleClass="badge-pill"/>
+
+              <!-- ═══════════════ MANAGER (HR) SECTION ═══════════════ -->
+              <VBox fx:id="managerSection" spacing="16">
+
+                <!-- Manager KPI cards -->
+                <HBox spacing="14">
+                  <VBox styleClass="kpi-card-blue" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                    <Label text="🧑‍💼" styleClass="kpi-icon"/>
+                    <Label text="MY TEAM SIZE" styleClass="kpi-title"/>
+                    <Label fx:id="managerTeamSizeLabel" text="—" styleClass="kpi-value-blue"/>
+                    <Label text="Active reports" styleClass="kpi-note"/>
+                  </VBox>
+                  <VBox styleClass="kpi-card-orange" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                    <Label text="📬" styleClass="kpi-icon"/>
+                    <Label text="PENDING APPROVALS" styleClass="kpi-title"/>
+                    <Label fx:id="managerPendingLeavesLabel" text="—" styleClass="kpi-value-orange"/>
+                    <Label text="Leaves to review" styleClass="kpi-note"/>
+                  </VBox>
+                  <VBox styleClass="kpi-card-purple" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                    <Label text="📅" styleClass="kpi-icon"/>
+                    <Label text="TODAY PRESENT" styleClass="kpi-title"/>
+                    <Label fx:id="managerTodayAttendanceLabel" text="—" styleClass="kpi-value-purple"/>
+                    <Label text="Team check-ins" styleClass="kpi-note"/>
+                  </VBox>
+                  <VBox styleClass="kpi-card-green" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                    <Label text="💰" styleClass="kpi-icon"/>
+                    <Label text="PAYROLL DUE" styleClass="kpi-title"/>
+                    <Label fx:id="managerPayrollDueLabel" text="—" styleClass="kpi-value-green"/>
+                    <Label text="Not paid this month" styleClass="kpi-note"/>
+                  </VBox>
                 </HBox>
-                <TableView fx:id="leaveTable" prefHeight="220">
-                  <columns>
-                    <TableColumn fx:id="colLeaveEmp" text="Employee" prefWidth="170"/>
-                    <TableColumn fx:id="colLeaveType" text="Type" prefWidth="110"/>
-                    <TableColumn fx:id="colLeaveDates" text="Dates" prefWidth="210"/>
-                    <TableColumn fx:id="colLeaveStatus" text="Status" prefWidth="110"/>
-                    <TableColumn fx:id="colLeaveManager" text="Manager" prefWidth="130"/>
-                  </columns>
-                </TableView>
+
+                <!-- Pending leave requests table for this manager -->
+                <VBox styleClass="section-card" spacing="0">
+                  <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="📬  Pending Leave Requests" styleClass="card-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Go to Leave Approvals →" styleClass="btn-neutral"
+                        onAction="#goToLeaveApprovals"/>
+                  </HBox>
+                  <TableView fx:id="pendingLeaveTable" prefHeight="220">
+                    <columns>
+                      <TableColumn fx:id="colMgrLeaveEmp"   text="Employee" prefWidth="200"/>
+                      <TableColumn fx:id="colMgrLeaveType"  text="Type"     prefWidth="130"/>
+                      <TableColumn fx:id="colMgrLeaveDates" text="Dates"    prefWidth="230"/>
+                      <TableColumn fx:id="colMgrLeaveDays"  text="Days"     prefWidth="80"/>
+                    </columns>
+                  </TableView>
+                </VBox>
               </VBox>
 
-              <!-- My Profile (employees) -->
-              <VBox fx:id="profileSection" styleClass="section-card" spacing="8">
-                <Label text="👤  My Profile" styleClass="card-title"/>
-                <Label fx:id="profileNameLabel" styleClass="summary-highlight"/>
-                <Label fx:id="profileDetailLabel" styleClass="summary-label" wrapText="true"/>
-                <Label fx:id="profileLeaveLabel" styleClass="summary-label"/>
+              <!-- ═══════════════ EMPLOYEE PROFILE SECTION ═══════════════ -->
+              <VBox fx:id="employeeSection" styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="👤  My Profile" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label fx:id="empStatusLabel" styleClass="chip-green"/>
+                </HBox>
+
+                <!-- Profile grid -->
+                <GridPane hgap="16" vgap="8" maxWidth="Infinity"
+                          style="-fx-padding: 4 0 16 0;">
+                  <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                  </columnConstraints>
+
+                  <!-- Row 0: name + ID -->
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="2">
+                    <Label text="Full Name" styleClass="field-label"/>
+                    <Label fx:id="empNameLabel" styleClass="summary-highlight"/>
+                  </VBox>
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="2">
+                    <Label text="Employee ID" styleClass="field-label"/>
+                    <Label fx:id="empIdLabel" styleClass="summary-label"/>
+                  </VBox>
+
+                  <!-- Row 1: title + dept -->
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="2">
+                    <Label text="Job Title" styleClass="field-label"/>
+                    <Label fx:id="empTitleLabel" styleClass="summary-label"/>
+                  </VBox>
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="2">
+                    <Label text="Department" styleClass="field-label"/>
+                    <Label fx:id="empDeptLabel" styleClass="summary-label"/>
+                  </VBox>
+
+                  <!-- Row 2: email + phone -->
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="2" spacing="2">
+                    <Label text="Email" styleClass="field-label"/>
+                    <Label fx:id="empEmailLabel" styleClass="summary-label"/>
+                  </VBox>
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="2" spacing="2">
+                    <Label text="Phone" styleClass="field-label"/>
+                    <Label fx:id="empPhoneLabel" styleClass="summary-label"/>
+                  </VBox>
+
+                  <!-- Row 3: manager + attendance -->
+                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="3" spacing="2">
+                    <Label text="Reporting Manager" styleClass="field-label"/>
+                    <Label fx:id="empManagerLabel" styleClass="summary-label"/>
+                  </VBox>
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="3" spacing="2">
+                    <Label text="Today's Attendance" styleClass="field-label"/>
+                    <Label fx:id="empTodayAttLabel" styleClass="summary-label"/>
+                  </VBox>
+                </GridPane>
+
+                <!-- Pay / Leave strip -->
+                <HBox spacing="14">
+                  <VBox styleClass="kpi-card-green" HBox.hgrow="ALWAYS">
+                    <Label text="💰" styleClass="kpi-icon"/>
+                    <Label text="BASE SALARY" styleClass="kpi-title"/>
+                    <Label fx:id="empBaseSalaryLabel" styleClass="kpi-value-green"/>
+                    <Label text="Monthly gross" styleClass="kpi-note"/>
+                  </VBox>
+                  <VBox styleClass="kpi-card-blue" HBox.hgrow="ALWAYS">
+                    <Label text="💳" styleClass="kpi-icon"/>
+                    <Label text="LAST NET PAY" styleClass="kpi-title"/>
+                    <Label fx:id="empLastPaidLabel" styleClass="kpi-value-blue"/>
+                    <Label text="After deductions" styleClass="kpi-note"/>
+                  </VBox>
+                  <VBox styleClass="kpi-card-orange" HBox.hgrow="ALWAYS">
+                    <Label text="🏖" styleClass="kpi-icon"/>
+                    <Label text="LEAVE BALANCE" styleClass="kpi-title"/>
+                    <Label fx:id="empLeaveBalanceLabel" styleClass="kpi-value-orange"/>
+                    <Label text="Available days" styleClass="kpi-note"/>
+                  </VBox>
+                </HBox>
+
               </VBox>
 
             </VBox>

@@ -90,15 +90,11 @@ public class LeaveManagementService {
     }
 
     public List<LeaveRequest> getPendingRequestsForApprover(AppUser user) throws SQLException {
-        String sql = buildApproverQuery(true, user.isAdmin());
-
+        // Only Managers can approve; Admin dashboard uses a read-only overview query instead.
+        String sql = buildApproverQuery(true);
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            if (!user.isAdmin()) {
-                statement.setString(1, user.getUsername());
-            }
-
+            statement.setString(1, user.getUsername());
             try (ResultSet resultSet = statement.executeQuery()) {
                 return readLeaveRequests(resultSet);
             }
@@ -106,25 +102,37 @@ public class LeaveManagementService {
     }
 
     public List<LeaveRequest> getDecisionHistoryForApprover(AppUser user) throws SQLException {
-        String sql = buildApproverQuery(false, user.isAdmin());
-
+        String sql = buildApproverQuery(false);
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            if (!user.isAdmin()) {
-                statement.setString(1, user.getUsername());
-            }
-
+            statement.setString(1, user.getUsername());
             try (ResultSet resultSet = statement.executeQuery()) {
                 return readLeaveRequests(resultSet);
             }
         }
     }
 
+    /** For Admin dashboard only – read-only overview of all pending leaves. */
+    public List<LeaveRequest> getAllPendingLeaves() throws SQLException {
+        String sql = "SELECT lr.request_id, lr.employee_id, e.full_name, lr.manager_username, lr.leave_type, "
+                + "lr.start_date, lr.end_date, lr.days_requested, lr.status, lr.comments, lr.requested_at, "
+                + "lr.decision_at, lr.decision_by "
+                + "FROM leave_requests lr "
+                + "JOIN employees e ON e.employee_id = lr.employee_id "
+                + "WHERE lr.status = 'Pending' "
+                + "ORDER BY lr.requested_at DESC";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql);
+             ResultSet rs = st.executeQuery()) {
+            return readLeaveRequests(rs);
+        }
+    }
+
     public String decideLeaveRequest(AppUser user, int requestId,
                                      String action, String comments) throws SQLException {
         if (user == null || !user.canManageLeaveApprovals()) {
-            throw new IllegalArgumentException("Unauthorized access attempt.");
+            throw new IllegalArgumentException(
+                    "Only HR Managers are authorized to approve or reject leave requests.");
         }
 
         String normalizedAction = action == null ? "" : action.trim();
@@ -221,16 +229,14 @@ public class LeaveManagementService {
         return requests;
     }
 
-    private String buildApproverQuery(boolean pendingOnly, boolean adminView) {
+    private String buildApproverQuery(boolean pendingOnly) {
         String statusFilter = pendingOnly ? "lr.status = 'Pending'" : "lr.status <> 'Pending'";
-        String managerFilter = adminView ? "" : " AND lr.manager_username = ?";
-
         return "SELECT lr.request_id, lr.employee_id, e.full_name, lr.manager_username, lr.leave_type, "
                 + "lr.start_date, lr.end_date, lr.days_requested, lr.status, lr.comments, lr.requested_at, "
                 + "lr.decision_at, lr.decision_by "
                 + "FROM leave_requests lr "
                 + "JOIN employees e ON e.employee_id = lr.employee_id "
-                + "WHERE " + statusFilter + managerFilter + " "
+                + "WHERE " + statusFilter + " AND lr.manager_username = ? "
                 + "ORDER BY lr.requested_at DESC, lr.request_id DESC";
     }
 

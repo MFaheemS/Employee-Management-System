@@ -63,6 +63,9 @@ public class LeaveApplicationController extends BaseController {
     private Button documentsNavButton;
 
     @FXML
+    private Button departmentNavButton;
+
+    @FXML
     private TableView<LeaveRequest> requestHistoryTable;
 
     @FXML
@@ -212,6 +215,14 @@ public class LeaveApplicationController extends BaseController {
                 leaveApprovalsNavButton
         );
         configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
+        configureDepartmentNavigation(departmentNavButton);
+    }
+
+    @FXML
+    private void goToDepartments() {
+        try { Main.showDepartmentManagement(); } catch (Exception e) {
+            showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Navigation Error", e.getMessage());
+        }
     }
 
     private void configureHistoryTable() {

@@ -13,6 +13,7 @@ public class Employee {
     private String managerUsername;
     private int leaveBalance;
     private double salary;
+    private double lastNetSalary;
 
     public Employee(String employeeId, String fullName, String jobTitle, String department, String email, boolean active) {
         this(employeeId, fullName, jobTitle, department, email, null, active, "Employee", null, 20, 0.0);
@@ -68,6 +69,10 @@ public class Employee {
     public int getLeaveBalance() { return leaveBalance; }
     public void setLeaveBalance(int leaveBalance) { this.leaveBalance = leaveBalance; }
 
-    public double getSalary() { return salary; }
+    public double getSalary()        { return salary; }
     public void setSalary(double salary) { this.salary = salary; }
+
+    /** The net salary from the most recently processed payroll run, 0 if none yet. */
+    public double getLastNetSalary() { return lastNetSalary; }
+    public void setLastNetSalary(double lastNetSalary) { this.lastNetSalary = lastNetSalary; }
 }

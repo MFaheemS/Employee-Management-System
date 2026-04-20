@@ -103,6 +103,26 @@ public final class Database {
                     + "FOREIGN KEY(employee_id) REFERENCES employees(employee_id)"
                     + ")");
 
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS departments ("
+                    + "department_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "department_name TEXT NOT NULL UNIQUE, "
+                    + "manager_username TEXT NOT NULL, "
+                    + "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+                    + ")");
+
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS deactivation_requests ("
+                    + "request_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "employee_id TEXT NOT NULL, "
+                    + "requested_by TEXT NOT NULL, "
+                    + "reason TEXT NOT NULL, "
+                    + "status TEXT NOT NULL DEFAULT 'Pending', "
+                    + "requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+                    + "decided_by TEXT, "
+                    + "decided_at TEXT, "
+                    + "FOREIGN KEY(employee_id) REFERENCES employees(employee_id)"
+                    + ")");
+
+                ensureColumn(connection, "employee_documents", "status", "TEXT NOT NULL DEFAULT 'Pending'");
                 ensureColumn(connection, "users", "role", "TEXT NOT NULL DEFAULT 'Employee'");
                 ensureColumn(connection, "users", "employee_id", "TEXT");
                 ensureColumn(connection, "employees", "role", "TEXT NOT NULL DEFAULT 'Employee'");
@@ -110,11 +130,13 @@ public final class Database {
                 ensureColumn(connection, "employees", "leave_balance", "INTEGER NOT NULL DEFAULT 20");
                 ensureColumn(connection, "employees", "phone", "TEXT");
                 ensureColumn(connection, "employees", "salary", "REAL NOT NULL DEFAULT 0");
+                ensureColumn(connection, "employees", "last_net_salary", "REAL NOT NULL DEFAULT 0");
         }
 
         seedDefaultAdmin();
             seedDemoUsers();
             assignDefaultManagers();
+            seedDefaultDepartment();
     }
 
     public static Connection getConnection() throws SQLException {
@@ -184,6 +206,16 @@ public final class Database {
             }
 
             connection.commit();
+        }
+    }
+
+    private static void seedDefaultDepartment() throws SQLException {
+        String sql = "INSERT OR IGNORE INTO departments (department_name, manager_username) VALUES (?, ?)";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "Operations");
+            statement.setString(2, "manager");
+            statement.executeUpdate();
         }
     }
 

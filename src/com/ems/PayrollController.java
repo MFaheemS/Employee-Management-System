@@ -19,6 +19,7 @@ public class PayrollController extends BaseController {
 
     private final PayrollService payrollService = new PayrollService();
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
+    private final AttendanceService attendanceService = new AttendanceService();
 
     @FXML private Label userLabel;
     @FXML private VBox generateSection;
@@ -43,6 +44,7 @@ public class PayrollController extends BaseController {
     @FXML private Button leaveApprovalsNavButton;
     @FXML private Button payrollNavButton;
     @FXML private Button documentsNavButton;
+    @FXML private Button departmentNavButton;
 
     @FXML private TableView<PayrollRecord> payrollTable;
     @FXML private TableColumn<PayrollRecord, String> colEmployee;
@@ -61,8 +63,9 @@ public class PayrollController extends BaseController {
         configureSidebarNavigation(userLabel, employeeAddNavButton, employeeDeactivateNavButton,
                 employeeSearchNavButton, attendanceNavButton, leaveApplyNavButton, leaveApprovalsNavButton);
         configureAdditionalNavigation(dashboardNavButton, payrollNavButton, documentsNavButton);
+        configureDepartmentNavigation(departmentNavButton);
 
-        // Only admins can generate payroll; others only view
+        // Only HR Managers can generate payroll; employees see their own slips
         boolean canGenerate = currentUser().canGeneratePayroll();
         generateSection.setVisible(canGenerate);
         generateSection.setManaged(canGenerate);
@@ -145,6 +148,26 @@ public class PayrollController extends BaseController {
     }
 
     @FXML
+    private void handleAutoFillFromAttendance() {
+        String id = empIdField.getText().trim();
+        if (id.isEmpty()) { setError("Enter an Employee ID first."); return; }
+        String monthText = monthField.getText().trim();
+        String yearText = yearField.getText().trim();
+        if (monthText.isEmpty() || yearText.isEmpty()) { setError("Enter month and year first."); return; }
+        try {
+            int month = Integer.parseInt(monthText);
+            int year = Integer.parseInt(yearText);
+            double totalHours = attendanceService.getTotalHoursForMonth(id, month, year);
+            overtimeHoursField.setText(String.format("%.2f", totalHours));
+            setSuccess(String.format("Attendance hours for %s/%d: %.2f hrs. Adjust overtime rate and deductions as needed.", monthText, year, totalHours));
+        } catch (NumberFormatException e) {
+            setError("Month and year must be numeric.");
+        } catch (java.sql.SQLException e) {
+            setError("DB error: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void handleFilter() {
         String filter = filterField.getText().trim();
         if (filter.isEmpty()) {
@@ -168,6 +191,7 @@ public class PayrollController extends BaseController {
     @FXML private void goToDashboard() { navigate(() -> Main.showDashboard()); }
     @FXML private void goToAdd() { navigate(() -> Main.showEmployeeAdd()); }
     @FXML private void goToDeactivate() { navigate(() -> Main.showEmployeeDeactivate()); }
+    @FXML private void goToDepartments() { navigate(() -> Main.showDepartmentManagement()); }
     @FXML private void goToEmployeeSearch() { navigate(() -> Main.showEmployeeSearch()); }
     @FXML private void goToAttendance() { navigate(() -> Main.showAttendance()); }
     @FXML private void goToLeaveApply() { navigate(() -> Main.showLeaveApplication()); }
@@ -185,7 +209,7 @@ public class PayrollController extends BaseController {
     private void loadPayroll() {
         try {
             List<PayrollRecord> records;
-            if (currentUser().canGeneratePayroll()) {
+            if (currentUser().isManager() || currentUser().isAdmin()) {
                 records = payrollService.getAllPayroll();
             } else {
                 String eid = currentUser().getEmployeeId();

@@ -160,10 +160,14 @@
               <VBox styleClass="section-card" spacing="0">
                 <HBox alignment="CENTER_LEFT" spacing="10">
                   <Label text="Payroll History" styleClass="card-title" HBox.hgrow="ALWAYS"/>
-                  <TextField fx:id="filterField" styleClass="input-field"
-                         promptText="Filter by Employee ID..." prefWidth="220"/>
-                  <Button text="Filter" styleClass="btn-neutral" onAction="#handleFilter"/>
-                  <Button text="Show All" styleClass="btn-neutral" onAction="#handleShowAll"/>
+                  <VBox fx:id="filterSection">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                      <TextField fx:id="filterField" styleClass="input-field"
+                             promptText="Filter by Employee ID..." prefWidth="220"/>
+                      <Button text="Filter" styleClass="btn-neutral" onAction="#handleFilter"/>
+                      <Button text="Show All" styleClass="btn-neutral" onAction="#handleShowAll"/>
+                    </HBox>
+                  </VBox>
                 </HBox>
 
                 <TableView fx:id="payrollTable" prefHeight="320">

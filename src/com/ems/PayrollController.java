@@ -46,6 +46,7 @@ public class PayrollController extends BaseController {
     @FXML private Button documentsNavButton;
     @FXML private Button departmentNavButton;
 
+    @FXML private VBox filterSection;
     @FXML private TableView<PayrollRecord> payrollTable;
     @FXML private TableColumn<PayrollRecord, String> colEmployee;
     @FXML private TableColumn<PayrollRecord, String> colPeriod;
@@ -75,14 +76,13 @@ public class PayrollController extends BaseController {
         monthField.setText(String.valueOf(now.getMonthValue()));
         yearField.setText(String.valueOf(now.getYear()));
 
+        // Hide filter for employees — they only ever see their own records
+        if (currentUser().isEmployee()) {
+            if (filterSection != null) { filterSection.setVisible(false); filterSection.setManaged(false); }
+        }
+
         configureTable();
         loadPayroll();
-
-        // If employee, pre-filter own records
-        if (currentUser().isEmployee() && currentUser().getEmployeeId() != null) {
-            filterField.setText(currentUser().getEmployeeId());
-            handleFilter();
-        }
     }
 
     @FXML

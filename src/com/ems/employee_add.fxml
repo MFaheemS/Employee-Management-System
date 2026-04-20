@@ -74,7 +74,7 @@
           <content>
             <VBox styleClass="content-body" spacing="16">
               <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Add / Edit Employee" styleClass="page-title"/>
+                <Label fx:id="pageTitleLabel" text="Add / Edit" styleClass="page-title"/>
                 <Label text="ACTIVE MODULE" styleClass="badge-pill"/>
               </HBox>
               <Label text="Use Employee ID to add new records or retrieve existing profiles for updates."
@@ -133,7 +133,7 @@
                            promptText="e.g. 75000" maxWidth="Infinity"/>
                   </VBox>
 
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <VBox fx:id="roleRow" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <Label text="Role" styleClass="field-label"/>
                     <ComboBox fx:id="roleComboBox" styleClass="input-field"
                            maxWidth="Infinity" promptText="Select role"/>

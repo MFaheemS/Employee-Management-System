@@ -24,7 +24,6 @@ public class DashboardController extends BaseController {
 
     private final LeaveManagementService leaveService     = new LeaveManagementService();
     private final EmployeeRepository     employeeRepo     = new EmployeeRepository();
-    private final AttendanceService      attendanceService = new AttendanceService();
 
     // ── Shared header ────────────────────────────────────────────────────────
     @FXML private Label userLabel;
@@ -124,44 +123,26 @@ public class DashboardController extends BaseController {
         try (Connection conn = Database.getConnection()) {
             setLabel(totalEmployeesLabel, count(conn, "SELECT COUNT(*) FROM employees"));
             setLabel(activeEmployeesLabel, count(conn, "SELECT COUNT(*) FROM employees WHERE is_active = 1"));
-            setLabel(pendingLeavesLabel, count(conn, "SELECT COUNT(*) FROM leave_requests WHERE status = 'Pending'"));
 
-            String today = LocalDate.now().toString();
-            try (PreparedStatement st = conn.prepareStatement(
-                    "SELECT COUNT(*) FROM attendance_records WHERE attendance_date = ?")) {
-                st.setString(1, today);
-                try (ResultSet rs = st.executeQuery()) {
-                    setLabel(todayAttendanceLabel, rs.next() ? rs.getInt(1) : 0);
-                }
-            }
-
-            // Department table
+            // Department table with manager name
             if (deptTable != null) {
                 configureDeptTable();
                 List<DeptRow> rows = new ArrayList<>();
                 try (PreparedStatement st = conn.prepareStatement(
-                        "SELECT department, COUNT(*) as total, SUM(is_active) as active "
-                        + "FROM employees GROUP BY department ORDER BY department ASC");
+                        "SELECT e.department, COALESCE(d.manager_username, '—') as manager_username, "
+                        + "COUNT(*) as total, SUM(e.is_active) as active "
+                        + "FROM employees e "
+                        + "LEFT JOIN departments d ON d.department_name = e.department "
+                        + "GROUP BY e.department ORDER BY e.department ASC");
                      ResultSet rs = st.executeQuery()) {
                     while (rs.next()) {
                         rows.add(new DeptRow(rs.getString("department"),
+                                rs.getString("manager_username"),
                                 rs.getInt("total"), rs.getInt("active")));
                     }
                 }
                 deptTable.setItems(FXCollections.observableArrayList(rows));
             }
-        }
-    }
-
-    private void loadAdminLeaveOverview() {
-        try {
-            if (leaveTable == null) return;
-            configureAdminLeaveTable();
-            List<LeaveRequest> all = leaveService.getAllPendingLeaves();
-            if (all.size() > 12) all = all.subList(0, 12);
-            leaveTable.setItems(FXCollections.observableArrayList(all));
-        } catch (SQLException e) {
-            // non-critical
         }
     }
 
@@ -277,18 +258,9 @@ public class DashboardController extends BaseController {
     private void configureDeptTable() {
         deptTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         colDept.setCellValueFactory(new PropertyValueFactory<>("department"));
+        colDeptManager.setCellValueFactory(new PropertyValueFactory<>("managerUsername"));
         colDeptCount.setCellValueFactory(new PropertyValueFactory<>("total"));
         colDeptActive.setCellValueFactory(new PropertyValueFactory<>("active"));
-    }
-
-    private void configureAdminLeaveTable() {
-        leaveTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-        colLeaveEmp.setCellValueFactory(new PropertyValueFactory<>("employeeName"));
-        colLeaveType.setCellValueFactory(new PropertyValueFactory<>("leaveType"));
-        colLeaveDates.setCellValueFactory(cellData -> Bindings.createStringBinding(
-                () -> cellData.getValue().getStartDate() + " → " + cellData.getValue().getEndDate()));
-        colLeaveStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        colLeaveManager.setCellValueFactory(new PropertyValueFactory<>("managerUsername"));
     }
 
     private void configureManagerLeaveTable() {
@@ -353,18 +325,21 @@ public class DashboardController extends BaseController {
 
     public static class DeptRow {
         private final String department;
+        private final String managerUsername;
         private final int    total;
         private final int    active;
 
-        public DeptRow(String department, int total, int active) {
-            this.department = department;
-            this.total      = total;
-            this.active     = active;
+        public DeptRow(String department, String managerUsername, int total, int active) {
+            this.department      = department;
+            this.managerUsername = managerUsername;
+            this.total           = total;
+            this.active          = active;
         }
 
-        public String getDepartment() { return department; }
-        public int    getTotal()      { return total; }
-        public int    getActive()     { return active; }
+        public String getDepartment()      { return department; }
+        public String getManagerUsername() { return managerUsername; }
+        public int    getTotal()           { return total; }
+        public int    getActive()          { return active; }
     }
 
     @FunctionalInterface

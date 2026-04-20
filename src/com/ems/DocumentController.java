@@ -54,7 +54,6 @@ public class DocumentController extends BaseController {
 
     @FXML private VBox managerActionsSection;
     @FXML private Button approveDocButton;
-    @FXML private Button rejectDocButton;
     @FXML private Button deleteDocButton;
 
     @FXML private VBox employeeActionsSection;
@@ -174,11 +173,6 @@ public class DocumentController extends BaseController {
     @FXML
     private void handleApproveDocument() {
         updateSelectedDocStatus("Approved");
-    }
-
-    @FXML
-    private void handleRejectDocument() {
-        updateSelectedDocStatus("Rejected");
     }
 
     private void updateSelectedDocStatus(String status) {

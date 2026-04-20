@@ -8,6 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -46,6 +47,12 @@ public class EmployeeAddController extends BaseController {
 
     @FXML
     private PasswordField passwordField;
+
+    @FXML
+    private Label pageTitleLabel;
+
+    @FXML
+    private VBox roleRow;
 
     @FXML
     private Label userLabel;
@@ -88,14 +95,16 @@ public class EmployeeAddController extends BaseController {
 
         AppUser user = currentUser();
         if (user.isAdmin()) {
-            // Admin creates Manager accounts only
             roleComboBox.setItems(FXCollections.observableArrayList("Manager"));
             roleComboBox.setValue("Manager");
+            if (pageTitleLabel != null) pageTitleLabel.setText("Add Manager");
         } else {
-            // Manager creates Employee accounts only
             roleComboBox.setItems(FXCollections.observableArrayList("Employee"));
             roleComboBox.setValue("Employee");
+            if (pageTitleLabel != null) pageTitleLabel.setText("Add Employee");
         }
+        // Role field is always fixed — hide it
+        if (roleRow != null) { roleRow.setVisible(false); roleRow.setManaged(false); }
         loadDepartments();
         // If manager, lock the department to their own dept
         if (user.isManager()) {

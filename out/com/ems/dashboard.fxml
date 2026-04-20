@@ -62,7 +62,7 @@
           <content>
             <VBox styleClass="content-body" spacing="20">
 
-              <!-- ═══════════════ ADMIN + MANAGER KPI STRIP ═══════════════ -->
+              <!-- ═══════════════ ADMIN KPI STRIP ═══════════════ -->
               <HBox fx:id="kpiSection" spacing="14">
                 <VBox styleClass="kpi-card-blue" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                   <Label text="👥" styleClass="kpi-icon"/>
@@ -75,18 +75,6 @@
                   <Label text="ACTIVE EMPLOYEES" styleClass="kpi-title"/>
                   <Label fx:id="activeEmployeesLabel" text="—" styleClass="kpi-value-green"/>
                   <Label text="Currently active" styleClass="kpi-note"/>
-                </VBox>
-                <VBox styleClass="kpi-card-orange" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                  <Label text="🕐" styleClass="kpi-icon"/>
-                  <Label text="PENDING LEAVES" styleClass="kpi-title"/>
-                  <Label fx:id="pendingLeavesLabel" text="—" styleClass="kpi-value-orange"/>
-                  <Label text="Awaiting approval" styleClass="kpi-note"/>
-                </VBox>
-                <VBox styleClass="kpi-card-purple" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                  <Label text="📅" styleClass="kpi-icon"/>
-                  <Label text="TODAY'S CHECK-INS" styleClass="kpi-title"/>
-                  <Label fx:id="todayAttendanceLabel" text="—" styleClass="kpi-value-purple"/>
-                  <Label text="Checked in today" styleClass="kpi-note"/>
                 </VBox>
               </HBox>
 
@@ -102,33 +90,15 @@
                   </HBox>
                   <TableView fx:id="deptTable" prefHeight="200">
                     <columns>
-                      <TableColumn fx:id="colDept"      text="Department" prefWidth="260"/>
-                      <TableColumn fx:id="colDeptCount" text="Total"      prefWidth="130"/>
-                      <TableColumn fx:id="colDeptActive" text="Active"    prefWidth="130"/>
+                      <TableColumn fx:id="colDept"        text="Department" prefWidth="200"/>
+                      <TableColumn fx:id="colDeptManager" text="Manager"    prefWidth="160"/>
+                      <TableColumn fx:id="colDeptCount"   text="Total"      prefWidth="100"/>
+                      <TableColumn fx:id="colDeptActive"  text="Active"     prefWidth="100"/>
                     </columns>
                   </TableView>
                 </VBox>
               </VBox>
 
-              <!-- Admin read-only leave overview -->
-              <VBox fx:id="adminLeaveOverviewSection" styleClass="section-card" spacing="0">
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                  <Label text="📋  Pending Leave Requests (Overview)" styleClass="card-title"/>
-                  <Region HBox.hgrow="ALWAYS"/>
-                  <Label text="READ ONLY" styleClass="badge-pill"/>
-                </HBox>
-                <Label text="Leaves are approved by HR Managers. This is a system-wide overview."
-                       styleClass="page-subtitle" style="-fx-padding: 0 0 10 0;"/>
-                <TableView fx:id="leaveTable" prefHeight="200">
-                  <columns>
-                    <TableColumn fx:id="colLeaveEmp"     text="Employee"  prefWidth="170"/>
-                    <TableColumn fx:id="colLeaveType"    text="Type"      prefWidth="110"/>
-                    <TableColumn fx:id="colLeaveDates"   text="Dates"     prefWidth="200"/>
-                    <TableColumn fx:id="colLeaveStatus"  text="Status"    prefWidth="100"/>
-                    <TableColumn fx:id="colLeaveManager" text="Manager"   prefWidth="130"/>
-                  </columns>
-                </TableView>
-              </VBox>
 
               <!-- ═══════════════ MANAGER (HR) SECTION ═══════════════ -->
               <VBox fx:id="managerSection" spacing="16">

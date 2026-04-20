@@ -21,7 +21,10 @@
       "Bash(where py *)",
       "Bash(py *)",
       "Bash(cp src/com/ems/*.fxml out/com/ems/)",
-      "Bash(cp src/com/ems/*.css out/com/ems/)"
+      "Bash(cp src/com/ems/*.css out/com/ems/)",
+      "Bash(powershell -Command ' *)",
+      "Bash(powershell *)",
+      "PowerShell(Set-Location \"D:\\\\Employee Management System\"; powershell -ExecutionPolicy Bypass -File \".\\\\make_docs.ps1\" 2>&1)"
     ]
   }
 }

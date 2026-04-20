@@ -138,8 +138,6 @@
                   <HBox spacing="10">
                     <Button fx:id="approveDocButton" text="✔  Approve"
                         styleClass="btn-gold" onAction="#handleApproveDocument"/>
-                    <Button fx:id="rejectDocButton" text="✖  Reject"
-                        styleClass="btn-neutral" onAction="#handleRejectDocument"/>
                     <Button fx:id="deleteDocButton" text="🗑  Delete"
                         styleClass="btn-red" onAction="#handleDeleteDocument"/>
                   </HBox>

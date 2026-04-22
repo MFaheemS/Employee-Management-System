@@ -461,6 +461,10 @@ public class EmployeeAddController extends BaseController {
         if (label != null) label.setText(text);
     }
 
+    private void setText(Button button, String text) {
+        if (button != null) button.setText(text);
+    }
+
     private void configureNavigation() {
         configureSidebarNavigation(
                 userLabel,

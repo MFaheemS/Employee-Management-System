@@ -513,6 +513,16 @@
 
 .input-field { -fx-padding: 8 12 8 12; }
 
+.input-field-readonly {
+    -fx-padding: 8 12 8 12;
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #64748B;
+    -fx-border-color: #CBD5E1;
+    -fx-font-weight: 700;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
 .input-field:focused, .input-area:focused {
     -fx-border-color: -app-accent;
     -fx-effect: dropshadow(gaussian, rgba(91,79,232,0.20), 8, 0.2, 0, 1);

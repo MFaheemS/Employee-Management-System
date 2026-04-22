@@ -80,17 +80,6 @@ public class EmployeeRepository {
         }
     }
 
-    public boolean deleteEmployee(String employeeId) throws SQLException {
-        String sql = "DELETE FROM employees WHERE employee_id = ?";
-
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, employeeId);
-            return statement.executeUpdate() == 1;
-        }
-    }
-
     /**
      * Permanently removes an employee and all their associated records from the database.
      * Called by admin on direct deactivation or on approving a manager's request.

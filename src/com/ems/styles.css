@@ -318,6 +318,15 @@
     -fx-background-radius: 999;
 }
 
+.badge-pill-orange {
+    -fx-background-color: rgba(245, 158, 11, 0.15);
+    -fx-text-fill: #F59E0B;
+    -fx-font-size: 10.5px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 999;
+}
+
 /* ============================================================
    KPI CARDS — Each has a colored top strip via border
    ============================================================ */
@@ -589,6 +598,24 @@
     -fx-background-color: #F8FAFC;
     -fx-border-color: -app-accent;
     -fx-text-fill: -app-accent;
+}
+
+.btn-danger {
+    -fx-background-color: rgba(239, 68, 68, 0.1);
+    -fx-text-fill: #EF4444;
+    -fx-border-color: rgba(239, 68, 68, 0.3);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 10 18 10 18;
+    -fx-cursor: hand;
+}
+
+.btn-danger:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.18);
+    -fx-border-color: #EF4444;
 }
 
 /* ============================================================

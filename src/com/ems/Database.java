@@ -144,20 +144,16 @@ public final class Database {
     }
 
     private static void seedDefaultAdmin() throws SQLException {
-        String sql = "INSERT OR IGNORE INTO users (username, password, role, employee_id) VALUES (?, ?, ?, ?)";
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "admin");
-            statement.setString(2, "admin");
-            statement.setString(3, "Admin");
-            statement.setString(4, null);
-            statement.executeUpdate();
-        }
-
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE users SET role = 'Admin' WHERE username = 'admin'")) {
-            statement.executeUpdate();
+        try (Connection connection = getConnection()) {
+            // Ensure admin account exists with correct password
+            try (PreparedStatement st = connection.prepareStatement(
+                    "INSERT OR IGNORE INTO users (username, password, role, employee_id) VALUES ('admin', '123', 'Admin', NULL)")) {
+                st.executeUpdate();
+            }
+            try (PreparedStatement st = connection.prepareStatement(
+                    "UPDATE users SET password = '123', role = 'Admin' WHERE username = 'admin'")) {
+                st.executeUpdate();
+            }
         }
     }
 
@@ -165,70 +161,93 @@ public final class Database {
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement employeeStatement = connection.prepareStatement(
+            // Remove old demo records that conflict with the new seed data
+            String[] oldUsernames = {"manager", "employee"};
+            String[] oldEmpIds    = {"MGR001", "EMP001"};
+            try (PreparedStatement du = connection.prepareStatement("DELETE FROM users WHERE username = ?");
+                 PreparedStatement de = connection.prepareStatement("DELETE FROM employees WHERE employee_id = ?")) {
+                for (String u : oldUsernames) { du.setString(1, u); du.executeUpdate(); }
+                for (String e : oldEmpIds)    { de.setString(1, e); de.executeUpdate(); }
+            }
+
+            try (PreparedStatement emp = connection.prepareStatement(
                     "INSERT OR IGNORE INTO employees "
-                            + "(employee_id, full_name, job_title, department, email, is_active, role, manager_username, leave_balance) "
-                            + "VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)");
-                 PreparedStatement userStatement = connection.prepareStatement(
-                         "INSERT OR IGNORE INTO users (username, password, role, employee_id) VALUES (?, ?, ?, ?)")) {
+                    + "(employee_id, full_name, job_title, department, email, is_active, role, manager_username, leave_balance, salary) "
+                    + "VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?, ?)");
+                 PreparedStatement usr = connection.prepareStatement(
+                    "INSERT OR IGNORE INTO users (username, password, role, employee_id) VALUES (?, '123', ?, ?)")) {
 
-                employeeStatement.setString(1, "MGR001");
-                employeeStatement.setString(2, "Manager Demo");
-                employeeStatement.setString(3, "Team Manager");
-                employeeStatement.setString(4, "Operations");
-                employeeStatement.setString(5, "manager@ems.local");
-                employeeStatement.setString(6, "Manager");
-                employeeStatement.setString(7, "admin");
-                employeeStatement.setInt(8, 25);
-                employeeStatement.executeUpdate();
+                // ── Managers ─────────────────────────────────────────────────
+                insertEmployee(emp, "M001", "Alice Morgan",   "Engineering Manager",   "Engineering", "alice.m@ems.local",  "Manager",  "admin",   20, 120000);
+                insertEmployee(emp, "M002", "Bob Khan",       "Operations Manager",    "Operations",  "bob.k@ems.local",   "Manager",  "admin",   20, 110000);
 
-                employeeStatement.setString(1, "EMP001");
-                employeeStatement.setString(2, "Employee Demo");
-                employeeStatement.setString(3, "Support Executive");
-                employeeStatement.setString(4, "Operations");
-                employeeStatement.setString(5, "employee@ems.local");
-                employeeStatement.setString(6, "Employee");
-                employeeStatement.setString(7, "manager");
-                employeeStatement.setInt(8, 18);
-                employeeStatement.executeUpdate();
+                insertUser(usr, "alice.m", "Manager", "M001");
+                insertUser(usr, "bob.k",   "Manager", "M002");
 
-                userStatement.setString(1, "manager");
-                userStatement.setString(2, "manager");
-                userStatement.setString(3, "Manager");
-                userStatement.setString(4, "MGR001");
-                userStatement.executeUpdate();
+                // ── Employees ────────────────────────────────────────────────
+                insertEmployee(emp, "E001", "James Smith",   "Software Engineer",      "Engineering", "j.smith@ems.local",  "Employee", "alice.m", 20, 80000);
+                insertEmployee(emp, "E002", "Sara Jones",    "QA Engineer",            "Engineering", "s.jones@ems.local",  "Employee", "alice.m", 18, 75000);
+                insertEmployee(emp, "E003", "Raj Patel",     "DevOps Engineer",        "Engineering", "r.patel@ems.local",  "Employee", "alice.m", 15, 85000);
+                insertEmployee(emp, "E004", "Linda Chen",    "Operations Analyst",     "Operations",  "l.chen@ems.local",   "Employee", "bob.k",   20, 70000);
+                insertEmployee(emp, "E005", "Ahmed Malik",   "Logistics Coordinator",  "Operations",  "a.malik@ems.local",  "Employee", "bob.k",   22, 68000);
 
-                userStatement.setString(1, "employee");
-                userStatement.setString(2, "employee");
-                userStatement.setString(3, "Employee");
-                userStatement.setString(4, "EMP001");
-                userStatement.executeUpdate();
+                insertUser(usr, "j.smith",  "Employee", "E001");
+                insertUser(usr, "s.jones",  "Employee", "E002");
+                insertUser(usr, "r.patel",  "Employee", "E003");
+                insertUser(usr, "l.chen",   "Employee", "E004");
+                insertUser(usr, "a.malik",  "Employee", "E005");
             }
 
             connection.commit();
         }
     }
 
+    private static void insertEmployee(PreparedStatement st, String id, String name, String title,
+                                       String dept, String email, String role, String manager,
+                                       int leaveBalance, double salary) throws SQLException {
+        st.setString(1, id);
+        st.setString(2, name);
+        st.setString(3, title);
+        st.setString(4, dept);
+        st.setString(5, email);
+        st.setString(6, role);
+        st.setString(7, manager);
+        st.setInt(8, leaveBalance);
+        st.setDouble(9, salary);
+        st.executeUpdate();
+    }
+
+    private static void insertUser(PreparedStatement st, String username, String role,
+                                   String employeeId) throws SQLException {
+        st.setString(1, username);
+        st.setString(2, role);
+        st.setString(3, employeeId);
+        st.executeUpdate();
+    }
+
     private static void seedDefaultDepartment() throws SQLException {
+        // Remove old Operations department that used old "manager" username
+        try (Connection connection = getConnection();
+             PreparedStatement st = connection.prepareStatement(
+                     "DELETE FROM departments WHERE manager_username = 'manager'")) {
+            st.executeUpdate();
+        }
+
         String sql = "INSERT OR IGNORE INTO departments (department_name, manager_username) VALUES (?, ?)";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "Operations");
-            statement.setString(2, "manager");
-            statement.executeUpdate();
+             PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, "Engineering");
+            st.setString(2, "alice.m");
+            st.executeUpdate();
+
+            st.setString(1, "Operations");
+            st.setString(2, "bob.k");
+            st.executeUpdate();
         }
     }
 
     private static void assignDefaultManagers() throws SQLException {
-        String sql = "UPDATE employees SET manager_username = COALESCE("
-                + "(SELECT username FROM users WHERE role = 'Manager' LIMIT 1), "
-                + "(SELECT username FROM users WHERE role = 'Admin' LIMIT 1)) "
-                + "WHERE manager_username IS NULL AND role = 'Employee'";
-
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.executeUpdate();
-        }
+        // No-op: all employees are seeded with explicit manager assignments
     }
 
     private static void ensureColumn(Connection connection, String tableName,

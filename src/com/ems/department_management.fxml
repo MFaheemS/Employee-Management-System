@@ -105,13 +105,32 @@
                   <Region HBox.hgrow="ALWAYS"/>
                   <Label text="SYSTEM VIEW" styleClass="badge-pill"/>
                 </HBox>
-                <TableView fx:id="departmentTable" prefHeight="340">
+                <Label text="Select a department and click Remove to delete it. Departments with active employees cannot be removed."
+                       styleClass="page-subtitle" style="-fx-padding: 0 0 8 0;"/>
+                <TableView fx:id="departmentTable" prefHeight="280">
                   <columns>
                     <TableColumn fx:id="colDeptName"  text="Department"      prefWidth="300"/>
                     <TableColumn fx:id="colManager"   text="Manager"         prefWidth="250"/>
                     <TableColumn fx:id="colCreatedAt" text="Created At"      prefWidth="220"/>
                   </columns>
                 </TableView>
+                <Region prefHeight="10"/>
+                <Button text="⊗  Remove Selected Department" styleClass="btn-danger"
+                        maxWidth="Infinity" onAction="#handleDeleteDepartment"/>
+                <Region prefHeight="6"/>
+                <Label fx:id="deleteStatusLabel" styleClass="status-label" maxWidth="Infinity"/>
+              </VBox>
+
+              <!-- ═══ Unassigned Managers ═══ -->
+              <VBox styleClass="section-card" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="⚠  Unassigned Managers" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="NO DEPARTMENT" styleClass="badge-pill-orange"/>
+                </HBox>
+                <Label text="These managers are not assigned to any department and have restricted access until assigned."
+                       styleClass="page-subtitle" style="-fx-padding: 0 0 8 0;"/>
+                <ListView fx:id="unassignedManagersList" prefHeight="130" styleClass="input-field"/>
               </VBox>
 
             </VBox>

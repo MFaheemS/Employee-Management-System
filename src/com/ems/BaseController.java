@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
+import java.sql.SQLException;
+
 public abstract class BaseController {
 
     protected AppUser currentUser() {
@@ -33,8 +35,18 @@ public abstract class BaseController {
             return false;
         }
 
-        if (currentUser().canManageEmployees()) {
+        if (currentUser().isAdmin() && currentUser().canManageEmployees()) {
             return true;
+        }
+
+        if (currentUser().isManager()) {
+            if (isManagerWithDepartment()) {
+                return true;
+            }
+            showAlert(Alert.AlertType.ERROR, "No Department Assigned",
+                    "You have not been assigned to a department yet. Contact your administrator.");
+            goHome();
+            return false;
         }
 
         showAlert(Alert.AlertType.ERROR, "Access Denied",
@@ -48,8 +60,15 @@ public abstract class BaseController {
             return false;
         }
 
-        if (currentUser().canManageLeaveApprovals()) {
+        if (currentUser().canManageLeaveApprovals() && isManagerWithDepartment()) {
             return true;
+        }
+
+        if (currentUser().isManager() && !isManagerWithDepartment()) {
+            showAlert(Alert.AlertType.ERROR, "No Department Assigned",
+                    "You have not been assigned to a department yet. Contact your administrator.");
+            goHome();
+            return false;
         }
 
         showAlert(Alert.AlertType.ERROR, "Access Denied",
@@ -93,14 +112,34 @@ public abstract class BaseController {
             return false;
         }
 
-        if (currentUser().canSearchEmployees()) {
+        if (currentUser().isAdmin() && currentUser().canSearchEmployees()) {
             return true;
+        }
+
+        if (currentUser().isManager()) {
+            if (isManagerWithDepartment()) {
+                return true;
+            }
+            showAlert(Alert.AlertType.ERROR, "No Department Assigned",
+                    "You have not been assigned to a department yet. Contact your administrator.");
+            goHome();
+            return false;
         }
 
         showAlert(Alert.AlertType.ERROR, "Access Denied",
                 "You are not authorized to search employee records.");
         goHome();
         return false;
+    }
+
+    protected boolean isManagerWithDepartment() {
+        AppUser user = currentUser();
+        if (user == null || !user.isManager()) return true;
+        try {
+            return new DepartmentRepository().hasDepartment(user.getUsername());
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     protected void handleLogout() {
@@ -143,9 +182,11 @@ public abstract class BaseController {
         }
 
         boolean hasEmployeeProfile = hasLinkedEmployeeProfile(user);
+        boolean managerHasDept = !user.isManager() || isManagerWithDepartment();
+
         // Admin creates managers; Manager creates/deactivates their own dept employees
-        setNavigationVisibility(employeeAddButton, user.canManageEmployees());
-        setNavigationVisibility(employeeDeactivateButton, user.canManageEmployees());
+        setNavigationVisibility(employeeAddButton, user.canManageEmployees() && (user.isAdmin() || managerHasDept));
+        setNavigationVisibility(employeeDeactivateButton, user.canManageEmployees() && (user.isAdmin() || managerHasDept));
         if (employeeAddButton != null) {
             employeeAddButton.setText(user.isAdmin() ? "＋  Manager Add" : "＋  Employee Add");
         }
@@ -153,13 +194,13 @@ public abstract class BaseController {
             employeeDeactivateButton.setText(user.isAdmin() ? "⊗  Manager Deactivate" : "⊗  Deactivate");
         }
         // Admin + Manager can search (each scoped in the controller)
-        setNavigationVisibility(employeeSearchButton, user.canSearchEmployees());
+        setNavigationVisibility(employeeSearchButton, user.canSearchEmployees() && (user.isAdmin() || managerHasDept));
         // Attendance: employees and managers with a linked profile
         setNavigationVisibility(attendanceButton, hasEmployeeProfile);
         // Leave apply: employees only (managers do not apply for leave)
         setNavigationVisibility(leaveApplyButton, hasEmployeeProfile && user.isEmployee());
-        // Only HR Manager handles leave approvals
-        setNavigationVisibility(leaveApprovalsButton, user.canManageLeaveApprovals());
+        // Only HR Manager handles leave approvals (only when assigned to a department)
+        setNavigationVisibility(leaveApprovalsButton, user.canManageLeaveApprovals() && managerHasDept);
 
         playEntranceAnimation(firstAvailable(userLabel,
                 employeeAddButton,
@@ -178,9 +219,10 @@ public abstract class BaseController {
         setNavigationVisibility(dashboardButton, true);
         // Payroll: Admin generates + views all; Employee views own slips; Manager has no payroll
         setNavigationVisibility(payrollButton, user.isAdmin() || user.isEmployee());
-        // Documents: Employee uploads own docs; Manager views their department's docs
+        // Documents: Employee uploads own docs; Manager views their department's docs (only if assigned)
         boolean hasProfile = hasLinkedEmployeeProfile(user);
-        setNavigationVisibility(documentsButton, hasProfile || user.isManager());
+        boolean managerHasDeptForDocs = !user.isManager() || isManagerWithDepartment();
+        setNavigationVisibility(documentsButton, hasProfile || (user.isManager() && managerHasDeptForDocs));
     }
 
     protected void configureDepartmentNavigation(Button departmentButton) {

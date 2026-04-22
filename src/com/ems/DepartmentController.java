@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -27,6 +28,9 @@ public class DepartmentController extends BaseController {
     @FXML private TableColumn<Department, String> colDeptName;
     @FXML private TableColumn<Department, String> colManager;
     @FXML private TableColumn<Department, String> colCreatedAt;
+
+    @FXML private Label deleteStatusLabel;
+    @FXML private ListView<String> unassignedManagersList;
 
     // ── Sidebar nav ─────────────────────────────────────────────────────────
     @FXML private Button dashboardNavButton;
@@ -58,6 +62,7 @@ public class DepartmentController extends BaseController {
         configureTable();
         loadManagers();
         loadDepartments();
+        loadUnassignedManagers();
     }
 
     @FXML
@@ -84,8 +89,32 @@ public class DepartmentController extends BaseController {
             deptNameField.clear();
             managerComboBox.setValue(null);
             loadDepartments();
+            loadUnassignedManagers();
         } catch (SQLException e) {
             setError("Database error: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleDeleteDepartment() {
+        Department selected = departmentTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            setDeleteError("Please select a department to remove.");
+            return;
+        }
+        try {
+            if (departmentRepository.hasEmployeesInDepartment(selected.getDepartmentName())) {
+                setDeleteError("Cannot remove \"" + selected.getDepartmentName()
+                        + "\" — it still has active employees. Reassign or deactivate them first.");
+                return;
+            }
+            departmentRepository.deleteDepartment(selected.getDepartmentId());
+            setDeleteSuccess("Department \"" + selected.getDepartmentName() + "\" has been removed.");
+            loadDepartments();
+            loadManagers();
+            loadUnassignedManagers();
+        } catch (SQLException e) {
+            setDeleteError("Database error: " + e.getMessage());
         }
     }
 
@@ -123,6 +152,15 @@ public class DepartmentController extends BaseController {
         }
     }
 
+    private void loadUnassignedManagers() {
+        try {
+            List<String> unassigned = departmentRepository.getUnassignedManagers();
+            unassignedManagersList.setItems(FXCollections.observableArrayList(unassigned));
+        } catch (SQLException e) {
+            setError("Could not load unassigned managers: " + e.getMessage());
+        }
+    }
+
     private void configureTable() {
         departmentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         colDeptName.setCellValueFactory(new PropertyValueFactory<>("departmentName"));
@@ -140,6 +178,20 @@ public class DepartmentController extends BaseController {
         statusLabel.getStyleClass().removeAll("status-error", "status-success");
         statusLabel.getStyleClass().add("status-error");
         statusLabel.setText(msg);
+    }
+
+    private void setDeleteSuccess(String msg) {
+        if (deleteStatusLabel == null) return;
+        deleteStatusLabel.getStyleClass().removeAll("status-error", "status-success");
+        deleteStatusLabel.getStyleClass().add("status-success");
+        deleteStatusLabel.setText(msg);
+    }
+
+    private void setDeleteError(String msg) {
+        if (deleteStatusLabel == null) return;
+        deleteStatusLabel.getStyleClass().removeAll("status-error", "status-success");
+        deleteStatusLabel.getStyleClass().add("status-error");
+        deleteStatusLabel.setText(msg);
     }
 
     private void navigate(NavigationAction action) {

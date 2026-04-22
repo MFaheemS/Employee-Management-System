@@ -57,6 +57,7 @@ public class DashboardController extends BaseController {
     @FXML private TableColumn<DeptRow, Integer> colDeptActive;
 
     // ── Manager section ───────────────────────────────────────────────────────
+    @FXML private VBox unassignedManagerSection;
     @FXML private VBox managerSection;
     @FXML private Label managerTeamSizeLabel;
     @FXML private Label managerPendingLeavesLabel;
@@ -97,10 +98,11 @@ public class DashboardController extends BaseController {
         String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, MMMM d"));
         welcomeLabel.setText(dateStr);
 
-        // Show role-specific sections
+        // Show role-specific sections (manager dept check handled after role branch)
         showHBox(kpiSection, user.isAdmin());
-        showSection(adminSection,    user.isAdmin());
-        showSection(managerSection,  user.isManager());
+        showSection(adminSection,            user.isAdmin());
+        showSection(managerSection,          false); // set in manager branch below
+        showSection(unassignedManagerSection, false); // set in manager branch below
         showSection(employeeSection, user.isEmployee()
                 || (user.getEmployeeId() != null && !user.getEmployeeId().isBlank()));
 
@@ -108,7 +110,10 @@ public class DashboardController extends BaseController {
             if (user.isAdmin()) {
                 loadAdminKPIs();
             } else if (user.isManager()) {
-                loadManagerDashboard();
+                boolean hasDept = isManagerWithDepartment();
+                showSection(unassignedManagerSection, !hasDept);
+                showSection(managerSection, hasDept);
+                if (hasDept) loadManagerDashboard();
             } else {
                 loadEmployeeDashboard();
             }

@@ -100,6 +100,19 @@
               </VBox>
 
 
+              <!-- ═══════════════ UNASSIGNED MANAGER SECTION ═══════════════ -->
+              <VBox fx:id="unassignedManagerSection" styleClass="section-card" spacing="12">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="⚠  No Department Assigned" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="RESTRICTED ACCESS" styleClass="badge-pill-orange"/>
+                </HBox>
+                <Label text="Your account has not been assigned to a department yet. You will not have access to employee management, leave approvals, or other manager features until an administrator assigns you to a department."
+                       styleClass="page-subtitle" wrapText="true"/>
+                <Label text="Please contact your system administrator to get assigned to a department."
+                       style="-fx-text-fill: #F59E0B; -fx-font-size: 13px;" wrapText="true"/>
+              </VBox>
+
               <!-- ═══════════════ MANAGER (HR) SECTION ═══════════════ -->
               <VBox fx:id="managerSection" spacing="16">
 

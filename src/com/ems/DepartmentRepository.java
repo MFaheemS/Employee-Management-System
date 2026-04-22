@@ -76,6 +76,47 @@ public class DepartmentRepository {
         }
     }
 
+    public List<String> getUnassignedManagers() throws SQLException {
+        String sql = "SELECT u.username FROM users u "
+                + "WHERE u.role = 'Manager' "
+                + "AND NOT EXISTS (SELECT 1 FROM departments d WHERE d.manager_username = u.username) "
+                + "ORDER BY u.username ASC";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql);
+             ResultSet rs = st.executeQuery()) {
+            List<String> list = new ArrayList<>();
+            while (rs.next()) list.add(rs.getString(1));
+            return list;
+        }
+    }
+
+    public boolean hasDepartment(String managerUsername) throws SQLException {
+        String sql = "SELECT 1 FROM departments WHERE manager_username = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, managerUsername);
+            try (ResultSet rs = st.executeQuery()) { return rs.next(); }
+        }
+    }
+
+    public boolean hasEmployeesInDepartment(String departmentName) throws SQLException {
+        String sql = "SELECT 1 FROM employees WHERE department = ? AND is_active = 1";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, departmentName);
+            try (ResultSet rs = st.executeQuery()) { return rs.next(); }
+        }
+    }
+
+    public void deleteDepartment(int departmentId) throws SQLException {
+        String sql = "DELETE FROM departments WHERE department_id = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, departmentId);
+            st.executeUpdate();
+        }
+    }
+
     private Department map(ResultSet rs) throws SQLException {
         return new Department(
                 rs.getInt("department_id"),

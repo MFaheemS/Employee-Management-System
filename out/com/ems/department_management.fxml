@@ -107,7 +107,7 @@
                 </HBox>
                 <Label text="Select a department and click Remove to delete it. Departments with active employees cannot be removed."
                        styleClass="page-subtitle" style="-fx-padding: 0 0 8 0;"/>
-                <TableView fx:id="departmentTable" prefHeight="280">
+                <TableView fx:id="departmentTable" prefHeight="420">
                   <columns>
                     <TableColumn fx:id="colDeptName"  text="Department"      prefWidth="300"/>
                     <TableColumn fx:id="colManager"   text="Manager"         prefWidth="250"/>

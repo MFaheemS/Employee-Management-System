@@ -3,7 +3,6 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.ems.EmployeeAddController"
@@ -61,11 +60,11 @@
       <top>
         <HBox styleClass="app-topbar" alignment="CENTER_LEFT" spacing="14">
           <VBox spacing="0">
-            <Label text="Employee Management" styleClass="topbar-title"/>
-            <Label text="Create, find, and maintain employee records" styleClass="topbar-subtitle"/>
+            <Label fx:id="topbarTitleLabel" text="Employee Management" styleClass="topbar-title"/>
+            <Label fx:id="topbarSubtitleLabel" text="Create, find, and maintain employee records" styleClass="topbar-subtitle"/>
           </VBox>
           <Region HBox.hgrow="ALWAYS"/>
-<Label text="Admin Tools" styleClass="topbar-pill"/>
+          <Label text="Admin Tools" styleClass="topbar-pill"/>
         </HBox>
       </top>
 
@@ -77,85 +76,99 @@
                 <Label fx:id="pageTitleLabel" text="Add / Edit" styleClass="page-title"/>
                 <Label text="ACTIVE MODULE" styleClass="badge-pill"/>
               </HBox>
-              <Label text="Use Employee ID to add new records or retrieve existing profiles for updates."
-                   styleClass="page-subtitle"/>
+              <Label fx:id="pageSubtitleLabel"
+                     text="Use ID to add new records or retrieve existing profiles for updates."
+                     styleClass="page-subtitle"/>
 
               <VBox styleClass="section-card" spacing="0">
                 <HBox alignment="CENTER_LEFT" spacing="8">
-                  <Label text="Personal and Job Details" styleClass="card-title"/>
+                  <Label fx:id="cardTitleLabel" text="Details" styleClass="card-title"/>
                 </HBox>
 
-                <GridPane hgap="14" vgap="3" maxWidth="Infinity">
-                  <columnConstraints>
-                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
-                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
-                  </columnConstraints>
+                <VBox spacing="3">
 
-                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="Employee ID" styleClass="field-label"/>
-                    <TextField fx:id="employeeIdField" styleClass="input-field"
-                           promptText="EMP-1001" maxWidth="Infinity"/>
-                  </VBox>
+                  <!-- Row 1: ID + Name — always visible -->
+                  <HBox spacing="14">
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label fx:id="idFieldLabel" text="Manager ID" styleClass="field-label"/>
+                      <HBox spacing="6" alignment="CENTER_LEFT">
+                        <TextField fx:id="employeeIdField" styleClass="input-field"
+                               promptText="M001" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="autoIdButton" text="Auto"
+                                styleClass="btn-auto-id" onAction="#handleAutoId"/>
+                      </HBox>
+                      <Label fx:id="idHintLabel" styleClass="field-hint" wrapText="true"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Full Name" styleClass="field-label"/>
+                      <TextField fx:id="fullNameField" styleClass="input-field"
+                             promptText="e.g. Alice Morgan" maxWidth="Infinity"/>
+                    </VBox>
+                  </HBox>
 
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <Label text="Full Name" styleClass="field-label"/>
-                    <TextField fx:id="fullNameField" styleClass="input-field"
-                           promptText="Jordan Rivera" maxWidth="Infinity"/>
-                  </VBox>
+                  <!-- Row 2: Job Title + Department — hidden for admin -->
+                  <HBox fx:id="titleDeptRow" spacing="14">
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Job Title" styleClass="field-label"/>
+                      <TextField fx:id="jobTitleField" styleClass="input-field"
+                             promptText="e.g. HR Specialist" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Department" styleClass="field-label"/>
+                      <ComboBox fx:id="departmentComboBox" styleClass="input-field"
+                             maxWidth="Infinity" promptText="Select department"/>
+                    </VBox>
+                  </HBox>
 
-                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <Label text="Job Title" styleClass="field-label"/>
-                    <TextField fx:id="jobTitleField" styleClass="input-field"
-                           promptText="HR Specialist" maxWidth="Infinity"/>
-                  </VBox>
+                  <!-- Row 3: Email + Phone — always visible -->
+                  <HBox spacing="14">
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Email" styleClass="field-label"/>
+                      <TextField fx:id="emailField" styleClass="input-field"
+                             promptText="user@company.com" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Phone" styleClass="field-label"/>
+                      <TextField fx:id="phoneField" styleClass="input-field"
+                             promptText="+92-300-0000000" maxWidth="Infinity"/>
+                    </VBox>
+                  </HBox>
 
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <Label text="Department" styleClass="field-label"/>
-                    <ComboBox fx:id="departmentComboBox" styleClass="input-field"
-                           maxWidth="Infinity" promptText="Select department"/>
-                  </VBox>
+                  <!-- Row 4: Salary — hidden for admin (0 until dept assigned) -->
+                  <HBox fx:id="salaryRow" spacing="14">
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Monthly Salary (PKR)" styleClass="field-label"/>
+                      <TextField fx:id="salaryField" styleClass="input-field"
+                             promptText="e.g. 75000" maxWidth="Infinity"/>
+                    </VBox>
+                    <!-- hidden role field kept for controller compatibility -->
+                    <VBox fx:id="roleRow" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Role" styleClass="field-label"/>
+                      <ComboBox fx:id="roleComboBox" styleClass="input-field"
+                             maxWidth="Infinity" promptText="Select role"/>
+                    </VBox>
+                  </HBox>
 
-                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="2">
-                    <Label text="Email" styleClass="field-label"/>
-                    <TextField fx:id="emailField" styleClass="input-field"
-                           promptText="employee@company.com" maxWidth="Infinity"/>
-                  </VBox>
+                  <!-- Row 5: Username + Password — always visible -->
+                  <HBox spacing="14">
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Login Username" styleClass="field-label"/>
+                      <TextField fx:id="usernameField" styleClass="input-field"
+                             promptText="e.g. alice.m" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                      <Label text="Password" styleClass="field-label"/>
+                      <PasswordField fx:id="passwordField" styleClass="input-field"
+                             promptText="Set login password" maxWidth="Infinity"/>
+                    </VBox>
+                  </HBox>
 
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
-                    <Label text="Phone" styleClass="field-label"/>
-                    <TextField fx:id="phoneField" styleClass="input-field"
-                           promptText="+92-300-0000000" maxWidth="Infinity"/>
-                  </VBox>
-
-                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="3">
-                    <Label text="Monthly Salary (PKR)" styleClass="field-label"/>
-                    <TextField fx:id="salaryField" styleClass="input-field"
-                           promptText="e.g. 75000" maxWidth="Infinity"/>
-                  </VBox>
-
-                  <VBox fx:id="roleRow" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                    <Label text="Role" styleClass="field-label"/>
-                    <ComboBox fx:id="roleComboBox" styleClass="input-field"
-                           maxWidth="Infinity" promptText="Select role"/>
-                  </VBox>
-
-                  <VBox GridPane.columnIndex="0" GridPane.rowIndex="4">
-                    <Label text="Login Username" styleClass="field-label"/>
-                    <TextField fx:id="usernameField" styleClass="input-field"
-                           promptText="e.g. jrivera" maxWidth="Infinity"/>
-                  </VBox>
-
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
-                    <Label text="Password" styleClass="field-label"/>
-                    <PasswordField fx:id="passwordField" styleClass="input-field"
-                           promptText="Set login password" maxWidth="Infinity"/>
-                  </VBox>
-                </GridPane>
+                </VBox>
 
                 <Region prefHeight="18"/>
 
                 <HBox spacing="10" maxWidth="Infinity">
-                  <Button text="Save Employee" styleClass="btn-gold"
+                  <Button fx:id="saveButton" text="Save" styleClass="btn-gold"
                       maxWidth="Infinity" HBox.hgrow="ALWAYS"
                       onAction="#handleAddEmployee"/>
                   <Button text="Find by ID" styleClass="btn-neutral"
@@ -166,14 +179,30 @@
                 <Region prefHeight="10"/>
 
                 <HBox spacing="10" maxWidth="Infinity">
-                  <Button text="Update Employee" styleClass="btn-neutral"
+                  <Button fx:id="updateButton" text="Update" styleClass="btn-neutral"
                       maxWidth="Infinity" HBox.hgrow="ALWAYS"
                       onAction="#handleUpdateEmployee"/>
-                  <Button text="Delete Employee" styleClass="btn-red"
+                  <Button fx:id="deleteButton" text="Delete" styleClass="btn-danger"
                       maxWidth="Infinity" HBox.hgrow="ALWAYS"
                       onAction="#handleDeleteEmployee"/>
                 </HBox>
               </VBox>
+
+              <!-- Info card shown for admin: explains auto-derive behaviour -->
+              <VBox fx:id="adminInfoCard" styleClass="section-card" spacing="6">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                  <Label text="ℹ  How Manager Assignment Works" styleClass="card-title"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="INFO" styleClass="badge-pill"/>
+                </HBox>
+                <Label text="• Job title is set automatically when you assign this manager to a department (e.g. 'Engineering Manager')."
+                       styleClass="page-subtitle" wrapText="true"/>
+                <Label text="• Salary starts at PKR 0 until a department is assigned. Update it from Employee Search after assignment."
+                       styleClass="page-subtitle" wrapText="true"/>
+                <Label text="• To assign a department, go to Departments → Create Department and select this manager."
+                       styleClass="page-subtitle" wrapText="true"/>
+              </VBox>
+
             </VBox>
           </content>
         </ScrollPane>

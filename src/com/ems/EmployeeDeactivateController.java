@@ -121,15 +121,16 @@ public class EmployeeDeactivateController extends BaseController {
                 employeeField.clear();
                 reasonField.clear();
             } else {
-                // Admin: direct deactivation
-                if (employeeRepository.deactivateEmployee(employeeId, reason)) {
-                    showAlert(Alert.AlertType.INFORMATION, "Employee Deactivated",
-                            "\"" + employee.getFullName() + "\" (ID: " + employeeId + ") has been deactivated.");
+                // Admin: permanently remove from database
+                if (employeeRepository.deleteEmployeeCompletely(employeeId)) {
+                    showAlert(Alert.AlertType.INFORMATION, "Record Removed",
+                            "\"" + employee.getFullName() + "\" (ID: " + employeeId
+                                    + ") has been permanently removed from the system.");
                     employeeField.clear();
                     reasonField.clear();
                     loadPendingRequests();
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Failed", "Could not deactivate employee.");
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Could not remove employee record.");
                 }
             }
         } catch (SQLException e) {
@@ -144,8 +145,12 @@ public class EmployeeDeactivateController extends BaseController {
         EmployeeRepository.DeactivationRequest req = requestsTable.getSelectionModel().getSelectedItem();
         if (req == null) { setStatus("Select a request row first.", true); return; }
         try {
-            employeeRepository.approveDeactivationRequest(req.getRequestId(), currentUser().getUsername());
-            setStatus("Employee \"" + req.getEmployeeName() + "\" deactivated successfully.", false);
+            String removed = employeeRepository.approveDeactivationRequest(req.getRequestId(), currentUser().getUsername());
+            if (removed != null) {
+                setStatus("\"" + req.getEmployeeName() + "\" permanently removed from the system.", false);
+            } else {
+                setStatus("Request not found.", true);
+            }
             loadPendingRequests();
         } catch (SQLException e) {
             setStatus("Error: " + e.getMessage(), true);

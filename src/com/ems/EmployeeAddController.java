@@ -8,12 +8,18 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class EmployeeAddController extends BaseController {
+
+    private static final String MANAGER_ID_PATTERN  = "^M\\d{1,3}$";
+    private static final String EMPLOYEE_ID_PATTERN = "^E\\d{1,3}$";
+    private static final String MANAGER_ID_PREFIX   = "M";
+    private static final String EMPLOYEE_ID_PREFIX  = "E";
 
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
     private final DepartmentRepository departmentRepository = new DepartmentRepository();
@@ -48,11 +54,22 @@ public class EmployeeAddController extends BaseController {
     @FXML
     private PasswordField passwordField;
 
-    @FXML
-    private Label pageTitleLabel;
+    @FXML private Label pageTitleLabel;
+    @FXML private Label topbarTitleLabel;
+    @FXML private Label topbarSubtitleLabel;
+    @FXML private Label pageSubtitleLabel;
+    @FXML private Label cardTitleLabel;
+    @FXML private Label idFieldLabel;
+    @FXML private Button saveButton;
+    @FXML private Button updateButton;
+    @FXML private Button deleteButton;
 
-    @FXML
-    private VBox roleRow;
+    @FXML private HBox titleDeptRow;
+    @FXML private HBox salaryRow;
+    @FXML private VBox roleRow;
+    @FXML private VBox adminInfoCard;
+    @FXML private Label idHintLabel;
+    @FXML private Button autoIdButton;
 
     @FXML
     private Label userLabel;
@@ -95,23 +112,70 @@ public class EmployeeAddController extends BaseController {
 
         AppUser user = currentUser();
         if (user.isAdmin()) {
-            roleComboBox.setItems(FXCollections.observableArrayList("Manager"));
-            roleComboBox.setValue("Manager");
-            if (pageTitleLabel != null) pageTitleLabel.setText("Add Manager");
+            configureAdminManagerForm();
         } else {
-            roleComboBox.setItems(FXCollections.observableArrayList("Employee"));
-            roleComboBox.setValue("Employee");
-            if (pageTitleLabel != null) pageTitleLabel.setText("Add Employee");
-        }
-        // Role field is always fixed — hide it
-        if (roleRow != null) { roleRow.setVisible(false); roleRow.setManaged(false); }
-        loadDepartments();
-        // If manager, lock the department to their own dept
-        if (user.isManager()) {
-            lockDepartmentToManager(user);
+            configureManagerEmployeeForm(user);
         }
         departmentComboBox.setOnAction(e -> autoFillManager());
         configureNavigation();
+    }
+
+    private void configureAdminManagerForm() {
+        roleComboBox.setItems(FXCollections.observableArrayList("Manager"));
+        roleComboBox.setValue("Manager");
+
+        setRowVisible(titleDeptRow, false);
+        setRowVisible(salaryRow, false);
+        if (roleRow != null) { roleRow.setVisible(false); roleRow.setManaged(false); }
+        if (adminInfoCard != null) { adminInfoCard.setVisible(true); adminInfoCard.setManaged(true); }
+
+        setText(pageTitleLabel,      "Add Manager");
+        setText(topbarTitleLabel,    "Manager Management");
+        setText(topbarSubtitleLabel, "Register managers who can then be assigned to departments");
+        setText(pageSubtitleLabel,   "Use Manager ID to add a new manager or load an existing record for updates.");
+        setText(cardTitleLabel,      "Manager Details");
+        setText(idFieldLabel,        "Manager ID");
+        setText(saveButton,          "Add Manager");
+        setText(updateButton,        "Update Manager");
+        setText(deleteButton,        "Delete Manager");
+        if (employeeIdField != null) employeeIdField.setPromptText("M001");
+        setText(idHintLabel,         "Format: M followed by up to 3 digits  (e.g. M001, M12)");
+        setupIdValidation(MANAGER_ID_PATTERN);
+    }
+
+    private void configureManagerEmployeeForm(AppUser user) {
+        roleComboBox.setItems(FXCollections.observableArrayList("Employee"));
+        roleComboBox.setValue("Employee");
+        if (roleRow != null)       { roleRow.setVisible(false);      roleRow.setManaged(false); }
+        if (adminInfoCard != null) { adminInfoCard.setVisible(false); adminInfoCard.setManaged(false); }
+
+        setText(pageTitleLabel,      "Add Employee");
+        setText(topbarTitleLabel,    "Employee Management");
+        setText(cardTitleLabel,      "Employee Details");
+        setText(idFieldLabel,        "Employee ID");
+        setText(saveButton,          "Save Employee");
+        setText(updateButton,        "Update Employee");
+        setText(deleteButton,        "Delete Employee");
+        if (employeeIdField != null) employeeIdField.setPromptText("E001");
+        setText(idHintLabel,         "Format: E followed by up to 3 digits  (e.g. E001, E99)");
+        setupIdValidation(EMPLOYEE_ID_PATTERN);
+
+        loadDepartments();
+        lockDepartmentToManager(user);
+    }
+
+    private void setupIdValidation(String pattern) {
+        if (employeeIdField == null || idHintLabel == null) return;
+        employeeIdField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isBlank()) {
+                idHintLabel.setStyle("");
+                return;
+            }
+            boolean valid = newVal.matches(pattern);
+            idHintLabel.setStyle(valid
+                    ? "-fx-text-fill: #22C55E;"
+                    : "-fx-text-fill: #EF4444;");
+        });
     }
 
     private void loadDepartments() {
@@ -137,6 +201,23 @@ public class EmployeeAddController extends BaseController {
 
     private void autoFillManager() {
         // manager_username is resolved from selected department in buildEmployeeFromFields
+    }
+
+    @FXML
+    private void handleAutoId() {
+        AppUser user = currentUser();
+        String prefix = (user != null && user.isAdmin()) ? MANAGER_ID_PREFIX : EMPLOYEE_ID_PREFIX;
+        try {
+            String next = employeeRepository.getNextAvailableId(prefix);
+            if (next != null && employeeIdField != null) {
+                employeeIdField.setText(next);
+            } else {
+                showAlert(Alert.AlertType.WARNING, "No ID Available",
+                        "All " + prefix + "001–" + prefix + "999 IDs are in use.");
+            }
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Could not generate ID: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -204,7 +285,9 @@ public class EmployeeAddController extends BaseController {
 
             fullNameField.setText(employee.getFullName());
             jobTitleField.setText(employee.getJobTitle());
-            departmentComboBox.setValue(employee.getDepartment());
+            if (departmentComboBox.getItems().contains(employee.getDepartment())) {
+                departmentComboBox.setValue(employee.getDepartment());
+            }
             emailField.setText(employee.getEmail());
             phoneField.setText(employee.getPhone() != null ? employee.getPhone() : "");
             salaryField.setText(employee.getSalary() > 0 ? String.valueOf((long) employee.getSalary()) : "");
@@ -362,21 +445,57 @@ public class EmployeeAddController extends BaseController {
     }
 
     private Employee buildEmployeeFromFields() {
-        String id = employeeIdField.getText().trim();
-        String name = fullNameField.getText().trim();
-        String title = jobTitleField.getText().trim();
-        String dept = departmentComboBox.getValue() != null ? departmentComboBox.getValue().trim() : "";
+        AppUser user = currentUser();
+        if (user != null && user.isAdmin()) {
+            return buildManagerFromFields();
+        }
+        return buildEmployeeFromFieldsFull();
+    }
+
+    private Employee buildManagerFromFields() {
+        String id    = employeeIdField.getText().trim();
+        String name  = fullNameField.getText().trim();
         String email = emailField.getText().trim();
         String phone = phoneField.getText().trim();
+
+        if (id.isEmpty() || name.isEmpty() || email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error",
+                    "Manager ID, Full Name, and Email are required.");
+            return null;
+        }
+        if (!id.matches(MANAGER_ID_PATTERN)) {
+            showAlert(Alert.AlertType.WARNING, "Invalid Manager ID",
+                    "Manager ID must start with 'M' followed by 1–3 digits (e.g. M001, M12).");
+            return null;
+        }
+        if (!email.matches("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$")) {
+            showAlert(Alert.AlertType.WARNING, "Invalid Email",
+                    "Please enter a valid email address.");
+            return null;
+        }
+        return new Employee(id, name, "Manager", "Unassigned", email, phone, true, "Manager", "admin", 20, 0.0);
+    }
+
+    private Employee buildEmployeeFromFieldsFull() {
+        String id         = employeeIdField.getText().trim();
+        String name       = fullNameField.getText().trim();
+        String title      = jobTitleField.getText().trim();
+        String dept       = departmentComboBox.getValue() != null ? departmentComboBox.getValue().trim() : "";
+        String email      = emailField.getText().trim();
+        String phone      = phoneField.getText().trim();
         String salaryText = salaryField.getText().trim();
-        String role = roleComboBox.getValue();
+        String role       = roleComboBox.getValue();
 
         if (id.isEmpty() || name.isEmpty() || title.isEmpty() || dept.isEmpty() || email.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Validation Error",
                     "Please fill in all required fields (ID, Name, Job Title, Department, Email).");
             return null;
         }
-
+        if (!id.matches(EMPLOYEE_ID_PATTERN)) {
+            showAlert(Alert.AlertType.WARNING, "Invalid Employee ID",
+                    "Employee ID must start with 'E' followed by 1–3 digits (e.g. E001, E99).");
+            return null;
+        }
         if (!email.matches("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$")) {
             showAlert(Alert.AlertType.WARNING, "Invalid Email",
                     "Please enter a valid email address.");
@@ -388,26 +507,22 @@ public class EmployeeAddController extends BaseController {
             try {
                 salary = Double.parseDouble(salaryText);
                 if (salary < 0) {
-                    showAlert(Alert.AlertType.WARNING, "Invalid Salary",
-                            "Salary cannot be negative.");
+                    showAlert(Alert.AlertType.WARNING, "Invalid Salary", "Salary cannot be negative.");
                     return null;
                 }
             } catch (NumberFormatException e) {
-                showAlert(Alert.AlertType.WARNING, "Invalid Salary",
-                        "Please enter a valid numeric salary.");
+                showAlert(Alert.AlertType.WARNING, "Invalid Salary", "Please enter a valid numeric salary.");
                 return null;
             }
         }
 
         if (role == null) role = "Employee";
-
         String managerUsername = null;
         try {
             managerUsername = departmentRepository.getManagerForDepartment(dept);
         } catch (SQLException e) {
-            // fall through; EmployeeRepository will assign a default manager
+            // fall through
         }
-
         return new Employee(id, name, title, dept, email, phone, true, role, managerUsername, 20, salary);
     }
 
@@ -419,9 +534,25 @@ public class EmployeeAddController extends BaseController {
         emailField.clear();
         phoneField.clear();
         salaryField.clear();
-        roleComboBox.setValue("Employee");
         usernameField.clear();
         passwordField.clear();
+        // restore role default based on user context
+        AppUser user = currentUser();
+        roleComboBox.setValue(user != null && user.isAdmin() ? "Manager" : "Employee");
+    }
+
+    private void setRowVisible(HBox row, boolean visible) {
+        if (row == null) return;
+        row.setVisible(visible);
+        row.setManaged(visible);
+    }
+
+    private void setText(Label label, String text) {
+        if (label != null) label.setText(text);
+    }
+
+    private void setText(Button button, String text) {
+        if (button != null) button.setText(text);
     }
 
     private void configureNavigation() {

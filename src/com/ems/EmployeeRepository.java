@@ -91,6 +91,68 @@ public class EmployeeRepository {
         }
     }
 
+    /**
+     * Permanently removes an employee and all their associated records from the database.
+     * Called by admin on direct deactivation or on approving a manager's request.
+     */
+    public boolean deleteEmployeeCompletely(String employeeId) throws SQLException {
+        try (Connection conn = Database.getConnection()) {
+            conn.setAutoCommit(false);
+            // Delete dependent records first (FK order)
+            for (String sql : new String[]{
+                    "DELETE FROM deactivation_requests WHERE employee_id = ?",
+                    "DELETE FROM leave_requests        WHERE employee_id = ?",
+                    "DELETE FROM attendance_records    WHERE employee_id = ?",
+                    "DELETE FROM payroll_records       WHERE employee_id = ?",
+                    "DELETE FROM employee_documents    WHERE employee_id = ?"
+            }) {
+                try (PreparedStatement st = conn.prepareStatement(sql)) {
+                    st.setString(1, employeeId); st.executeUpdate();
+                }
+            }
+            // Delete the user account
+            try (PreparedStatement st = conn.prepareStatement(
+                    "DELETE FROM users WHERE employee_id = ?")) {
+                st.setString(1, employeeId); st.executeUpdate();
+            }
+            // Delete the employee record
+            int rows;
+            try (PreparedStatement st = conn.prepareStatement(
+                    "DELETE FROM employees WHERE employee_id = ?")) {
+                st.setString(1, employeeId); rows = st.executeUpdate();
+            }
+            conn.commit();
+            return rows == 1;
+        }
+    }
+
+    /**
+     * Returns the next available ID in the sequence for the given prefix (M or E).
+     * Scans M001..M999 (or E001..E999) and returns the first gap.
+     */
+    public String getNextAvailableId(String prefix) throws SQLException {
+        String sql = "SELECT employee_id FROM employees WHERE employee_id LIKE ? ORDER BY employee_id ASC";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, prefix + "%");
+            try (ResultSet rs = st.executeQuery()) {
+                java.util.Set<Integer> used = new java.util.HashSet<>();
+                while (rs.next()) {
+                    String id = rs.getString(1);
+                    try {
+                        used.add(Integer.parseInt(id.substring(prefix.length())));
+                    } catch (NumberFormatException ignored) {}
+                }
+                for (int i = 1; i <= 999; i++) {
+                    if (!used.contains(i)) {
+                        return String.format("%s%03d", prefix, i);
+                    }
+                }
+                return null; // no ID available (shouldn't happen in practice)
+            }
+        }
+    }
+
     public boolean deactivateEmployee(String employeeId, String reason) throws SQLException {
         String sql = "UPDATE employees "
                 + "SET is_active = 0, deactivation_reason = ?, deactivated_at = datetime('now') "
@@ -215,6 +277,20 @@ public class EmployeeRepository {
         }
     }
 
+    /** Updates a manager employee record when assigned to or unassigned from a department. */
+    public void updateManagerAssignment(String managerUsername, String department, String jobTitle) throws SQLException {
+        String sql = "UPDATE employees SET department = ?, job_title = ? "
+                + "WHERE role = 'Manager' AND employee_id IN "
+                + "(SELECT employee_id FROM users WHERE username = ?)";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, department);
+            st.setString(2, jobTitle);
+            st.setString(3, managerUsername);
+            st.executeUpdate();
+        }
+    }
+
     public void createUserAccount(String username, String password, String role, String employeeId) throws SQLException {
         String sql = "INSERT INTO users (username, password, role, employee_id) VALUES (?, ?, ?, ?)";
         try (Connection connection = Database.getConnection();
@@ -268,29 +344,21 @@ public class EmployeeRepository {
         }
     }
 
-    public void approveDeactivationRequest(int requestId, String decidedBy) throws SQLException {
-        try (Connection conn = Database.getConnection()) {
-            conn.setAutoCommit(false);
-            String empId = null;
-            String reason = null;
-            try (PreparedStatement st = conn.prepareStatement(
-                    "SELECT employee_id, reason FROM deactivation_requests WHERE request_id = ?")) {
-                st.setInt(1, requestId);
-                try (ResultSet rs = st.executeQuery()) {
-                    if (rs.next()) { empId = rs.getString("employee_id"); reason = rs.getString("reason"); }
-                }
+    public String approveDeactivationRequest(int requestId, String decidedBy) throws SQLException {
+        // Fetch the employee ID from the request
+        String empId = null;
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(
+                     "SELECT employee_id FROM deactivation_requests WHERE request_id = ?")) {
+            st.setInt(1, requestId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) empId = rs.getString("employee_id");
             }
-            if (empId == null) { conn.rollback(); return; }
-            try (PreparedStatement st = conn.prepareStatement(
-                    "UPDATE employees SET is_active=0, deactivation_reason=?, deactivated_at=datetime('now') WHERE employee_id=?")) {
-                st.setString(1, reason); st.setString(2, empId); st.executeUpdate();
-            }
-            try (PreparedStatement st = conn.prepareStatement(
-                    "UPDATE deactivation_requests SET status='Approved', decided_by=?, decided_at=datetime('now') WHERE request_id=?")) {
-                st.setString(1, decidedBy); st.setInt(2, requestId); st.executeUpdate();
-            }
-            conn.commit();
         }
+        if (empId == null) return null;
+        // Hard-delete the employee (this also removes the deactivation_requests rows)
+        deleteEmployeeCompletely(empId);
+        return empId;
     }
 
     public void rejectDeactivationRequest(int requestId, String decidedBy) throws SQLException {

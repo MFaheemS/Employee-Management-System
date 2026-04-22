@@ -17,6 +17,7 @@ import java.util.List;
 public class DepartmentController extends BaseController {
 
     private final DepartmentRepository departmentRepository = new DepartmentRepository();
+    private final EmployeeRepository   employeeRepository   = new EmployeeRepository();
 
     @FXML private Label userLabel;
     @FXML private Label statusLabel;
@@ -85,6 +86,8 @@ public class DepartmentController extends BaseController {
                 return;
             }
             departmentRepository.addDepartment(name, manager);
+            // Update the manager's employee record: derive job title from dept name
+            employeeRepository.updateManagerAssignment(manager, name, name + " Manager");
             setSuccess("Department \"" + name + "\" created and assigned to " + manager + ".");
             deptNameField.clear();
             managerComboBox.setValue(null);
@@ -108,7 +111,10 @@ public class DepartmentController extends BaseController {
                         + "\" — it still has active employees. Reassign or deactivate them first.");
                 return;
             }
+            String managerUsername = selected.getManagerUsername();
             departmentRepository.deleteDepartment(selected.getDepartmentId());
+            // Reset the manager's record: no dept, generic title, salary stays
+            employeeRepository.updateManagerAssignment(managerUsername, "Unassigned", "Manager");
             setDeleteSuccess("Department \"" + selected.getDepartmentName() + "\" has been removed.");
             loadDepartments();
             loadManagers();
@@ -145,7 +151,7 @@ public class DepartmentController extends BaseController {
 
     private void loadManagers() {
         try {
-            List<String> managers = departmentRepository.getAllManagerUsernames();
+            List<String> managers = departmentRepository.getUnassignedManagers();
             managerComboBox.setItems(FXCollections.observableArrayList(managers));
         } catch (SQLException e) {
             setError("Could not load managers: " + e.getMessage());

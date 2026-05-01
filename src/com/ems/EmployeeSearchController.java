@@ -232,7 +232,7 @@ public class EmployeeSearchController extends BaseController {
             AppUser user = currentUser();
             List<Employee> employees;
             if (user.isAdmin()) {
-                employees = employeeRepository.searchManagersOnly(searchField.getText());
+                employees = employeeRepository.searchEmployees(searchField.getText());
             } else {
                 employees = employeeRepository.searchEmployeesForManager(searchField.getText(), user.getUsername());
             }

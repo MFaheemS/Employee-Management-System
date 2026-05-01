@@ -188,13 +188,16 @@ public abstract class BaseController {
         setNavigationVisibility(employeeAddButton, user.canManageEmployees() && (user.isAdmin() || managerHasDept));
         setNavigationVisibility(employeeDeactivateButton, user.canManageEmployees() && (user.isAdmin() || managerHasDept));
         if (employeeAddButton != null) {
-            employeeAddButton.setText(user.isAdmin() ? "＋  Manager Add" : "＋  Employee Add");
+            employeeAddButton.setText(user.isAdmin() ? "＋  Add Manager" : "＋  Add Employee");
         }
         if (employeeDeactivateButton != null) {
-            employeeDeactivateButton.setText(user.isAdmin() ? "⊗  Manager Deactivate" : "⊗  Deactivate");
+            employeeDeactivateButton.setText(user.isAdmin() ? "⊗  Remove Record" : "⊗  Deactivate Employee");
         }
         // Admin + Manager can search (each scoped in the controller)
         setNavigationVisibility(employeeSearchButton, user.canSearchEmployees() && (user.isAdmin() || managerHasDept));
+        if (employeeSearchButton != null) {
+            employeeSearchButton.setText(user.isAdmin() ? "⊛  Search Records" : "⊛  Search Employees");
+        }
         // Attendance: employees and managers with a linked profile
         setNavigationVisibility(attendanceButton, hasEmployeeProfile);
         // Leave apply: employees only (managers do not apply for leave)

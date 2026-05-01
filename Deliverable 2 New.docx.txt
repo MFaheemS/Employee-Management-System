@@ -1,0 +1,111 @@
+Employee Management System (EMS)
+Deliverable 2 - Sprint 2 Documentation
+Course: CS3009 - Software Engineering
+Team: Muhammad Faheem, Irtaza Kazmi, Humayun Bilal
+
+1. Introduction
+Sprint 2 extended the EMS foundation established in Sprint 1 by adding leave management, attendance tracking, and employee search. These features strengthened the system by enabling day-to-day HR workflow automation while preserving the role-based access boundaries introduced earlier. Sprint 2 moved the project from core setup into active operational use for managers and employees.
+
+2. Project Vision
+The project vision remained centered on a secure and integrated HR management system, but Sprint 2 refined it by emphasizing workflow automation and department-level control. The updated vision is to support role-scoped HR operations, improve accuracy in leave and attendance handling, and provide managers with controlled visibility into their teams.
+
+3. Intended Use of the System
+3.1 Who will use the system
+- Administrator: oversees the system and manages higher-level organizational actions.
+- Manager: handles department-scoped employee operations and approvals.
+- Employee: uses self-service features for leave and attendance.
+
+3.2 How the system will be used
+- Users log in with role-based credentials.
+- Managers work only within their department scope.
+- Employees submit leave requests, mark attendance, and review their own records.
+- Admin users can access broader employee search scope as defined by the application.
+
+3.3 Updated stakeholder needs for Sprint 2
+Manager:
+- Approve or reject leave requests from employees in their own department.
+- View attendance records for their team filtered by date.
+- Search employees within the allowed scope.
+Employee:
+- Submit leave requests.
+- Mark daily attendance.
+- View recent attendance history.
+
+4. Features Functionality
+4.1 Sprint 1 completed features
+- User authentication and session management.
+- Role-based access control.
+- Department creation and manager assignment.
+- Employee add/update and deactivation workflow.
+
+4.2 Sprint 2 new features
+- Leave request submission by employees.
+- Leave approval and rejection by managers.
+- Attendance check-in/check-out tracking.
+- Employee search with role-based scope.
+
+4.3 How Sprint 2 improved the system capability
+Sprint 2 added practical HR operations to the base system. Employees gained self-service leave and attendance functionality, managers gained approval and monitoring capabilities, and the system became more useful for daily workforce management rather than only setup and administration.
+
+5. User Stories
+Sprint 2 user stories:
+US07 - Submit Leave Request
+As an employee, I want to submit a leave request specifying the type and dates so that my manager can review and approve it.
+
+US08 - Approve or Reject Leave Request
+As a manager, I want to approve or reject leave requests from my department employees so that leave is managed fairly.
+
+US09 - Mark Attendance
+As an employee, I want to mark my attendance each day so that my working hours are recorded accurately.
+
+US10 - View Team Attendance (Manager)
+As a manager, I want to view attendance records for my team on a selected date so that I can monitor punctuality.
+
+US11 - Employee Search
+As a manager, I want to search for employees in my department by ID, name, or department so that I can quickly find employee information.
+
+Sprint 1 leftover stories completed in Sprint 2:
+- None.
+
+6. Non-Functional Requirements
+Performance:
+- Leave, attendance, and search operations should complete quickly for normal dataset sizes.
+- Daily attendance and leave review actions should remain responsive in the desktop interface.
+
+Usability:
+- Forms should guide users with clear fields and simple validation messages.
+- Date pickers and pre-filled values should reduce input mistakes.
+- Role-based visibility should hide irrelevant actions from users.
+
+Reliability:
+- Leave balance updates should remain consistent when approvals are processed.
+- Attendance check-in and check-out should prevent duplicate or invalid same-day entries.
+- Search and approval workflows should return predictable results within the user’s scope.
+
+Security:
+- Role checks should prevent users from accessing data outside their permissions.
+- Department-level scoping should be enforced in queries and controllers.
+
+Scalability:
+- The leave, attendance, and search modules should remain manageable as employee records grow.
+- The database design should support later expansion without breaking existing workflows.
+
+7. Iteration 2 Implementation Screenshots
+Insert screenshots showing the Sprint 2 features below, each with a brief caption:
+- Leave application screen: employee submits a leave request.
+- Leave approvals screen: manager reviews and processes leave requests.
+- Attendance screen: employee marks check-in/check-out and views recent history.
+- Employee search screen: manager searches employees within allowed scope.
+
+8. Work Division for Sprint 2
+Muhammad Faheem:
+- Leave management service and approval workflow logic.
+- Leave balance deduction and request handling.
+
+Irtaza Kazmi:
+- Attendance service implementation.
+- Employee search scoping and related repository logic.
+
+Humayun Bilal:
+- UI for leave application, leave approvals, attendance, and employee search screens.
+- Layout and interface adjustments for Sprint 2.

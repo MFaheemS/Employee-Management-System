@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
@@ -14,6 +15,9 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         stage.setTitle("Employee Management System");
+        stage.setMaximized(true);
+        stage.setFullScreen(true);
+        stage.setFullScreenExitHint("");
         stage.setResizable(true);
 
         try {
@@ -60,5 +64,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource(resourceName));
         Scene scene = new Scene(loader.load());
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
+        primaryStage.setFullScreen(true);
     }
 }

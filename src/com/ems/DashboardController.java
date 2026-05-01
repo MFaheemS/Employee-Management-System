@@ -114,6 +114,10 @@ public class DashboardController extends BaseController {
                 showSection(unassignedManagerSection, !hasDept);
                 showSection(managerSection, hasDept);
                 if (hasDept) loadManagerDashboard();
+                // If the manager also has a linked employee profile, load it as well
+                if (user.getEmployeeId() != null && !user.getEmployeeId().isBlank()) {
+                    loadEmployeeDashboard();
+                }
             } else {
                 loadEmployeeDashboard();
             }

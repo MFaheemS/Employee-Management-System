@@ -1,0 +1,189 @@
+Employee Management System (EMS)
+Deliverable 1 - Requirements Engineering
+Course: CS3009 - Software Engineering
+Team: Muhammad Faheem, Irtaza Kazmi, Humayun Bilal
+
+1. Introduction
+The Employee Management System (EMS) is a Java desktop application built with JavaFX and SQLite to automate common HR activities. Sprint 1 established the core foundation of the system by delivering authentication, role-based access control, department setup, employee lifecycle management, and deactivation request handling. This sprint created the base structure that later sprints extend with leave, attendance, payroll, document, and dashboard features.
+
+2. Project Vision
+The project vision is to provide a secure and integrated HR management platform that supports three distinct user roles: Administrator, Manager, and Employee. The system aims to reduce manual HR work, improve data consistency, and provide controlled access to workforce operations and records.
+
+3. Intended Use of the System
+3.1 Who will use the system
+- Administrator: manages top-level organizational setup and approval authority.
+- Manager: manages employees within an assigned department.
+- Employee: uses self-service HR functions relevant to their own account.
+- Secondary stakeholders: HR, Finance, IT Support, and Organizational Management.
+
+3.2 How the system will be used
+- Users authenticate with a username and password.
+- The system loads a role-specific home screen after login.
+- Admin users manage departments, manager accounts, and employee oversight.
+- Managers manage employees within their own department context.
+- Employees view and use their own personal HR data and workflows.
+
+3.3 Stakeholder needs
+Administrator needs:
+- Create departments and assign a manager to each department.
+- Create manager accounts and maintain the organizational structure.
+- Approve or reject deactivation requests.
+- Directly deactivate employees when needed.
+- View organization-level employee information.
+
+Manager needs:
+- Add employees within their department.
+- Submit deactivation requests for employees in their department.
+- Update employee records where allowed.
+- Maintain department-level control over employee management.
+
+Employee needs:
+- Log in securely and access only their own data.
+- View profile and employment-related details.
+- Use the system through role-appropriate access.
+
+4. Features / Overall Functionality
+4.1 What the system will do
+- Authenticate users with role-based access control.
+- Create and manage departments.
+- Add managers and employees.
+- Update employee information.
+- Handle deactivation requests submitted by managers and resolved by administrators.
+
+4.2 How the system helps users accomplish their tasks
+- Administrators can manage the organization structure and oversee higher-level HR actions.
+- Managers can onboard employees and raise deactivation requests without manual paperwork.
+- Employees can log into a secure system with role-specific access to future HR features.
+
+4.3 Sprint 1 completed functionality
+- User authentication and session management.
+- Role-based access control.
+- Department creation and manager assignment.
+- Manager account creation.
+- Employee account creation.
+- Employee update functionality.
+- Deactivation request workflow.
+
+5. User Stories
+US01 - User Login
+As a system user, I want to log in with a username and password so that I can access the system securely and see features relevant to my role.
+
+US02 - Add Manager Account
+As an administrator, I want to create a manager account with a department assignment so that the manager can begin overseeing their team.
+
+US03 - Add Employee Account
+As a manager, I want to add a new employee to my department so that the employee can access the system.
+
+US04 - Submit Deactivation Request
+As a manager, I want to submit a deactivation request for an employee so that the admin can review and action it.
+
+US05 - Admin Approves or Rejects Deactivation
+As an administrator, I want to see pending deactivation requests and approve or reject them so that I maintain final authority over employee status changes.
+
+US06 - Create Department
+As an administrator, I want to create a department and assign it a manager so that the organizational hierarchy is defined.
+
+6. Structured Specifications
+6.1 User Login
+Function Name: Login
+Module: Authentication
+Description: Verifies user credentials and loads a role-scoped session.
+Inputs: Username (String), Password (String)
+Processing: 1. Query the users table for a matching account. 2. Retrieve the role and employee_id. 3. Store the authenticated user in AppSession. 4. Load the appropriate home screen.
+Outputs: Authenticated session and role-based home screen.
+Preconditions: A valid user account must exist.
+Postconditions: Current user data is stored in AppSession.
+Exceptions: Invalid credentials, account not found.
+
+6.2 Add Manager Account
+Function Name: Add Employee
+Module: Employee Management
+Description: Creates a manager employee record and linked login account.
+Inputs: Employee ID, Full Name, Job Title, Department, Email, Phone, Salary, Login Username, Password.
+Processing: 1. Validate required fields. 2. Check duplicate employee ID. 3. Check duplicate username. 4. Resolve manager details from the selected department. 5. Insert the employee record. 6. Insert the user account.
+Outputs: Confirmation message and persisted manager record.
+Preconditions: Administrator must be logged in.
+Postconditions: Manager employee and user records are inserted.
+Exceptions: Duplicate ID, duplicate username, invalid email, missing fields.
+
+6.3 Add Employee Account
+Function Name: Add Employee
+Module: Employee Management
+Description: Creates a new employee record and linked login account for a manager's department.
+Inputs: Employee ID, Full Name, Job Title, Department, Email, Phone, Salary, Login Username, Password.
+Processing: 1. Validate required fields. 2. Check duplicate employee ID. 3. Check duplicate username. 4. Use the manager's assigned department. 5. Insert the employee record. 6. Insert the user account.
+Outputs: Confirmation message and persisted employee record.
+Preconditions: Manager must be logged in and assigned to a department.
+Postconditions: Employee and user records are inserted.
+Exceptions: Duplicate ID, duplicate username, missing fields, invalid input.
+
+6.4 Create Department
+Function Name: Create Department
+Module: Department Management
+Description: Admin creates a new department and assigns a manager.
+Inputs: Department Name (String), Manager Username (String, selected from existing managers).
+Processing: 1. Validate department name is unique. 2. Validate manager is selected. 3. Insert the department record.
+Outputs: Department created and available in employee creation forms.
+Preconditions: Administrator must be logged in.
+Postconditions: Department record is stored with manager assignment.
+Exceptions: Duplicate department name, no manager selected.
+
+6.5 Submit Deactivation Request
+Function Name: Submit / Approve / Reject Deactivation Request
+Module: Employee Lifecycle
+Description: Allows a manager to submit a deactivation request for an employee in their department.
+Inputs: Employee ID, Reason (from manager).
+Processing: 1. Validate employee is in the manager's department. 2. Check no pending request exists. 3. Insert the request with status=Pending.
+Outputs: Deactivation request stored as pending.
+Preconditions: Manager must be logged in and the employee must be active.
+Postconditions: Deactivation request is inserted into the database.
+Exceptions: Employee not in department, duplicate pending request, employee already inactive.
+
+6.6 Approve or Reject Deactivation Request
+Function Name: Submit / Approve / Reject Deactivation Request
+Module: Employee Lifecycle
+Description: Allows an administrator to approve or reject a pending deactivation request.
+Inputs: Request ID, Admin username.
+Processing: 1. Fetch the employee record linked to the request. 2. If approved, deactivate the employee record. 3. Update the request status to Approved or Rejected.
+Outputs: Employee deactivated or request cancelled.
+Preconditions: Administrator must be logged in and a pending request must exist.
+Postconditions: Request status is updated and the employee record is resolved.
+Exceptions: Request not found, request already processed, database error.
+
+7. Scrum Board
+The Sprint 1 Scrum board tracked the core backlog items for authentication, department creation, employee management, and deactivation workflow. Work items moved through the usual Scrum states such as To Do, In Progress, and Done as the team completed the base system foundation. The board was used to coordinate database setup, controller logic, and UI implementation across team members.
+
+8. NFR Specification
+Security: Role predicates should enforce access boundaries and prevent cross-role data leakage.
+Usability: Role-aware navigation should show only the actions relevant to the signed-in user.
+Performance: Standard database operations should complete within a few seconds on normal hardware.
+Reliability: Multi-step database updates should be protected with transactions where needed.
+Maintainability: Shared navigation and access checks should be centralized to reduce duplicated logic.
+Portability: The application should run on Windows using Java 17, JavaFX 25, and SQLite without external server dependencies.
+
+9. Iteration 1 Implementation Screenshots
+Insert screenshots demonstrating the Sprint 1 implementation below, each with a brief caption:
+- Login screen: user authentication and role-based sign-in.
+- Admin view: department creation and manager account management.
+- Manager view: employee add and deactivation request workflow.
+- Dashboard or main workspace view: role-based navigation and access-controlled landing screen.
+
+10. Work Division
+Muhammad Faheem:
+- Sprint planning.
+- Database schema design.
+- Authentication system.
+- AppSession and role-based access control framework.
+- BaseController.
+
+Irtaza Kazmi:
+- Employee CRUD repository logic.
+- Department management logic.
+- DepartmentRepository.
+- Deactivation workflow.
+
+Humayun Bilal:
+- JavaFX FXML layouts.
+- CSS design system.
+- Sidebar navigation.
+- Login screen UI.

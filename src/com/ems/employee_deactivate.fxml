@@ -81,16 +81,16 @@
 
               <!-- Admin: direct deactivation -->
               <VBox fx:id="adminDeactivateSection" styleClass="section-card" spacing="0">
-                <Label text="Direct Deactivation" styleClass="card-title"/>
+                <Label text="Remove Record" styleClass="card-title"/>
 
-                <Label text="Employee ID to Deactivate" styleClass="field-label"/>
-                <TextField fx:id="employeeField"
+                <Label text="Employee / Manager ID" styleClass="field-label"/>
+                <TextField fx:id="adminEmployeeField"
                        styleClass="input-field"
-                       promptText="EMP-1001"
+                       promptText="M001 or E001"
                        maxWidth="Infinity"/>
 
-                <Label text="Reason for Deactivation" styleClass="field-label"/>
-                <TextArea fx:id="reasonField"
+                <Label text="Reason for Removal" styleClass="field-label"/>
+                <TextArea fx:id="adminReasonField"
                       styleClass="input-area"
                       promptText="Explain the reason and any follow-up actions"
                       maxWidth="Infinity"
@@ -98,7 +98,7 @@
 
                 <Region prefHeight="16"/>
 
-                <Button text="Deactivate Employee"
+                <Button text="Remove Record"
                   styleClass="btn-red"
                   maxWidth="Infinity"
                   onAction="#handleDeactivate"/>
@@ -139,7 +139,7 @@
                 <Label text="Employee ID" styleClass="field-label"/>
                 <TextField fx:id="employeeField"
                        styleClass="input-field"
-                       promptText="EMP-1001"
+                       promptText="E001"
                        maxWidth="Infinity"/>
 
                 <Label text="Reason" styleClass="field-label"/>

@@ -157,6 +157,37 @@ public class EmployeeRepository {
         }
     }
 
+    public List<Employee> findByIdPrefix(String prefix) throws SQLException {
+        String sql = "SELECT employee_id, full_name, job_title, department, email, phone, is_active, "
+                + "role, manager_username, leave_balance, salary, last_net_salary "
+                + "FROM employees WHERE employee_id LIKE ? ORDER BY employee_id ASC LIMIT 20";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, prefix + "%");
+            try (ResultSet rs = st.executeQuery()) {
+                List<Employee> list = new ArrayList<>();
+                while (rs.next()) list.add(mapEmployee(rs));
+                return list;
+            }
+        }
+    }
+
+    public List<Employee> findByIdPrefixForManager(String prefix, String managerUsername) throws SQLException {
+        String sql = "SELECT employee_id, full_name, job_title, department, email, phone, is_active, "
+                + "role, manager_username, leave_balance, salary, last_net_salary "
+                + "FROM employees WHERE employee_id LIKE ? AND manager_username = ? ORDER BY employee_id ASC LIMIT 20";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, prefix + "%");
+            st.setString(2, managerUsername);
+            try (ResultSet rs = st.executeQuery()) {
+                List<Employee> list = new ArrayList<>();
+                while (rs.next()) list.add(mapEmployee(rs));
+                return list;
+            }
+        }
+    }
+
     public List<Employee> searchEmployees(String searchText) throws SQLException {
         String normalizedText = searchText == null ? "" : searchText.trim();
         String pattern = "%" + normalizedText + "%";

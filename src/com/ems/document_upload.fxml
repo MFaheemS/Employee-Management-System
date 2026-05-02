@@ -133,9 +133,11 @@
 
                 <Region prefHeight="10"/>
 
-                <!-- Manager actions: Approve / Reject / Delete -->
+                <!-- Manager actions: Open / Approve / Delete -->
                 <VBox fx:id="managerActionsSection" spacing="8">
                   <HBox spacing="10">
+                    <Button text="📂  Open Selected File"
+                        styleClass="btn-neutral" onAction="#handleOpenFile"/>
                     <Button fx:id="approveDocButton" text="✔  Approve"
                         styleClass="btn-gold" onAction="#handleApproveDocument"/>
                     <Button fx:id="deleteDocButton" text="🗑  Delete"

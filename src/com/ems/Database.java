@@ -140,6 +140,9 @@ public final class Database {
     }
 
     public static Connection getConnection() throws SQLException {
+        if (TestConnectionProvider.isActive()) {
+            return TestConnectionProvider.get();
+        }
         return DriverManager.getConnection(DB_URL);
     }
 
